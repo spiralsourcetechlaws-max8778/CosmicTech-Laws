@@ -1,0 +1,22 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+logs/*.log
+data/logs/*.log
+
+# Backups (we have a script for these)
+backups/
+
+# Temporary files
+*.tmp
+*.bak
+*~
+
+# Railway specific (if any)
+.railway/

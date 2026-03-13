@@ -1,0 +1,56 @@
+{
+  "ip_blacklist": [
+    "45.155.205.0/24",
+    "185.220.101.0/24",
+    "5.8.37.0/24",
+    "91.219.236.0/24",
+    "185.117.75.0/24",
+    "102.2.220.165",
+    "127.0.0.1"
+  ],
+  "tor_exits": [
+    "185.220.101.1",
+    "185.220.101.2",
+    "185.220.101.3"
+  ],
+  "malicious_asns": [
+    "AS197695", "AS198605", "AS199279"
+  ],
+  "suspicious_countries": [
+    "RU", "CN", "KP", "IR", "SY", "BY", "UA"
+  ],
+  "malicious_useragents": [
+    "sqlmap",
+    "nmap",
+    "nikto",
+    "metasploit",
+    "dirb",
+    "gobuster",
+    "hydra",
+    "john",
+    "aircrack",
+    "wireshark"
+  ],
+  "common_attack_patterns": {
+    "sqli": [
+      "' OR '1'='1",
+      "1' ORDER BY 1--",
+      "admin'--",
+      "' UNION SELECT",
+      "EXEC xp_cmdshell"
+    ],
+    "xss": [
+      "<script>alert",
+      "javascript:",
+      "onload=",
+      "onerror=",
+      "onmouseover="
+    ],
+    "lfi": [
+      "../../../../etc/passwd",
+      "php://filter",
+      "file://",
+      "expect://"
+    ]
+  }
+}

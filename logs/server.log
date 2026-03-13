@@ -1,0 +1,89 @@
+[Mon Feb  9 19:22:53 2026] PHP 8.4.16 Development Server (http://0.0.0.0:8080) started
+[Mon Feb  9 19:23:19 2026] 127.0.0.1:59148 Accepted
+[Mon Feb  9 19:23:19 2026] 127.0.0.1:59148 [200]: GET /
+[Mon Feb  9 19:23:20 2026] 127.0.0.1:59148 Closing
+[Mon Feb  9 19:23:20 2026] 127.0.0.1:59152 Accepted
+[Mon Feb  9 19:23:20 2026] 127.0.0.1:59152 Closed without sending a request; it was probably just an unused speculative preconnection
+[Mon Feb  9 19:23:20 2026] 127.0.0.1:59152 Closing
+[Mon Feb  9 19:23:22 2026] 127.0.0.1:59158 Accepted
+[Mon Feb  9 19:23:22 2026] 127.0.0.1:59158 [200]: GET /favicon.ico
+[Mon Feb  9 19:23:22 2026] 127.0.0.1:59158 Closing
+[Mon Feb  9 19:23:29 2026] 127.0.0.1:55680 Accepted
+[Mon Feb  9 19:23:29 2026] 127.0.0.1:55680 [200]: GET /
+[Mon Feb  9 19:23:29 2026] 127.0.0.1:55696 Accepted
+[Mon Feb  9 19:23:29 2026] 127.0.0.1:55680 Closing
+[Mon Feb  9 19:23:30 2026] 127.0.0.1:55696 [200]: GET /favicon.ico
+[Mon Feb  9 19:23:30 2026] 127.0.0.1:55696 Closing
+[Mon Feb  9 19:23:42 2026] 127.0.0.1:33608 Accepted
+[Mon Feb  9 19:23:42 2026] PHP Fatal error:  Uncaught Error: Call to undefined function isRequestAllowed() in /home/kali/COSMIC-OSINT-LAB@888/lab808/public/lab.php:669
+Stack trace:
+#0 {main}
+  thrown in /home/kali/COSMIC-OSINT-LAB@888/lab808/public/lab.php on line 669
+[Mon Feb  9 19:23:42 2026] 127.0.0.1:33608 [500]: GET /lab.php - Uncaught Error: Call to undefined function isRequestAllowed() in /home/kali/COSMIC-OSINT-LAB@888/lab808/public/lab.php:669
+Stack trace:
+#0 {main}
+  thrown in /home/kali/COSMIC-OSINT-LAB@888/lab808/public/lab.php on line 669
+[Mon Feb  9 19:23:42 2026] 127.0.0.1:33608 Closing
+[Mon Feb  9 19:23:42 2026] 127.0.0.1:33620 Accepted
+[Mon Feb  9 19:23:44 2026] 127.0.0.1:33620 [200]: GET /favicon.ico
+[Mon Feb  9 19:23:44 2026] 127.0.0.1:33620 Closing
+[Mon Feb  9 19:23:46 2026] 127.0.0.1:42674 Accepted
+[Mon Feb  9 19:23:46 2026] PHP Warning:  require_once(/home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/original_security_functions.php): Failed to open stream: No such file or directory in /home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/security_functions.php on line 328
+[Mon Feb  9 19:23:46 2026] PHP Fatal error:  Uncaught Error: Failed opening required '/home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/original_security_functions.php' (include_path='.:/usr/share/php') in /home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/security_functions.php:328
+Stack trace:
+#0 /home/kali/COSMIC-OSINT-LAB@888/lab808/public/redteam-dashboard.php(9): require_once()
+#1 {main}
+  thrown in /home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/security_functions.php on line 328
+[Mon Feb  9 19:23:46 2026] 127.0.0.1:42674 [500]: GET /redteam-dashboard.php - Uncaught Error: Failed opening required '/home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/original_security_functions.php' (include_path='.:/usr/share/php') in /home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/security_functions.php:328
+Stack trace:
+#0 /home/kali/COSMIC-OSINT-LAB@888/lab808/public/redteam-dashboard.php(9): require_once()
+#1 {main}
+  thrown in /home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/security_functions.php on line 328
+[Mon Feb  9 19:23:46 2026] 127.0.0.1:42674 Closing
+[Mon Feb  9 19:23:46 2026] 127.0.0.1:42676 Accepted
+[Mon Feb  9 19:23:48 2026] 127.0.0.1:42676 [200]: GET /favicon.ico
+[Mon Feb  9 19:23:48 2026] 127.0.0.1:42676 Closing
+[Mon Feb  9 19:23:50 2026] 127.0.0.1:42684 Accepted
+[Mon Feb  9 19:23:51 2026] PHP Warning:  require_once(/home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/original_security_functions.php): Failed to open stream: No such file or directory in /home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/security_functions.php on line 328
+[Mon Feb  9 19:23:51 2026] PHP Fatal error:  Uncaught Error: Failed opening required '/home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/original_security_functions.php' (include_path='.:/usr/share/php') in /home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/security_functions.php:328
+Stack trace:
+#0 /home/kali/COSMIC-OSINT-LAB@888/lab808/public/ai-dashboard.php(2): require_once()
+#1 {main}
+  thrown in /home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/security_functions.php on line 328
+[Mon Feb  9 19:23:51 2026] 127.0.0.1:42684 [500]: GET /ai-dashboard.php - Uncaught Error: Failed opening required '/home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/original_security_functions.php' (include_path='.:/usr/share/php') in /home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/security_functions.php:328
+Stack trace:
+#0 /home/kali/COSMIC-OSINT-LAB@888/lab808/public/ai-dashboard.php(2): require_once()
+#1 {main}
+  thrown in /home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/security_functions.php on line 328
+[Mon Feb  9 19:23:51 2026] 127.0.0.1:42684 Closing
+[Mon Feb  9 19:23:51 2026] 127.0.0.1:42692 Accepted
+[Mon Feb  9 19:23:53 2026] 127.0.0.1:42692 [200]: GET /favicon.ico
+[Mon Feb  9 19:23:53 2026] 127.0.0.1:42692 Closing
+[Mon Feb  9 19:23:54 2026] 127.0.0.1:54240 Accepted
+[Mon Feb  9 19:23:54 2026] PHP Warning:  require_once(/home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/original_security_functions.php): Failed to open stream: No such file or directory in /home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/security_functions.php on line 328
+[Mon Feb  9 19:23:54 2026] PHP Fatal error:  Uncaught Error: Failed opening required '/home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/original_security_functions.php' (include_path='.:/usr/share/php') in /home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/security_functions.php:328
+Stack trace:
+#0 /home/kali/COSMIC-OSINT-LAB@888/lab808/public/redteam-api.php(9): require_once()
+#1 {main}
+  thrown in /home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/security_functions.php on line 328
+[Mon Feb  9 19:23:54 2026] 127.0.0.1:54240 [500]: GET /redteam-api.php - Uncaught Error: Failed opening required '/home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/original_security_functions.php' (include_path='.:/usr/share/php') in /home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/security_functions.php:328
+Stack trace:
+#0 /home/kali/COSMIC-OSINT-LAB@888/lab808/public/redteam-api.php(9): require_once()
+#1 {main}
+  thrown in /home/kali/COSMIC-OSINT-LAB@888/lab808/public/includes/security_functions.php on line 328
+[Mon Feb  9 19:23:54 2026] 127.0.0.1:54240 Closing
+[Mon Feb  9 19:23:54 2026] 127.0.0.1:54256 Accepted
+[Mon Feb  9 19:23:56 2026] 127.0.0.1:54256 [200]: GET /favicon.ico
+[Mon Feb  9 19:23:56 2026] 127.0.0.1:54256 Closing
+[Mon Feb  9 19:23:58 2026] 127.0.0.1:54272 Accepted
+[Mon Feb  9 19:23:58 2026] 127.0.0.1:54272 [200]: GET /
+[Mon Feb  9 19:23:58 2026] 127.0.0.1:54272 Closing
+[Mon Feb  9 19:23:58 2026] 127.0.0.1:54286 Accepted
+[Mon Feb  9 19:23:58 2026] 127.0.0.1:54294 Accepted
+[Mon Feb  9 19:23:59 2026] 127.0.0.1:54286 [200]: GET /favicon.ico
+[Mon Feb  9 19:23:59 2026] 127.0.0.1:54286 Closing
+[Mon Feb  9 19:24:05 2026] 127.0.0.1:54294 [200]: GET /
+[Mon Feb  9 19:24:05 2026] 127.0.0.1:54294 Closing
+[Mon Feb  9 19:24:05 2026] 127.0.0.1:59642 Accepted
+[Mon Feb  9 19:24:05 2026] 127.0.0.1:59642 [200]: GET /favicon.ico
+[Mon Feb  9 19:24:05 2026] 127.0.0.1:59642 Closing

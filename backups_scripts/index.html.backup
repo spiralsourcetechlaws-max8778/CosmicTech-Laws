@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>COSMIC-OSINT-LAB Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
+            color: #00ff00;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 3px solid #00ff00;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            color: #ff00ff;
+            font-size: 2.5em;
+            text-shadow: 0 0 10px #ff00ff;
+        }
+        .modules {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .module {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: #00ff00;
+            display: block;
+        }
+        .module:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 255, 0, 0.3);
+            border-color: #ff00ff;
+        }
+        .module h3 {
+            color: #00ffff;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        .status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #000;
+            border: 1px solid #00ff00;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="status">
+        🟢 Online<br>
+        📡 102.2.220.165:8080<br>
+        👤 kali@nethunter
+    </div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>🌀 COSMIC-OSINT-LAB</h1>
+            <p>Kali NetHunter ARM71 Interface</p>
+        </div>
+        
+        <div class="modules">
+            <a href="ai-dashboard.php" class="module">
+                <h3>🤖 AI Dashboard</h3>
+                <p>Artificial Intelligence analysis and monitoring interface</p>
+            </a>
+            
+            <a href="redteam-dashboard.php" class="module">
+                <h3>🔴 Red Team Dashboard</h3>
+                <p>Offensive security operations and penetration testing</p>
+            </a>
+            
+            <a href="lab.php" class="module">
+                <h3>🔬 Lab Interface</h3>
+                <p>Experimental environment and testing grounds</p>
+            </a>
+            
+            <a href="redteam-api.php" class="module">
+                <h3>⚙️ API Endpoint</h3>
+                <p>REST API for automation and integration</p>
+            </a>
+            
+            <a href="test-server.html" class="module">
+                <h3>🧪 Server Test</h3>
+                <p>Verify server connectivity and basic functionality</p>
+            </a>
+            
+            <a href="/" class="module">
+                <h3>📁 Directory Listing</h3>
+                <p>View all available files in this directory</p>
+            </a>
+        </div>
+        
+        <div style="margin-top: 50px; text-align: center; color: #888;">
+            <p>System Status: <span style="color: #0f0;">OPERATIONAL</span></p>
+            <p>Last Updated: <span id="datetime"></span></p>
+        </div>
+    </div>
+    
+    <script>
+        // Update datetime
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById('datetime').textContent = 
+                now.toLocaleString('en-US', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+        }
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+        
+        // Test all links
+        document.querySelectorAll('.module').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const url = this.getAttribute('href');
+                console.log(`Attempting to access: ${url}`);
+            });
+        });
+    </script>
+</body>
+</html>

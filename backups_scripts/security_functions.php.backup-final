@@ -1,0 +1,87 @@
+<?php
+require_once __DIR__ . '/../system/modules/C2Helper.php';
+// [Previous security functions code here]
+?>
+
+// ========================
+// ========================
+
+// ========================
+// ========================
+
+
+// ========================
+// ========================
+
+// ========================
+// ========================
+
+
+// ========================
+// ========================
+
+// ========================
+// ========================
+
+/**
+ * Get C2 Dashboard URL
+ */
+function get_c2_dashboard_url() {
+    return '/c2-dashboard.php';
+}
+
+/**
+ * Get C2 Beacon URL for a payload UUID
+ */
+function get_c2_beacon_url($uuid) {
+    return '/c2/beacon.php?uuid=' . urlencode($uuid);
+}
+
+// ========================
+// LOCAL THREAT INTELLIGENCE – SINGLE SOURCE OF TRUTH
+// ========================
+    // Lazy-loaded – full definition in ThreatIntelModule.php
+
+// ========================
+// MOCK API RESPONSE GENERATOR
+// ========================
+class MockAPI {
+    public static function getIPReputation($ip) {
+        $local_ti = new LocalThreatIntel();
+        $check = $local_ti->checkIP($ip);
+        return [
+            'data' => [
+                'ipAddress' => $ip,
+                'isPublic' => !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE),
+                'ipVersion' => filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) ? 4 : 6,
+                'isWhitelisted' => false,
+                'abuseConfidenceScore' => $check['threat_score'],
+                'countryCode' => $check['geolocation']['country'] ?? 'XX',
+                'usageType' => 'Data Center/Web Hosting/Transit',
+                'isp' => $check['geolocation']['isp'] ?? 'Unknown',
+                'domain' => 'example.com',
+                'totalReports' => rand(0, 100),
+                'numDistinctUsers' => rand(1, 50),
+                'lastReportedAt' => date('Y-m-d\TH:i:s\Z', strtotime('-'.rand(1,30).' days'))
+            ]
+        ];
+    }
+    
+    public static function getVirusTotalReport($ip) {
+        return [
+            'data' => [
+                'attributes' => [
+                    'last_analysis_stats' => [
+                        'malicious' => rand(0, 5),
+                        'suspicious' => rand(0, 3),
+                        'undetected' => rand(50, 70),
+                        'harmless' => rand(20, 40)
+                    ],
+                    'country' => 'KE',
+                    'as_owner' => 'Safaricom Limited',
+                    'reputation' => rand(-100, 100)
+                ]
+            ]
+        ];
+    }
+}

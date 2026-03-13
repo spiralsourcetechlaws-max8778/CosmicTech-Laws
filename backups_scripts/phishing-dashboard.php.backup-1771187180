@@ -1,0 +1,56 @@
+<?php
+require_once __DIR__ . '/includes/security_functions.php';
+require_once __DIR__ . '/../system/modules/phishing/PhishingGenerator.php';
+
+$phish = new PhishingGenerator(true);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['clone'])) {
+    $url = $_POST['url'];
+    $name = preg_replace('/[^a-zA-Z0-9_-]/', '', $_POST['campaign_name']);
+    $link = $phish->clonePage($url, $name);
+    $message = "Page cloned: <a href='$link'>$link</a>";
+}
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🎣 COSMIC Phishing Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/cosmic-c2.css">
+</head>
+<body class="cosmic-scroll-body">
+    <div class="main-content" style="margin-left:20px;">
+        <h1>🎣 Phishing Campaign Generator</h1>
+        
+        <div class="glass-panel">
+            <h2>Clone a Web Page</h2>
+            <?php if (isset($message)) echo "<p>$message</p>"; ?>
+            <form method="post">
+                <div style="margin-bottom:15px;">
+                    <label>Target URL:</label>
+                    <input type="url" name="url" placeholder="https://example.com/login" required>
+                </div>
+                <div style="margin-bottom:15px;">
+                    <label>Campaign Name (no spaces):</label>
+                    <input type="text" name="campaign_name" placeholder="company_login" required>
+                </div>
+                <button type="submit" name="clone" class="btn">Clone Page</button>
+            </form>
+        </div>
+        
+        <div class="glass-panel">
+            <h2>Generate Email Template</h2>
+            <form method="post" action="phishing-send.php">
+                <select name="template_type">
+                    <option value="password_reset">Password Reset</option>
+                    <option value="invoice">Invoice</option>
+                    <option value="security_alert">Security Alert</option>
+                </select>
+                <input type="text" name="target_name" placeholder="Target Name">
+                <input type="text" name="phishing_link" placeholder="Phishing URL">
+                <button type="submit" class="btn">Generate & Send (Demo)</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

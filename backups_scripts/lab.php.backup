@@ -1,0 +1,62 @@
+<?php
+require_once "includes/security_functions.php";
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🔬 Lab Interface - COSMIC-OSINT-LAB</title>
+    <style>
+        body { font-family: monospace; background: #000; color: #0ff; padding: 20px; }
+        h1 { color: #0ff; text-align: center; }
+        .panel { border: 2px solid #0ff; padding: 20px; margin: 20px auto; max-width: 800px; }
+        .tool { display: block; padding: 10px; margin: 5px; border: 1px solid #0ff; color: #0ff; text-decoration: none; }
+        .tool:hover { background: #033; }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <h1>🔬 Lab Interface</h1>
+        <p>Experimental Environment</p>
+        
+        <h3>Security Tools</h3>
+        <a href="#" class="tool" onclick="runTool('scan')">🔍 Port Scanner</a>
+        <a href="#" class="tool" onclick="runTool('analyze')">📊 Traffic Analyzer</a>
+        <a href="#" class="tool" onclick="runTool('monitor')">👁️‍🗨️ Network Monitor</a>
+        <a href="#" class="tool" onclick="runTool('test')">🧪 Security Tester</a>
+        
+        <h3>Deception Tools</h3>
+        <a href="#" class="tool" onclick="runTool('honeypot')">🍯 Deploy Honeypot</a>
+        <a href="#" class="tool" onclick="runTool('canary')">🐦 Setup Canary Token</a>
+        <a href="#" class="tool" onclick="runTool('decoy')">🎭 Create Decoy</a>
+        
+        <div id="tool-output" style="margin-top: 20px; padding: 10px; border: 1px solid #0ff; min-height: 100px;">
+            Tool output will appear here...
+        </div>
+    </div>
+    
+    <script>
+        function runTool(tool) {
+            const output = document.getElementById('tool-output');
+            output.innerHTML = '<p>Running ' + tool + '... ⏳</p>';
+            
+            const responses = {
+                scan: 'Scanning ports... Found 3 open ports: 22(SSH), 80(HTTP), 443(HTTPS)',
+                analyze: 'Analyzing network traffic... No anomalies detected.',
+                monitor: 'Monitoring network... All systems operational.',
+                test: 'Running security tests... All tests passed.',
+                honeypot: 'Honeypot deployed at port 8081... Waiting for connections.',
+                canary: 'Canary token created: canary_' + Math.random().toString(36).substr(2),
+                decoy: 'Decoy system created. Fake credentials deployed.'
+            };
+            
+            setTimeout(() => {
+                output.innerHTML = '<p><strong>' + tool.toUpperCase() + ' Output:</strong></p><p>' + responses[tool] + '</p>';
+            }, 1000);
+        }
+    </script>
+    
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="/" style="color: #0ff;">← Back to Main Menu</a>
+    </div>
+</body>
+</html>

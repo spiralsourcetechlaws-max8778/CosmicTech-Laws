@@ -1,0 +1,50 @@
+<?php
+/**
+ * COSMIC OSINT LAB - Secure Payload Download Handler
+ * Forces download of generated payloads from data/payloads/ or data/advanced_payloads/
+ */
+require_once __DIR__ . '/includes/security_functions.php';
+
+$filename = $_GET['file'] ?? '';
+if (empty($filename)) {
+    die('No file specified.');
+}
+
+// Security: prevent directory traversal
+$filename = basename($filename);
+$allowed_dirs = [
+    dirname(__DIR__) . '/data/payloads/',
+    dirname(__DIR__) . '/data/advanced_payloads/',
+    dirname(__DIR__) . '/data/keylogs/'  // for future keylog exports
+];
+
+$filepath = null;
+foreach ($allowed_dirs as $dir) {
+    $test = $dir . $filename;
+    if (file_exists($test)) {
+        $filepath = $test;
+        break;
+    }
+}
+
+if (!$filepath) {
+    http_response_code(404);
+    die('File not found.');
+}
+
+// Log the download event
+log_security_event('PAYLOAD_DOWNLOADED', [
+    'filename' => $filename,
+    'size' => filesize($filepath),
+    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+]);
+
+// Force download
+header('Content-Description: File Transfer');
+header('Content-Type: application/octet-stream');
+header('Content-Disposition: attachment; filename="' . $filename . '"');
+header('Content-Length: ' . filesize($filepath));
+header('Cache-Control: no-cache, must-revalidate');
+header('Pragma: public');
+readfile($filepath);
+exit;

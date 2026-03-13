@@ -1,0 +1,368 @@
+/* ==========================================================================
+   COSMIC C2 v3.0 – PRISMATIC SOVEREIGN INTERFACE
+   Elegant, glassmorphic, neon‑accented – no scroll modifications
+   ========================================================================== */
+:root {
+    --cosmic-bg: #0a0a0f;
+    --cosmic-surface: rgba(20, 30, 50, 0.7);
+    --cosmic-glass: rgba(10, 20, 40, 0.6);
+    --cosmic-neon-blue: #00f3ff;
+    --cosmic-neon-green: #00ff9d;
+    --cosmic-neon-purple: #b300ff;
+    --cosmic-neon-pink: #ff00c8;
+    --cosmic-neon-cyan: #0ff0fc;
+    --cosmic-glow: 0 0 10px rgba(0, 243, 255, 0.5);
+    --cosmic-glow-strong: 0 0 20px rgba(0, 255, 157, 0.7);
+    --cosmic-border: 1px solid rgba(0, 243, 255, 0.3);
+    --cosmic-font: 'Share Tech Mono', 'Courier New', monospace;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    background: radial-gradient(ellipse at bottom, #0a0a1a 0%, #030307 100%);
+    color: var(--cosmic-neon-cyan);
+    font-family: var(--cosmic-font);
+    min-height: 100vh;
+    padding: 20px;
+    backdrop-filter: blur(2px);
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Animated cosmic background */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml;utf8,<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%2300f3ff" stop-opacity="0.1"/><stop offset="100%" stop-color="%2300f3ff" stop-opacity="0"/></radialGradient></defs><rect width="100%" height="100%" fill="black"/><circle cx="20%" cy="30%" r="150" fill="url(%23glow)"/><circle cx="80%" cy="70%" r="200" fill="url(%23glow)"/></svg>');
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Glassmorphic panels */
+.glass-panel {
+    background: var(--cosmic-glass);
+    backdrop-filter: blur(10px);
+    border: var(--cosmic-border);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), var(--cosmic-glow);
+    transition: all 0.3s ease;
+}
+
+.glass-panel:hover {
+    border-color: var(--cosmic-neon-green);
+    box-shadow: 0 8px 32px rgba(0, 255, 157, 0.2), var(--cosmic-glow-strong);
+}
+
+/* Neon typography */
+h1, h2, h3, h4 {
+    font-weight: 400;
+    text-shadow: 0 0 5px currentColor;
+    letter-spacing: 2px;
+}
+
+h1 {
+    color: var(--cosmic-neon-blue);
+    font-size: 2.5em;
+    border-bottom: 2px solid var(--cosmic-neon-purple);
+    padding-bottom: 15px;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+}
+
+h2 {
+    color: var(--cosmic-neon-green);
+    border-left: 4px solid var(--cosmic-neon-pink);
+    padding-left: 15px;
+    margin-bottom: 20px;
+}
+
+/* Prismatic buttons */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--cosmic-font);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: transparent;
+    color: var(--cosmic-neon-cyan);
+    border: 1px solid var(--cosmic-neon-cyan);
+    box-shadow: 0 0 5px rgba(0, 243, 255, 0.3);
+    text-decoration: none;
+}
+
+.btn:hover {
+    background: var(--cosmic-neon-cyan);
+    color: #000;
+    box-shadow: 0 0 20px var(--cosmic-neon-cyan);
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    border-color: var(--cosmic-neon-green);
+    color: var(--cosmic-neon-green);
+}
+.btn-primary:hover {
+    background: var(--cosmic-neon-green);
+    color: #000;
+}
+
+.btn-danger {
+    border-color: #ff3366;
+    color: #ff3366;
+}
+.btn-danger:hover {
+    background: #ff3366;
+    color: #000;
+}
+
+/* Cosmic cards grid */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin: 30px 0;
+}
+
+.stat-card {
+    background: var(--cosmic-surface);
+    border-radius: 16px;
+    padding: 25px;
+    border: 1px solid rgba(0, 243, 255, 0.2);
+    backdrop-filter: blur(5px);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+    transform: rotate(45deg);
+    animation: shimmer 6s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
+}
+
+.stat-value {
+    font-size: 3em;
+    font-weight: bold;
+    color: var(--cosmic-neon-green);
+    text-shadow: 0 0 10px var(--cosmic-neon-green);
+    line-height: 1;
+}
+
+.stat-label {
+    color: var(--cosmic-neon-blue);
+    text-transform: uppercase;
+    font-size: 0.8em;
+    letter-spacing: 2px;
+    margin-top: 10px;
+}
+
+/* Tables – digital rain style */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    background: rgba(0, 20, 40, 0.6);
+    backdrop-filter: blur(4px);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+th {
+    background: rgba(0, 100, 255, 0.2);
+    color: var(--cosmic-neon-blue);
+    padding: 15px 10px;
+    font-weight: normal;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-bottom: 2px solid var(--cosmic-neon-purple);
+}
+
+td {
+    padding: 12px 10px;
+    border-bottom: 1px solid rgba(0, 243, 255, 0.1);
+    color: #ccf;
+}
+
+tr:hover td {
+    background: rgba(0, 255, 157, 0.05);
+}
+
+/* Sidebar navigation – sovereign command center */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 260px;
+    height: 100vh;
+    background: rgba(5, 10, 20, 0.9);
+    backdrop-filter: blur(15px);
+    border-right: 1px solid var(--cosmic-neon-blue);
+    padding: 30px 0;
+    z-index: 1000;
+    transition: all 0.3s;
+    box-shadow: 5px 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.sidebar-logo {
+    text-align: center;
+    padding: 0 20px 30px;
+    border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+    margin-bottom: 30px;
+}
+
+.sidebar-logo h2 {
+    color: var(--cosmic-neon-purple);
+    border: none;
+    font-size: 1.8em;
+    text-shadow: 0 0 15px var(--cosmic-neon-purple);
+}
+
+.sidebar-nav {
+    list-style: none;
+    padding: 0 15px;
+}
+
+.sidebar-nav li {
+    margin-bottom: 10px;
+}
+
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: #ccf;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.sidebar-nav a:hover {
+    background: rgba(0, 243, 255, 0.1);
+    border-color: var(--cosmic-neon-cyan);
+    color: white;
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+}
+
+.sidebar-nav .active {
+    background: var(--cosmic-neon-blue);
+    color: black;
+}
+
+.sidebar-nav i {
+    width: 24px;
+    margin-right: 12px;
+    font-size: 1.2em;
+}
+
+/* Main content shift for sidebar */
+.main-content {
+    margin-left: 280px;
+    padding: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar { width: 100%; height: auto; position: relative; }
+    .main-content { margin-left: 0; }
+    .cards-grid { grid-template-columns: 1fr; }
+}
+
+/* Beacon pulse animation */
+.beacon-pulse {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: var(--cosmic-neon-green);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--cosmic-neon-green);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.5); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* File manager grid */
+.file-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+}
+
+.file-item {
+    background: rgba(20, 30, 50, 0.7);
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.file-item:hover {
+    border-color: var(--cosmic-neon-green);
+    box-shadow: 0 0 15px rgba(0, 255, 157, 0.3);
+    transform: scale(1.02);
+}
+
+/* Quick link bar */
+.quick-links {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(5px);
+    border-radius: 40px;
+    border: 1px solid var(--cosmic-neon-purple);
+}
+
+/* Modal styling */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+}
+
+.modal-content {
+    background: var(--cosmic-glass);
+    border: 2px solid var(--cosmic-neon-blue);
+    margin: 5% auto;
+    padding: 30px;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 16px;
+    backdrop-filter: blur(15px);
+}

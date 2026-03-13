@@ -1,0 +1,65 @@
+<?php
+// Unified Navigation System
+function render_navigation($current_page = '') {
+    $pages = [
+        'home' => ['/', '🏠', 'Home'],
+        'quicknav' => ['redteam-quicknav.php', '⚡', 'Quick Nav'],
+        'trojan' => ['trojan-dashboard.php', '🏴‍☠️', 'Trojan Gen'],
+        'redteam' => ['redteam-dashboard.php', '🔴', 'Red Team'],
+        'ai' => ['ai-dashboard.php', '🤖', 'AI Dashboard'],
+        'lab' => ['lab.php', '🔬', 'Lab'],
+        'api' => ['redteam-api.php?action=status', '⚙️', 'API']
+    ];
+    
+    $nav_html = '<nav class="main-nav">';
+    $nav_html .= '<div class="nav-container">';
+    
+    foreach ($pages as $key => $page) {
+        $active = ($current_page === $key) ? 'active' : '';
+        $nav_html .= sprintf(
+            '<a href="%s" class="nav-item %s" title="%s"><span class="nav-icon">%s</span><span class="nav-text">%s</span></a>',
+            $page[0],
+            $active,
+            $page[2],
+            $page[1],
+            $page[2]
+        );
+    }
+    
+    $nav_html .= '</div></nav>';
+    
+    return $nav_html;
+}
+
+// Quick link generator
+function quick_link($type, $platform = '', $params = []) {
+    $links = [
+        'reverse_shell' => [
+            'windows' => 'trojan-dashboard.php?type=reverse_shell&platform=windows&lport=4444',
+            'linux' => 'trojan-dashboard.php?type=reverse_shell&platform=linux&lport=4444',
+            'android' => 'trojan-dashboard.php?type=reverse_shell&platform=android&lport=4444'
+        ],
+        'backdoor' => [
+            'windows' => 'trojan-dashboard.php?type=windows_persistence&platform=windows',
+            'linux' => 'trojan-dashboard.php?type=linux_rootkit&platform=linux',
+            'android' => 'trojan-dashboard.php?type=android_backdoor&platform=android'
+        ],
+        'keylogger' => 'trojan-dashboard.php?type=keylogger',
+        'test' => 'payload-tester.php'
+    ];
+    
+    if ($platform && isset($links[$type][$platform])) {
+        $url = $links[$type][$platform];
+    } elseif (isset($links[$type])) {
+        $url = $links[$type];
+    } else {
+        $url = 'trojan-dashboard.php';
+    }
+    
+    // Add parameters if provided
+    if (!empty($params)) {
+        $url .= (strpos($url, '?') === false ? '?' : '&') . http_build_query($params);
+    }
+    
+    return $url;
+}

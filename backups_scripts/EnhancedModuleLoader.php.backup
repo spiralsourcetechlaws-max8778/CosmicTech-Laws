@@ -1,0 +1,116 @@
+<?php
+/**
+ * COSMIC OSINT LAB - Enhanced Module Loader
+ * Safe wrapper for module loading with fallbacks
+ */
+
+class EnhancedModuleLoader {
+    
+    private static $instance = null;
+    private $module = null;
+    private $available = false;
+    private $error = null;
+    
+    private function __construct() {
+        $this->load_module();
+    }
+    
+    public static function getInstance() {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+    
+    private function load_module() {
+        // Correct path: /home/kali/COSMIC-OSINT-LAB@888/lab808/system/modules/TrojanModule.php
+        $module_path = dirname(__DIR__) . '/../system/modules/TrojanModule.php';
+        
+        if (!file_exists($module_path)) {
+            $this->error = "Module file not found: $module_path";
+            $this->available = false;
+            return;
+        }
+        
+        require_once $module_path;
+        
+        if (!class_exists('EnhancedTrojanModule')) {
+            $this->error = "EnhancedTrojanModule class not found in $module_path";
+            $this->available = false;
+            return;
+        }
+        
+        try {
+            $this->module = new EnhancedTrojanModule();
+            $this->available = true;
+            $this->error = null;
+        } catch (Exception $e) {
+            $this->error = "Failed to instantiate module: " . $e->getMessage();
+            $this->module = null;
+            $this->available = false;
+        }
+    }
+    
+    public function isAvailable() {
+        return $this->available;
+    }
+    
+    public function getModule() {
+        return $this->module;
+    }
+    
+    public function getError() {
+        return $this->error;
+    }
+    
+    public function getPayloadTypes() {
+        if ($this->available && method_exists($this->module, 'get_payload_types')) {
+            return $this->module->get_payload_types();
+        }
+        
+        // Fallback types
+        return [
+            'reverse_shell' => [
+                'name' => 'Reverse Shell',
+                'description' => 'Standard reverse shell connection',
+                'platforms' => ['linux', 'windows', 'mac', 'python'],
+                'complexity' => 'low'
+            ],
+            'android_backdoor' => [
+                'name' => 'Android Backdoor',
+                'description' => 'Android device remote access',
+                'platforms' => ['android'],
+                'complexity' => 'high'
+            ],
+            'windows_persistence' => [
+                'name' => 'Windows Persistence',
+                'description' => 'Windows registry and service persistence',
+                'platforms' => ['windows'],
+                'complexity' => 'medium'
+            ]
+        ];
+    }
+    
+    public function getEncryptionMethods() {
+        if ($this->available && method_exists($this->module, 'get_encryption_methods')) {
+            return $this->module->get_encryption_methods();
+        }
+        
+        return [
+            'none' => 'No Encryption',
+            'base64' => 'Base64 Encoding'
+        ];
+    }
+    
+    public function getOutputFormats() {
+        if ($this->available && method_exists($this->module, 'get_output_formats')) {
+            return $this->module->get_output_formats();
+        }
+        
+        return [
+            'sh' => 'Shell Script (.sh)',
+            'ps1' => 'PowerShell (.ps1)',
+            'py' => 'Python Script (.py)'
+        ];
+    }
+}

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🔧 API Test Interface</title>
+    <style>
+        body { font-family: monospace; background: #000; color: #0f0; padding: 20px; }
+        .panel { border: 2px solid #0f0; padding: 20px; margin: 10px auto; max-width: 800px; }
+        h1 { color: #f0f; text-align: center; }
+        .btn { background: #000; color: #0f0; border: 1px solid #0f0; padding: 10px; margin: 5px; cursor: pointer; }
+        .btn:hover { background: #0f0; color: #000; }
+        pre { background: #111; padding: 10px; overflow: auto; max-height: 300px; }
+        .endpoint { color: #0ff; }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <h1>🔧 API Test Interface</h1>
+        <p>Test the Red Team API endpoints</p>
+    </div>
+    
+    <div class="panel">
+        <h3>📡 Available Endpoints:</h3>
+        <p><span class="endpoint">GET /redteam-api.php?action=status</span> - Check API status</p>
+        <p><span class="endpoint">GET /redteam-api.php?action=ttp</span> - Get TTP library</p>
+        <p><span class="endpoint">GET /redteam-api.php?action=report&campaign_id=test</span> - Generate report</p>
+        
+        <button class="btn" onclick="testEndpoint('status')">Test Status</button>
+        <button class="btn" onclick="testEndpoint('ttp')">Test TTP Library</button>
+        <button class="btn" onclick="testEndpoint('report')">Test Report</button>
+        <button class="btn" onclick="testEndpoint('')">Test Error</button>
+        
+        <div id="result" style="margin-top: 20px;">
+            <h4>Result:</h4>
+            <pre id="result-data">Click a button to test...</pre>
+        </div>
+    </div>
+    
+    <div class="panel">
+        <h3>📝 Test Simulation (POST)</h3>
+        <form id="simulation-form">
+            <p>Attack Type:
+                <select name="type" id="type">
+                    <option value="phishing">Phishing</option>
+                    <option value="sqli">SQL Injection</option>
+                    <option value="xss">XSS</option>
+                    <option value="bruteforce">Brute Force</option>
+                </select>
+            </p>
+            <p>Difficulty:
+                <select name="difficulty" id="difficulty">
+                    <option value="easy">Easy</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="hard">Hard</option>
+                    <option value="expert">Expert</option>
+                </select>
+            </p>
+            <button type="button" class="btn" onclick="runSimulation()">Run Simulation</button>
+        </form>
+        <div id="simulation-result" style="margin-top: 20px;"></div>
+    </div>
+    
+    <script>
+        function testEndpoint(action) {
+            const url = `redteam-api.php?action=${action}${action === 'report' ? '&campaign_id=test' : ''}`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('result-data').textContent = 
+                        JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('result-data').textContent = 
+                        'Error: ' + error.message;
+                });
+        }
+        
+        function runSimulation() {
+            const type = document.getElementById('type').value;
+            const difficulty = document.getElementById('difficulty').value;
+            
+            const formData = new FormData();
+            formData.append('action', 'simulate');
+            formData.append('type', type);
+            formData.append('difficulty', difficulty);
+            
+            fetch('redteam-api.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('simulation-result');
+                resultDiv.innerHTML = `
+                    <h4>Simulation Results:</h4>
+                    <pre>${JSON.stringify(data.data, null, 2)}</pre>
+                    <p><strong>Success:</strong> ${data.data.success ? '✅ YES' : '❌ NO'}</p>
+                    <p><strong>Detected:</strong> ${data.data.detected ? '✅ YES' : '❌ NO'}</p>
+                    <p><strong>Recommendations:</strong></p>
+                    <ul>
+                        ${data.data.recommendations.map(r => `<li>${r}</li>`).join('')}
+                    </ul>
+                `;
+            })
+            .catch(error => {
+                document.getElementById('simulation-result').innerHTML = 
+                    `<p style="color: #f00;">Error: ${error.message}</p>`;
+            });
+        }
+    </script>
+</body>
+</html>

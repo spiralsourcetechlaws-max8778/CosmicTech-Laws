@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>COSMIC-OSINT-LAB</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff00;
+            margin: 0;
+            padding: 20px;
+        }
+        .terminal {
+            border: 2px solid #00ff00;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+            background: #000;
+        }
+        .header {
+            color: #ff00ff;
+            text-align: center;
+            border-bottom: 1px solid #00ff00;
+            padding-bottom: 10px;
+        }
+        .menu a {
+            display: block;
+            color: #00ffff;
+            padding: 10px;
+            margin: 5px;
+            text-decoration: none;
+            border: 1px solid #333;
+        }
+        .menu a:hover {
+            background: #222;
+            border-color: #00ff00;
+        }
+        .status {
+            color: #ffff00;
+            padding: 10px;
+            background: #111;
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <div class="header">
+            <h1>🌀 COSMIC-OSINT-LAB</h1>
+            <h3>Kali NetHunter ARM71 - Web Interface</h3>
+        </div>
+        
+        <div class="status">
+            📡 Server: 102.2.220.165:8080<br>
+            📁 Path: /home/kali/COSMIC-OSINT-LAB@888/lab808<br>
+            👤 User: kali<br>
+            🚀 Status: RUNNING
+        </div>
+        
+        <div class="menu">
+            <h2>📊 Access Modules:</h2>
+            <a href="ai-dashboard.php">🤖 AI Dashboard</a>
+            <a href="redteam-dashboard.php">🔴 Red Team Dashboard</a>
+            <a href="lab.php">🔬 Lab Interface</a>
+            <a href="redteam-api.php">⚙️ API Endpoint</a>
+            <a href="test.php">🧪 PHP Test</a>
+        </div>
+        
+        <div style="margin-top: 20px; color: #888;">
+            <h3>📂 Files in this directory:</h3>
+            <pre id="fileList">Loading...</pre>
+        </div>
+    </div>
+    
+    <script>
+        // List files dynamically
+        fetch('.')
+            .then(r => r.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const links = Array.from(doc.querySelectorAll('a'))
+                    .map(a => a.textContent)
+                    .filter(name => name && !name.startsWith('?'));
+                document.getElementById('fileList').textContent = links.join('\\n');
+            });
+    </script>
+</body>
+</html>

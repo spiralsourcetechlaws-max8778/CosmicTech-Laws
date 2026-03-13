@@ -1,0 +1,59 @@
+<?php
+// Create `/public/mitre-dashboard.php`
+class MITREIntegration {
+    private $matrix = [];
+    
+    public function __construct() {
+        $this->loadMITREMatrix();
+    }
+    
+    private function loadMITREMatrix() {
+        // Simplified MITRE ATT&CK matrix
+        $this->matrix = [
+            'TA0001' => ['name' => 'Initial Access', 'techniques' => ['T1566', 'T1190']],
+            'TA0002' => ['name' => 'Execution', 'techniques' => ['T1059', 'T1106']],
+            'TA0003' => ['name' => 'Persistence', 'techniques' => ['T1547', 'T1136']],
+            'TA0004' => ['name' => 'Privilege Escalation', 'techniques' => ['T1548', 'T1068']],
+            'TA0005' => ['name' => 'Defense Evasion', 'techniques' => ['T1562', 'T1070']],
+            'TA0006' => ['name' => 'Credential Access', 'techniques' => ['T1110', 'T1555']],
+            'TA0007' => ['name' => 'Discovery', 'techniques' => ['T1083', 'T1018']],
+            'TA0008' => ['name' => 'Lateral Movement', 'techniques' => ['T1021', 'T1091']],
+            'TA0009' => ['name' => 'Collection', 'techniques' => ['T1560', 'T1113']],
+            'TA0011' => ['name' => 'Command and Control', 'techniques' => ['T1071', 'T1095']],
+            'TA0010' => ['name' => 'Exfiltration', 'techniques' => ['T1048', 'T1020']],
+            'TA0040' => ['name' => 'Impact', 'techniques' => ['T1485', 'T1490']]
+        ];
+    }
+    
+    public function mapAttack($techniques) {
+        $mapping = [];
+        foreach ($techniques as $technique) {
+            foreach ($this->matrix as $tactic => $data) {
+                if (in_array($technique, $data['techniques'])) {
+                    $mapping[] = [
+                        'technique' => $technique,
+                        'tactic' => $data['name'],
+                        'tactic_id' => $tactic
+                    ];
+                }
+            }
+        }
+        return $mapping;
+    }
+    
+    public function generateMatrixHTML() {
+        $html = '<div class="mitre-matrix">';
+        foreach ($this->matrix as $tactic_id => $tactic) {
+            $html .= "<div class='tactic'>";
+            $html .= "<h4>{$tactic_id}: {$tactic['name']}</h4>";
+            $html .= "<div class='techniques'>";
+            foreach ($tactic['techniques'] as $technique) {
+                $html .= "<span class='technique' title='{$technique}'>{$technique}</span>";
+            }
+            $html .= "</div></div>";
+        }
+        $html .= '</div>';
+        return $html;
+    }
+}
+?>

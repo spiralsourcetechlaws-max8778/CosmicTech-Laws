@@ -1,0 +1,48 @@
+[Tue Feb 10 15:15:10 2026] PHP 8.4.16 Development Server (http://0.0.0.0:8080) started
+[Tue Feb 10 15:15:34 2026] 127.0.0.1:57834 Accepted
+[Tue Feb 10 15:15:35 2026] 127.0.0.1:57834 [200]: GET /trojan-dashboard.php
+[Tue Feb 10 15:15:35 2026] 127.0.0.1:57834 Closing
+[Tue Feb 10 15:15:35 2026] 127.0.0.1:57844 Accepted
+[Tue Feb 10 15:15:35 2026] 127.0.0.1:57846 Accepted
+[Tue Feb 10 15:15:37 2026] 127.0.0.1:57844 Closed without sending a request; it was probably just an unused speculative preconnection
+[Tue Feb 10 15:15:37 2026] 127.0.0.1:57844 Closing
+[Tue Feb 10 15:15:37 2026] 127.0.0.1:57846 Closed without sending a request; it was probably just an unused speculative preconnection
+[Tue Feb 10 15:15:37 2026] 127.0.0.1:57846 Closing
+[Tue Feb 10 15:15:40 2026] 127.0.0.1:48192 Accepted
+[Tue Feb 10 15:15:40 2026] PHP Fatal error:  Uncaught Error: Call to undefined method EnhancedTrojanModule::get_windows_persistence_template() in /home/kali/COSMIC-OSINT-LAB@888/lab808/system/modules/TrojanModule.php:58
+Stack trace:
+#0 /home/kali/COSMIC-OSINT-LAB@888/lab808/system/modules/TrojanModule.php(28): EnhancedTrojanModule->load_templates()
+#1 /home/kali/COSMIC-OSINT-LAB@888/lab808/system/modules/TrojanModule.php(23): EnhancedTrojanModule->initialize()
+#2 /home/kali/COSMIC-OSINT-LAB@888/lab808/public/cosmic-unified-dashboard.php(11): EnhancedTrojanModule->__construct()
+#3 {main}
+  thrown in /home/kali/COSMIC-OSINT-LAB@888/lab808/system/modules/TrojanModule.php on line 58
+[Tue Feb 10 15:15:40 2026] 127.0.0.1:48192 [500]: GET /favicon.ico - Uncaught Error: Call to undefined method EnhancedTrojanModule::get_windows_persistence_template() in /home/kali/COSMIC-OSINT-LAB@888/lab808/system/modules/TrojanModule.php:58
+Stack trace:
+#0 /home/kali/COSMIC-OSINT-LAB@888/lab808/system/modules/TrojanModule.php(28): EnhancedTrojanModule->load_templates()
+#1 /home/kali/COSMIC-OSINT-LAB@888/lab808/system/modules/TrojanModule.php(23): EnhancedTrojanModule->initialize()
+#2 /home/kali/COSMIC-OSINT-LAB@888/lab808/public/cosmic-unified-dashboard.php(11): EnhancedTrojanModule->__construct()
+#3 {main}
+  thrown in /home/kali/COSMIC-OSINT-LAB@888/lab808/system/modules/TrojanModule.php on line 58
+[Tue Feb 10 15:15:40 2026] 127.0.0.1:48192 Closing
+[Tue Feb 10 15:15:50 2026] 10.44.73.59:46538 Accepted
+[Tue Feb 10 15:15:50 2026] PHP Fatal error:  Uncaught Error: Call to undefined method EnhancedTrojanModule::get_windows_persistence_template() in /home/kali/COSMIC-OSINT-LAB@888/lab808/system/modules/TrojanModule.php:58
+Stack trace:
+#0 /home/kali/COSMIC-OSINT-LAB@888/lab808/system/modules/TrojanModule.php(28): EnhancedTrojanModule->load_templates()
+#1 /home/kali/COSMIC-OSINT-LAB@888/lab808/system/modules/TrojanModule.php(23): EnhancedTrojanModule->initialize()
+#2 /home/kali/COSMIC-OSINT-LAB@888/lab808/public/cosmic-unified-dashboard.php(11): EnhancedTrojanModule->__construct()
+#3 {main}
+  thrown in /home/kali/COSMIC-OSINT-LAB@888/lab808/system/modules/TrojanModule.php on line 58
+[Tue Feb 10 15:15:50 2026] 10.44.73.59:46538 [500]: GET /cosmic-unified-dashboard.php - Uncaught Error: Call to undefined method EnhancedTrojanModule::get_windows_persistence_template() in /home/kali/COSMIC-OSINT-LAB@888/lab808/system/modules/TrojanModule.php:58
+Stack trace:
+#0 /home/kali/COSMIC-OSINT-LAB@888/lab808/system/modules/TrojanModule.php(28): EnhancedTrojanModule->load_templates()
+#1 /home/kali/COSMIC-OSINT-LAB@888/lab808/system/modules/TrojanModule.php(23): EnhancedTrojanModule->initialize()
+#2 /home/kali/COSMIC-OSINT-LAB@888/lab808/public/cosmic-unified-dashboard.php(11): EnhancedTrojanModule->__construct()
+#3 {main}
+  thrown in /home/kali/COSMIC-OSINT-LAB@888/lab808/system/modules/TrojanModule.php on line 58
+[Tue Feb 10 15:15:50 2026] 10.44.73.59:46538 Closing
+[Tue Feb 10 15:15:51 2026] 10.44.73.59:46550 Accepted
+[Tue Feb 10 15:15:51 2026] 10.44.73.59:46556 Accepted
+[Tue Feb 10 15:16:02 2026] 10.44.73.59:46550 Closed without sending a request; it was probably just an unused speculative preconnection
+[Tue Feb 10 15:16:02 2026] 10.44.73.59:46550 Closing
+[Tue Feb 10 15:16:02 2026] 10.44.73.59:46556 Closed without sending a request; it was probably just an unused speculative preconnection
+[Tue Feb 10 15:16:02 2026] 10.44.73.59:46556 Closing

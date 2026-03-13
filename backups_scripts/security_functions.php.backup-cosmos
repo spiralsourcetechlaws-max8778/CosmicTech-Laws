@@ -1,0 +1,716 @@
+<?php
+require_once __DIR__ . '/../system/modules/C2Helper.php';
+// [Previous security functions code here]
+?>
+
+// ========================
+// LOCAL THREAT INTELLIGENCE
+// ========================
+
+class LocalThreatIntel {
+    private $blacklist = [];
+    private $geo_data = [];
+    private $attack_patterns = [];
+    
+    public function __construct() {
+        $this->loadLocalDatabases();
+    }
+    
+    private function loadLocalDatabases() {
+        // Load blacklist
+        $threat_data = json_decode(file_get_contents(__DIR__ . '/../config/threat_intel.json'), true);
+        $this->blacklist = $threat_data['ip_blacklist'] ?? [];
+        $this->attack_patterns = $threat_data['common_attack_patterns'] ?? [];
+        
+        // Load geo data
+        $geo_file = __DIR__ . '/../data/geo_data.json';
+        if (file_exists($geo_file)) {
+            $this->geo_data = json_decode(file_get_contents($geo_file), true);
+        }
+    }
+    
+    public function checkIP($ip) {
+        $result = [
+            'ip' => $ip,
+            'is_blacklisted' => false,
+            'is_tor_exit' => false,
+            'threat_score' => 0,
+            'geolocation' => $this->getGeolocation($ip),
+            'recommendations' => []
+        ];
+        
+        // Check blacklist
+        foreach ($this->blacklist as $range) {
+            if ($this->ipInRange($ip, $range)) {
+                $result['is_blacklisted'] = true;
+                $result['threat_score'] += 80;
+                $result['recommendations'][] = "Block IP: Blacklisted range $range";
+                break;
+            }
+        }
+        
+        // Check for Tor exit node
+        $threat_data = json_decode(file_get_contents(__DIR__ . '/../config/threat_intel.json'), true);
+        foreach ($threat_data['tor_exits'] as $tor_ip) {
+            if ($ip == $tor_ip) {
+                $result['is_tor_exit'] = true;
+                $result['threat_score'] += 60;
+                $result['recommendations'][] = "Monitor: Tor exit node detected";
+            }
+        }
+        
+        // Country risk assessment
+        if (isset($result['geolocation']['country'])) {
+            $country = $result['geolocation']['country'];
+            if (in_array($country, $threat_data['suspicious_countries'])) {
+                $result['threat_score'] += 40;
+                $result['recommendations'][] = "High-risk country: $country";
+            }
+        }
+        
+        return $result;
+    }
+    
+    private function ipInRange($ip, $range) {
+        if (strpos($range, '/') !== false) {
+            // CIDR notation
+            list($subnet, $bits) = explode('/', $range);
+            $ip_long = ip2long($ip);
+            $subnet_long = ip2long($subnet);
+            $mask = -1 << (32 - $bits);
+            return ($ip_long & $mask) == ($subnet_long & $mask);
+        } else {
+            // Single IP
+            return $ip === $range;
+        }
+    }
+    
+    public function getGeolocation($ip) {
+        if (isset($this->geo_data[$ip])) {
+            return $this->geo_data[$ip];
+        }
+        
+        // Mock geolocation for unknown IPs
+        return [
+            'country' => 'XX',
+            'country_name' => 'Unknown',
+            'region' => 'Unknown',
+            'city' => 'Unknown',
+            'isp' => 'Unknown ISP',
+            'asn' => 'AS' . rand(1000, 99999),
+            'latitude' => 0,
+            'longitude' => 0,
+            'threat_level' => 'unknown'
+        ];
+    }
+    
+    public function detectAttackPattern($input) {
+        $detections = [];
+        
+        foreach ($this->attack_patterns as $type => $patterns) {
+            foreach ($patterns as $pattern) {
+                if (stripos($input, $pattern) !== false) {
+                    $detections[] = [
+                        'type' => $type,
+                        'pattern' => $pattern,
+                        'input' => substr($input, 0, 50)
+                    ];
+                }
+            }
+        }
+        
+        return $detections;
+    }
+    
+    public function analyzeUserAgent($user_agent) {
+        $analysis = [
+            'is_suspicious' => false,
+            'suspicious_indicators' => [],
+            'browser_info' => []
+        ];
+        
+        $ua_lower = strtolower($user_agent);
+        
+        // Check for security tools
+        $threat_data = json_decode(file_get_contents(__DIR__ . '/../config/threat_intel.json'), true);
+        foreach ($threat_data['malicious_useragents'] as $tool) {
+            if (strpos($ua_lower, $tool) !== false) {
+                $analysis['is_suspicious'] = true;
+                $analysis['suspicious_indicators'][] = "Security tool: $tool";
+            }
+        }
+        
+        // Browser detection
+        if (strpos($ua_lower, 'chrome') !== false) {
+            $analysis['browser_info']['name'] = 'Chrome';
+        } elseif (strpos($ua_lower, 'firefox') !== false) {
+            $analysis['browser_info']['name'] = 'Firefox';
+        } elseif (strpos($ua_lower, 'safari') !== false) {
+            $analysis['browser_info']['name'] = 'Safari';
+        } else {
+            $analysis['browser_info']['name'] = 'Unknown';
+            $analysis['suspicious_indicators'][] = "Uncommon browser";
+        }
+        
+        return $analysis;
+    }
+}
+
+// ========================
+// MOCK API RESPONSE GENERATOR
+// ========================
+
+class MockAPI {
+    public static function getIPReputation($ip) {
+        $local_ti = new LocalThreatIntel();
+        $check = $local_ti->checkIP($ip);
+        
+        return [
+            'data' => [
+                'ipAddress' => $ip,
+                'isPublic' => !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE),
+                'ipVersion' => filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) ? 4 : 6,
+                'isWhitelisted' => false,
+                'abuseConfidenceScore' => $check['threat_score'],
+                'countryCode' => $check['geolocation']['country'] ?? 'XX',
+                'usageType' => 'Data Center/Web Hosting/Transit',
+                'isp' => $check['geolocation']['isp'] ?? 'Unknown',
+                'domain' => 'example.com',
+                'totalReports' => rand(0, 100),
+                'numDistinctUsers' => rand(1, 50),
+                'lastReportedAt' => date('Y-m-d\TH:i:s\Z', strtotime('-'.rand(1,30).' days'))
+            ]
+        ];
+    }
+    
+    public static function getVirusTotalReport($ip) {
+        return [
+            'data' => [
+                'attributes' => [
+                    'last_analysis_stats' => [
+                        'malicious' => rand(0, 5),
+                        'suspicious' => rand(0, 3),
+                        'undetected' => rand(50, 70),
+                        'harmless' => rand(20, 40)
+                    ],
+                    'country' => 'KE',
+                    'as_owner' => 'Safaricom Limited',
+                    'reputation' => rand(-100, 100)
+                ]
+            ]
+        ];
+    }
+}
+
+
+// ========================
+// LOCAL THREAT INTELLIGENCE
+// ========================
+
+class LocalThreatIntel {
+    private $blacklist = [];
+    private $geo_data = [];
+    private $attack_patterns = [];
+    
+    public function __construct() {
+        $this->loadLocalDatabases();
+    }
+    
+    private function loadLocalDatabases() {
+        // Load blacklist
+        $threat_data = json_decode(file_get_contents(__DIR__ . '/../config/threat_intel.json'), true);
+        $this->blacklist = $threat_data['ip_blacklist'] ?? [];
+        $this->attack_patterns = $threat_data['common_attack_patterns'] ?? [];
+        
+        // Load geo data
+        $geo_file = __DIR__ . '/../data/geo_data.json';
+        if (file_exists($geo_file)) {
+            $this->geo_data = json_decode(file_get_contents($geo_file), true);
+        }
+    }
+    
+    public function checkIP($ip) {
+        $result = [
+            'ip' => $ip,
+            'is_blacklisted' => false,
+            'is_tor_exit' => false,
+            'threat_score' => 0,
+            'geolocation' => $this->getGeolocation($ip),
+            'recommendations' => []
+        ];
+        
+        // Check blacklist
+        foreach ($this->blacklist as $range) {
+            if ($this->ipInRange($ip, $range)) {
+                $result['is_blacklisted'] = true;
+                $result['threat_score'] += 80;
+                $result['recommendations'][] = "Block IP: Blacklisted range $range";
+                break;
+            }
+        }
+        
+        // Check for Tor exit node
+        $threat_data = json_decode(file_get_contents(__DIR__ . '/../config/threat_intel.json'), true);
+        foreach ($threat_data['tor_exits'] as $tor_ip) {
+            if ($ip == $tor_ip) {
+                $result['is_tor_exit'] = true;
+                $result['threat_score'] += 60;
+                $result['recommendations'][] = "Monitor: Tor exit node detected";
+            }
+        }
+        
+        // Country risk assessment
+        if (isset($result['geolocation']['country'])) {
+            $country = $result['geolocation']['country'];
+            if (in_array($country, $threat_data['suspicious_countries'])) {
+                $result['threat_score'] += 40;
+                $result['recommendations'][] = "High-risk country: $country";
+            }
+        }
+        
+        return $result;
+    }
+    
+    private function ipInRange($ip, $range) {
+        if (strpos($range, '/') !== false) {
+            // CIDR notation
+            list($subnet, $bits) = explode('/', $range);
+            $ip_long = ip2long($ip);
+            $subnet_long = ip2long($subnet);
+            $mask = -1 << (32 - $bits);
+            return ($ip_long & $mask) == ($subnet_long & $mask);
+        } else {
+            // Single IP
+            return $ip === $range;
+        }
+    }
+    
+    public function getGeolocation($ip) {
+        if (isset($this->geo_data[$ip])) {
+            return $this->geo_data[$ip];
+        }
+        
+        // Mock geolocation for unknown IPs
+        return [
+            'country' => 'XX',
+            'country_name' => 'Unknown',
+            'region' => 'Unknown',
+            'city' => 'Unknown',
+            'isp' => 'Unknown ISP',
+            'asn' => 'AS' . rand(1000, 99999),
+            'latitude' => 0,
+            'longitude' => 0,
+            'threat_level' => 'unknown'
+        ];
+    }
+    
+    public function detectAttackPattern($input) {
+        $detections = [];
+        
+        foreach ($this->attack_patterns as $type => $patterns) {
+            foreach ($patterns as $pattern) {
+                if (stripos($input, $pattern) !== false) {
+                    $detections[] = [
+                        'type' => $type,
+                        'pattern' => $pattern,
+                        'input' => substr($input, 0, 50)
+                    ];
+                }
+            }
+        }
+        
+        return $detections;
+    }
+    
+    public function analyzeUserAgent($user_agent) {
+        $analysis = [
+            'is_suspicious' => false,
+            'suspicious_indicators' => [],
+            'browser_info' => []
+        ];
+        
+        $ua_lower = strtolower($user_agent);
+        
+        // Check for security tools
+        $threat_data = json_decode(file_get_contents(__DIR__ . '/../config/threat_intel.json'), true);
+        foreach ($threat_data['malicious_useragents'] as $tool) {
+            if (strpos($ua_lower, $tool) !== false) {
+                $analysis['is_suspicious'] = true;
+                $analysis['suspicious_indicators'][] = "Security tool: $tool";
+            }
+        }
+        
+        // Browser detection
+        if (strpos($ua_lower, 'chrome') !== false) {
+            $analysis['browser_info']['name'] = 'Chrome';
+        } elseif (strpos($ua_lower, 'firefox') !== false) {
+            $analysis['browser_info']['name'] = 'Firefox';
+        } elseif (strpos($ua_lower, 'safari') !== false) {
+            $analysis['browser_info']['name'] = 'Safari';
+        } else {
+            $analysis['browser_info']['name'] = 'Unknown';
+            $analysis['suspicious_indicators'][] = "Uncommon browser";
+        }
+        
+        return $analysis;
+    }
+}
+
+// ========================
+// MOCK API RESPONSE GENERATOR
+// ========================
+
+class MockAPI {
+    public static function getIPReputation($ip) {
+        $local_ti = new LocalThreatIntel();
+        $check = $local_ti->checkIP($ip);
+        
+        return [
+            'data' => [
+                'ipAddress' => $ip,
+                'isPublic' => !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE),
+                'ipVersion' => filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) ? 4 : 6,
+                'isWhitelisted' => false,
+                'abuseConfidenceScore' => $check['threat_score'],
+                'countryCode' => $check['geolocation']['country'] ?? 'XX',
+                'usageType' => 'Data Center/Web Hosting/Transit',
+                'isp' => $check['geolocation']['isp'] ?? 'Unknown',
+                'domain' => 'example.com',
+                'totalReports' => rand(0, 100),
+                'numDistinctUsers' => rand(1, 50),
+                'lastReportedAt' => date('Y-m-d\TH:i:s\Z', strtotime('-'.rand(1,30).' days'))
+            ]
+        ];
+    }
+    
+    public static function getVirusTotalReport($ip) {
+        return [
+            'data' => [
+                'attributes' => [
+                    'last_analysis_stats' => [
+                        'malicious' => rand(0, 5),
+                        'suspicious' => rand(0, 3),
+                        'undetected' => rand(50, 70),
+                        'harmless' => rand(20, 40)
+                    ],
+                    'country' => 'KE',
+                    'as_owner' => 'Safaricom Limited',
+                    'reputation' => rand(-100, 100)
+                ]
+            ]
+        ];
+    }
+}
+
+
+// ========================
+// LOCAL THREAT INTELLIGENCE (Added by setup script)
+// ========================
+
+class LocalThreatIntel {
+    private $blacklist = [];
+    private $geo_data = [];
+    private $attack_patterns = [];
+    
+    public function __construct() {
+        $this->loadLocalDatabases();
+    }
+    
+    private function loadLocalDatabases() {
+        // Load blacklist
+        $threat_data = json_decode(file_get_contents(__DIR__ . '/../config/threat_intel.json'), true);
+        $this->blacklist = $threat_data['ip_blacklist'] ?? [];
+        $this->attack_patterns = $threat_data['common_attack_patterns'] ?? [];
+        
+        // Load geo data
+        $geo_file = __DIR__ . '/../data/geo_data.json';
+        if (file_exists($geo_file)) {
+            $this->geo_data = json_decode(file_get_contents($geo_file), true);
+        }
+    }
+    
+    public function checkIP($ip) {
+        $result = [
+            'ip' => $ip,
+            'is_blacklisted' => false,
+            'is_tor_exit' => false,
+            'threat_score' => 0,
+            'geolocation' => $this->getGeolocation($ip),
+            'recommendations' => []
+        ];
+        
+        // Check blacklist
+        foreach ($this->blacklist as $range) {
+            if ($this->ipInRange($ip, $range)) {
+                $result['is_blacklisted'] = true;
+                $result['threat_score'] += 80;
+                $result['recommendations'][] = "Block IP: Blacklisted range $range";
+                break;
+            }
+        }
+        
+        // Check for Tor exit node
+        $threat_data = json_decode(file_get_contents(__DIR__ . '/../config/threat_intel.json'), true);
+        foreach ($threat_data['tor_exits'] as $tor_ip) {
+            if ($ip == $tor_ip) {
+                $result['is_tor_exit'] = true;
+                $result['threat_score'] += 60;
+                $result['recommendations'][] = "Monitor: Tor exit node detected";
+            }
+        }
+        
+        // Country risk assessment
+        if (isset($result['geolocation']['country'])) {
+            $country = $result['geolocation']['country'];
+            if (in_array($country, $threat_data['suspicious_countries'])) {
+                $result['threat_score'] += 40;
+                $result['recommendations'][] = "High-risk country: $country";
+            }
+        }
+        
+        return $result;
+    }
+    
+    private function ipInRange($ip, $range) {
+        if (strpos($range, '/') !== false) {
+            list($subnet, $bits) = explode('/', $range);
+            $ip_long = ip2long($ip);
+            $subnet_long = ip2long($subnet);
+            $mask = -1 << (32 - $bits);
+            return ($ip_long & $mask) == ($subnet_long & $mask);
+        } else {
+            return $ip === $range;
+        }
+    }
+    
+    public function getGeolocation($ip) {
+        if (isset($this->geo_data[$ip])) {
+            return $this->geo_data[$ip];
+        }
+        
+        // Mock geolocation for unknown IPs
+        return [
+            'country' => 'XX',
+            'country_name' => 'Unknown',
+            'region' => 'Unknown',
+            'city' => 'Unknown',
+            'isp' => 'Unknown ISP',
+            'asn' => 'AS' . rand(1000, 99999),
+            'latitude' => 0,
+            'longitude' => 0,
+            'threat_level' => 'unknown'
+        ];
+    }
+    
+    public function detectAttackPattern($input) {
+        $detections = [];
+        foreach ($this->attack_patterns as $type => $patterns) {
+            foreach ($patterns as $pattern) {
+                if (stripos($input, $pattern) !== false) {
+                    $detections[] = [
+                        'type' => $type,
+                        'pattern' => $pattern,
+                        'input' => substr($input, 0, 50)
+                    ];
+                }
+            }
+        }
+        return $detections;
+    }
+    
+    public function analyzeUserAgent($user_agent) {
+        $analysis = [
+            'is_suspicious' => false,
+            'suspicious_indicators' => [],
+            'browser_info' => []
+        ];
+        
+        $ua_lower = strtolower($user_agent);
+        
+        // Check for security tools
+        $threat_data = json_decode(file_get_contents(__DIR__ . '/../config/threat_intel.json'), true);
+        foreach ($threat_data['malicious_useragents'] as $tool) {
+            if (strpos($ua_lower, $tool) !== false) {
+                $analysis['is_suspicious'] = true;
+                $analysis['suspicious_indicators'][] = "Security tool: $tool";
+            }
+        }
+        
+        // Browser detection
+        if (strpos($ua_lower, 'chrome') !== false) {
+            $analysis['browser_info']['name'] = 'Chrome';
+        } elseif (strpos($ua_lower, 'firefox') !== false) {
+            $analysis['browser_info']['name'] = 'Firefox';
+        } elseif (strpos($ua_lower, 'safari') !== false) {
+            $analysis['browser_info']['name'] = 'Safari';
+        } else {
+            $analysis['browser_info']['name'] = 'Unknown';
+            $analysis['suspicious_indicators'][] = "Uncommon browser";
+        }
+        
+        return $analysis;
+    }
+}
+
+// ========================
+// LOCAL THREAT INTELLIGENCE (Added by setup script)
+// ========================
+
+class LocalThreatIntel {
+    private $blacklist = [];
+    private $geo_data = [];
+    private $attack_patterns = [];
+    
+    public function __construct() {
+        $this->loadLocalDatabases();
+    }
+    
+    private function loadLocalDatabases() {
+        // Load blacklist
+        $threat_data = json_decode(file_get_contents(__DIR__ . '/../config/threat_intel.json'), true);
+        $this->blacklist = $threat_data['ip_blacklist'] ?? [];
+        $this->attack_patterns = $threat_data['common_attack_patterns'] ?? [];
+        
+        // Load geo data
+        $geo_file = __DIR__ . '/../data/geo_data.json';
+        if (file_exists($geo_file)) {
+            $this->geo_data = json_decode(file_get_contents($geo_file), true);
+        }
+    }
+    
+    public function checkIP($ip) {
+        $result = [
+            'ip' => $ip,
+            'is_blacklisted' => false,
+            'is_tor_exit' => false,
+            'threat_score' => 0,
+            'geolocation' => $this->getGeolocation($ip),
+            'recommendations' => []
+        ];
+        
+        // Check blacklist
+        foreach ($this->blacklist as $range) {
+            if ($this->ipInRange($ip, $range)) {
+                $result['is_blacklisted'] = true;
+                $result['threat_score'] += 80;
+                $result['recommendations'][] = "Block IP: Blacklisted range $range";
+                break;
+            }
+        }
+        
+        // Check for Tor exit node
+        $threat_data = json_decode(file_get_contents(__DIR__ . '/../config/threat_intel.json'), true);
+        foreach ($threat_data['tor_exits'] as $tor_ip) {
+            if ($ip == $tor_ip) {
+                $result['is_tor_exit'] = true;
+                $result['threat_score'] += 60;
+                $result['recommendations'][] = "Monitor: Tor exit node detected";
+            }
+        }
+        
+        // Country risk assessment
+        if (isset($result['geolocation']['country'])) {
+            $country = $result['geolocation']['country'];
+            if (in_array($country, $threat_data['suspicious_countries'])) {
+                $result['threat_score'] += 40;
+                $result['recommendations'][] = "High-risk country: $country";
+            }
+        }
+        
+        return $result;
+    }
+    
+    private function ipInRange($ip, $range) {
+        if (strpos($range, '/') !== false) {
+            list($subnet, $bits) = explode('/', $range);
+            $ip_long = ip2long($ip);
+            $subnet_long = ip2long($subnet);
+            $mask = -1 << (32 - $bits);
+            return ($ip_long & $mask) == ($subnet_long & $mask);
+        } else {
+            return $ip === $range;
+        }
+    }
+    
+    public function getGeolocation($ip) {
+        if (isset($this->geo_data[$ip])) {
+            return $this->geo_data[$ip];
+        }
+        
+        // Mock geolocation for unknown IPs
+        return [
+            'country' => 'XX',
+            'country_name' => 'Unknown',
+            'region' => 'Unknown',
+            'city' => 'Unknown',
+            'isp' => 'Unknown ISP',
+            'asn' => 'AS' . rand(1000, 99999),
+            'latitude' => 0,
+            'longitude' => 0,
+            'threat_level' => 'unknown'
+        ];
+    }
+    
+    public function detectAttackPattern($input) {
+        $detections = [];
+        foreach ($this->attack_patterns as $type => $patterns) {
+            foreach ($patterns as $pattern) {
+                if (stripos($input, $pattern) !== false) {
+                    $detections[] = [
+                        'type' => $type,
+                        'pattern' => $pattern,
+                        'input' => substr($input, 0, 50)
+                    ];
+                }
+            }
+        }
+        return $detections;
+    }
+    
+    public function analyzeUserAgent($user_agent) {
+        $analysis = [
+            'is_suspicious' => false,
+            'suspicious_indicators' => [],
+            'browser_info' => []
+        ];
+        
+        $ua_lower = strtolower($user_agent);
+        
+        // Check for security tools
+        $threat_data = json_decode(file_get_contents(__DIR__ . '/../config/threat_intel.json'), true);
+        foreach ($threat_data['malicious_useragents'] as $tool) {
+            if (strpos($ua_lower, $tool) !== false) {
+                $analysis['is_suspicious'] = true;
+                $analysis['suspicious_indicators'][] = "Security tool: $tool";
+            }
+        }
+        
+        // Browser detection
+        if (strpos($ua_lower, 'chrome') !== false) {
+            $analysis['browser_info']['name'] = 'Chrome';
+        } elseif (strpos($ua_lower, 'firefox') !== false) {
+            $analysis['browser_info']['name'] = 'Firefox';
+        } elseif (strpos($ua_lower, 'safari') !== false) {
+            $analysis['browser_info']['name'] = 'Safari';
+        } else {
+            $analysis['browser_info']['name'] = 'Unknown';
+            $analysis['suspicious_indicators'][] = "Uncommon browser";
+        }
+        
+        return $analysis;
+    }
+}
+
+/**
+ * Get C2 Dashboard URL
+ */
+function get_c2_dashboard_url() {
+    return '/c2-dashboard.php';
+}
+
+/**
+ * Get C2 Beacon URL for a payload UUID
+ */
+function get_c2_beacon_url($uuid) {
+    return '/c2/beacon.php?uuid=' . urlencode($uuid);
+}

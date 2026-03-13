@@ -1,0 +1,4 @@
+[2024-01-01 10:30:00] SQL Injection attempt from 192.168.1.100 - BLOCKED
+[2024-01-01 10:32:15] XSS attempt from 203.0.113.5 - DETECTED
+[2024-01-01 10:35:45] Brute force attack from 198.51.100.23 - BLOCKED
+[2024-01-01 10:40:22] LFI attempt from 192.0.2.44 - DETECTED

@@ -1,0 +1,131 @@
+<?php
+/**
+ * COSMIC OSINT LAB - Module Integration API
+ * RESTful API for inter-module communication
+ */
+
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+session_start();
+
+// Load modules
+require_once __DIR__ . '/../system/modules/TrojanModule.php';
+
+$action = $_GET['action'] ?? $_POST['action'] ?? '';
+$module = $_GET['module'] ?? $_POST['module'] ?? '';
+
+$response = [
+    'status' => 'error',
+    'message' => 'Invalid request',
+    'timestamp' => time(),
+    'data' => []
+];
+
+try {
+    switch ($module) {
+        case 'trojan':
+            $trojan = new EnhancedTrojanModule();
+            
+            switch ($action) {
+                case 'generate':
+                    $config = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+                    $payload = $trojan->generate_advanced_payload($config);
+                    $response = [
+                        'status' => 'success',
+                        'message' => 'Payload generated',
+                        'data' => $payload
+                    ];
+                    break;
+                    
+                case 'analyze':
+                    $payload = $_POST['payload'] ?? '';
+                    $analysis = $trojan->analyze_payload($payload, $_POST);
+                    $response = [
+                        'status' => 'success',
+                        'message' => 'Analysis complete',
+                        'data' => $analysis
+                    ];
+                    break;
+                    
+                case 'listeners':
+                    $config = $_GET;
+                    $listeners = $trojan->generate_multi_listener($config);
+                    $response = [
+                        'status' => 'success',
+                        'message' => 'Listeners generated',
+                        'data' => $listeners
+                    ];
+                    break;
+                    
+                default:
+                    $response['message'] = 'Unknown action for trojan module';
+            }
+            break;
+            
+        case 'integration':
+            // Cross-module integration
+            $integration_data = json_decode(file_get_contents('php://input'), true);
+            
+            switch ($action) {
+                case 'link_payload':
+                    // Link payload to red team operation
+                    $response = [
+                        'status' => 'success',
+                        'message' => 'Payload linked to operation',
+                        'data' => [
+                            'operation_id' => uniqid('op_'),
+                            'payload_id' => $integration_data['payload_id'],
+                            'status' => 'active'
+                        ]
+                    ];
+                    break;
+                    
+                case 'create_workflow':
+                    // Create automated workflow
+                    $response = [
+                        'status' => 'success',
+                        'message' => 'Workflow created',
+                        'data' => [
+                            'workflow_id' => uniqid('wf_'),
+                            'steps' => $integration_data['steps'],
+                            'status' => 'ready'
+                        ]
+                    ];
+                    break;
+            }
+            break;
+            
+        case 'system':
+            switch ($action) {
+                case 'status':
+                    $response = [
+                        'status' => 'success',
+                        'message' => 'System status',
+                        'data' => [
+                            'uptime' => @exec('uptime -p'),
+                            'modules' => [
+                                'trojan' => class_exists('EnhancedTrojanModule') ? 'active' : 'inactive',
+                                'redteam' => file_exists(__DIR__ . '/../includes/RedTeamOperations.php') ? 'active' : 'inactive'
+                            ],
+                            'resources' => [
+                                'memory' => memory_get_usage(true) / 1024 / 1024 . ' MB',
+                                'payloads' => count(glob(__DIR__ . '/../data/payloads/*'))
+                            ]
+                        ]
+                    ];
+                    break;
+            }
+            break;
+            
+        default:
+            $response['message'] = 'Unknown module';
+    }
+} catch (Exception $e) {
+    $response['message'] = $e->getMessage();
+    $response['error'] = $e->getTraceAsString();
+}
+
+echo json_encode($response, JSON_PRETTY_PRINT);

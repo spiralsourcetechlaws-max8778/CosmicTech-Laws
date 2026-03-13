@@ -1,0 +1,24 @@
+{
+  "102.2.220.165": {
+    "country": "KE",
+    "country_name": "Kenya",
+    "region": "Nairobi",
+    "city": "Nairobi",
+    "isp": "Safaricom",
+    "asn": "AS33771",
+    "latitude": -1.2921,
+    "longitude": 36.8219,
+    "threat_level": "low"
+  },
+  "127.0.0.1": {
+    "country": "LOCAL",
+    "country_name": "Localhost",
+    "region": "Internal",
+    "city": "Loopback",
+    "isp": "System",
+    "asn": "AS0",
+    "latitude": 0,
+    "longitude": 0,
+    "threat_level": "safe"
+  }
+}

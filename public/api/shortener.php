@@ -16,7 +16,7 @@ header('Content-Type: application/json');
 
 // Simple API key auth (same as C2)
 $apiKey = $_GET['key'] ?? $_SERVER['HTTP_X_API_KEY'] ?? '';
-if ($apiKey !== 'COSMIC-C2-SECRET-2026') {
+if ($apiKey !== getenv('C2_API_KEY')) {
     http_response_code(401);
     die(json_encode(['error' => 'Unauthorized']));
 }

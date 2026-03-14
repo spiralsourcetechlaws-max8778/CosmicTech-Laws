@@ -6,7 +6,7 @@ require_once dirname(__DIR__, 3) . '/system/modules/C2Engine.php';
 header('Content-Type: application/json');
 
 $key = $_GET['key'] ?? '';
-if ($key !== 'COSMIC-C2-SECRET-2026') {
+if ($key !== getenv('C2_API_KEY')) {
     http_response_code(401);
     die(json_encode(['error' => 'Unauthorized']));
 }

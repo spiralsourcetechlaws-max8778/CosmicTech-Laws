@@ -13,7 +13,7 @@ $response = ['status' => 'error', 'message' => 'Invalid action'];
 
 // Simple API key authentication (optional, for security)
 $api_key = $_SERVER['HTTP_X_API_KEY'] ?? $_REQUEST['key'] ?? '';
-if ($api_key !== 'COSMIC-C2-SECRET-2026') {   // Change this in production
+if ($api_key !== getenv('C2_API_KEY')) {   // Change this in production
     http_response_code(401);
     die(json_encode(['status' => 'error', 'message' => 'Unauthorized']));
 }

@@ -1,0 +1,5 @@
+[phases.setup]
+nixPkgs = ["php80Extensions.sqlite3", "php80"]
+
+[phases.install]
+cmds = ["echo 'extension=sqlite3.so' >> /etc/php/8.0/cli/conf.d/20-sqlite3.ini"]

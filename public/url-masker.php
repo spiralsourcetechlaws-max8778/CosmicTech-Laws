@@ -8,7 +8,7 @@ require_once __DIR__ . '/../system/modules/CosmicUrlMasker.php';
 
 // Token authentication (simple)
 $config = require __DIR__ . '/../config/urlmasker.php'; // optional config file
-$adminToken = $config['admin_token'] ?? 'cosmic-secret';
+$adminToken = getenv('URLMASKER_TOKEN') ?: 'cosmic-secret';
 
 $token = $_GET['token'] ?? $_POST['token'] ?? '';
 if ($token !== $adminToken) {

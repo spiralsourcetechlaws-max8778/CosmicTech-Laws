@@ -20,3 +20,9 @@ backups/
 
 # Railway specific (if any)
 .railway/
+# Railway environment
+.env
+config/*.php
+*.db
+data/*.db
+data/logs/*.log

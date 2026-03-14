@@ -12,7 +12,7 @@ class C2Engine {
 
     public function __construct($config = []) {
         $this->dbPath = dirname(__DIR__, 2) . '/data/c2/c2.db';
-        $this->authToken = $config['auth_token'] ?? null;
+        $this->authToken = getenv('C2_API_KEY') ?: 'COSMIC-C2-SECRET-2026';
         $this->initLogger();
         $this->connect();
         $this->migrate();

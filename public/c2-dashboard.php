@@ -59,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     <script src="/assets/js/unified-quicknav.js" defer></script>
 </head>
 <body class="cosmic-scroll-body">
+<?php require_once __DIR__ . "/includes/navigation.php"; echo render_cosmic_navigation(); ?>
     <div class="sidebar">
         <div class="sidebar-logo">
             <h2>🌀 COSMIC C2</h2>

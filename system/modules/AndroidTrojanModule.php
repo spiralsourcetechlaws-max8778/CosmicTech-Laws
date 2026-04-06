@@ -5,6 +5,7 @@
  * Generates custom Android backdoor APKs with C2 integration.
  */
 class AndroidTrojanModule {
+    private $available = true;
 
     private $config;
     private $logger;
@@ -30,7 +31,12 @@ class AndroidTrojanModule {
 
         $this->outputDir = rtrim($this->config['output_dir'], '/') . '/';
         $this->initLogger();
-        $this->checkPrerequisites();
+        try {
+            $this->checkPrerequisites();
+        } catch (RuntimeException $e) {
+            $this->available = false;
+            error_log("AndroidTrojanModule disabled: " . $e->getMessage());
+        }
         $this->ensureKeystore();
 
         if (class_exists('C2Engine')) {
@@ -120,6 +126,9 @@ class AndroidTrojanModule {
     }
 
     public function generate_payload($cfg) {
+        if (!$this->available) {
+            throw new RuntimeException("Android SDK not properly configured. Install SDK or fix paths.");
+        }
         $cfg = array_merge([
             'lhost'           => '127.0.0.1',
             'lport'           => 4444,

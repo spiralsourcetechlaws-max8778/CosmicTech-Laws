@@ -474,3 +474,5 @@
 [2026-03-11 14:19:16] INFO: Prerequisites satisfied []
 [2026-03-11 14:21:32] INFO: Prerequisites satisfied []
 [2026-03-11 14:21:33] INFO: Prerequisites satisfied []
+[2026-04-06 13:33:46] ERROR: Missing prerequisites {"missing":["aapt","apksigner","android.jar for API 33 (not found at \/home\/kali\/android-sdk\/platforms\/android-33\/android.jar)"]}
+[2026-04-06 13:37:35] ERROR: Missing prerequisites {"missing":["aapt","apksigner","android.jar for API 33 (not found at \/home\/kali\/android-sdk\/platforms\/android-33\/android.jar)"]}

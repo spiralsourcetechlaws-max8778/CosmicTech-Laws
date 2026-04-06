@@ -118,6 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="/assets/js/unified-quicknav.js" defer></script>
 </head>
 <body class="cosmic-scroll-body">
+<?php require_once __DIR__ . "/includes/navigation.php"; echo render_cosmic_navigation(); ?>
     <div class="main-content" style="margin-left:20px;">
         <h1>🎣 COSMIC Phishing Campaign Manager</h1>
 

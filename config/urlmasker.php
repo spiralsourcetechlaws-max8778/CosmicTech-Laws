@@ -1,4 +1,8 @@
 <?php
+/**
+ * URL Masker Configuration
+ * Change this token to a strong secret in production!
+ */
 return [
-    'admin_token' => 'SpiralSourceTechLaws@8888',  // CHANGE THIS!
+    'admin_token' => 'cosmic-secret',
 ];

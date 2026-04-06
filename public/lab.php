@@ -352,6 +352,7 @@ $lab_tools = [
     <script src="/assets/js/unified-quicknav.js" defer></script>
 </head>
 <body class="cosmic-scroll-body">
+<?php require_once __DIR__ . "/includes/navigation.php"; echo render_cosmic_navigation(); ?>
     <div class="lab-header">
         <h1 style="color: var(--lab-blue); font-size: 2.5em;">🔬 Enhanced Virtual Lab</h1>
         <p style="color: var(--lab-green);">Isolated Testing Environment - COSMIC OSINT LAB</p>

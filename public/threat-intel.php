@@ -45,6 +45,7 @@ if (class_exists('C2Engine')) {
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 </head>
 <body class="cosmic-scroll-body">
+<?php require_once __DIR__ . "/includes/navigation.php"; echo render_cosmic_navigation(); ?>
     <div class="main-content" style="margin-left:20px;">
         <h1>🛡️ COSMIC Threat Intelligence</h1>
 
